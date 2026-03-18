@@ -83,7 +83,12 @@ async fn main() -> Result<()> {
                     
                     let client = reqwest::Client::builder().http2_prior_knowledge().build()?;
                     let provider = arc_providers::anthropic::AnthropicProvider::new(client, "".to_string());
-                    let msgs = vec![Message { role: Role::User, content: prompt.clone() }];
+                    let msgs = vec![Message { 
+                        role: Role::User, 
+                        content: prompt.clone(),
+                        tool_calls: vec![],
+                        tool_call_id: None,
+                    }];
                     
                     let response_text = provider.generate_text("claude-3-5-sonnet-20241022", &msgs).await.unwrap_or_else(|e| e.to_string());
                     let json_out = serde_json::json!({

@@ -6,6 +6,10 @@
 ![Google Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 ![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+<br/>
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
+![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
 
 ## Overview
 ARC CLI is a next-generation autonomous Agentic CLI framework natively built in Rust for absolute speed, safety, and scale. Going far beyond traditional autocomplete tools, ARC is a true agentic orchestrator that reasons over complex, multi-file codebases natively in your terminal. It is designed to autonomously plan, write, verify, and secure software using a multi-agent delegation model. 

@@ -30,6 +30,14 @@ pub struct Cli {
     #[arg(long, default_value = "text")]
     pub output_format: String,
 
+    /// Boot natively into PTT Voice mode (`arc-voice`)
+    #[arg(long)]
+    pub voice: bool,
+
+    /// Pass an image path natively to a multi-modal agent (`arc-vision`)
+    #[arg(long)]
+    pub vision: Option<String>,
+
     #[command(subcommand)]
     pub command: Option<Command>,
 }

@@ -1,6 +1,5 @@
 use anyhow::Result;
 use ignore::WalkBuilder;
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use tree_sitter::{Parser, Query, QueryCursor};
 
@@ -25,7 +24,7 @@ impl RepoMap {
 
         let mut parser = Parser::new();
         let language = tree_sitter_rust::language();
-        parser.set_language(language.clone())?;
+        parser.set_language(language)?;
 
         // A tree-sitter query to extract fundamental declarations
         let query_source = r#"

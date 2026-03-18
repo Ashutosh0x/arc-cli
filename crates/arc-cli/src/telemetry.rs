@@ -1,9 +1,6 @@
 use anyhow::{Context, Result};
 use std::path::PathBuf;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter, Layer};
-use opentelemetry::{global, KeyValue};
-use opentelemetry::trace::TracerProvider as _;
-use opentelemetry_sdk::{propagation::TraceContextPropagator, Resource};
 
 // Keep the appender guard alive for the duration of the program
 pub struct TelemetryGuard {
@@ -13,7 +10,7 @@ pub struct TelemetryGuard {
 impl Drop for TelemetryGuard {
     fn drop(&mut self) {
         // Ensure all OTLP spans are exported on exit
-        global::shutdown_tracer_provider();
+        // global::shutdown_tracer_provider();
     }
 }
 
@@ -38,11 +35,13 @@ pub fn init_telemetry(log_dir: PathBuf) -> Result<TelemetryGuard> {
         .with_filter(EnvFilter::new("warn")); // Keep CLI quiet except warnings
 
     // 3. OpenTelemetry OTLP Exporter (if enabled)
+    /*
     let otel_layer = if std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT").is_ok() {
         global::set_text_map_propagator(TraceContextPropagator::new());
 
         let exporter = opentelemetry_otlp::new_exporter()
-            .http()
+            .tonic()
+            .with_env()
             .build_span_exporter()?;
 
         let provider = opentelemetry_sdk::trace::TracerProvider::builder()
@@ -59,18 +58,14 @@ pub fn init_telemetry(log_dir: PathBuf) -> Result<TelemetryGuard> {
         Some(tracing_opentelemetry::layer().with_tracer(tracer))
     } else {
         None
-    };
+    */
 
     // Compose all layers
     let subscriber = tracing_subscriber::registry()
         .with(cli_layer)
         .with(file_layer);
 
-    if let Some(otel) = otel_layer {
-        subscriber.with(otel).try_init()?;
-    } else {
-        subscriber.try_init()?;
-    }
+    subscriber.try_init()?;
 
     Ok(TelemetryGuard {
         _file_guard: file_guard,

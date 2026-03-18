@@ -53,8 +53,19 @@ impl Orchestrator {
             sub_agent.add_context_file(file);
         }
 
+        // Inject strict LLM heuristics
+        // Currently achieved via raw task prepending; in production arc-compact manages this memory explicitly.
+        let polished_task = format!(
+"{}
+
+<arc_heuristics>
+1. If your task requires modifying >2 files, you MUST use the `arc-repomap` AST indexer to avoid blowing context ceilings. 
+2. Maintain strict surgical editing. DO NOT output full files. Use structured line replacements.
+3. If you are debating with another agent natively over A2A, limit your response to 200 words prioritizing verifiable facts over politeness.
+</arc_heuristics>", task.task_description);
+
         // Execute
-        sub_agent.execute_task(&task.task_description).await
+        sub_agent.execute_task(&polished_task).await
     }
 
     /// Run multiple sub-agents in parallel on independent tasks.
@@ -75,7 +86,9 @@ impl Orchestrator {
                 for f in task.contextual_files {
                     agent.add_context_file(f);
                 }
-                agent.execute_task(&task.task_description).await
+                
+                let polished = format!("{}\n\n<arc_heuristics>\nStrict Token Budget: Use arc-repomap if evaluating structure. Do not hallucinate outputs.\n</arc_heuristics>", task.task_description);
+                agent.execute_task(&polished).await
             });
 
             handles.push(handle);

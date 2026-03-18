@@ -50,6 +50,7 @@ pub enum ContextSegment {
     User,
     Tool,
     Retrieved,
+    Debate, // Peer-to-peer Agent Network messages
 }
 
 /// A message with context segment tagging for instruction hierarchy.
@@ -137,6 +138,8 @@ pub fn evaluate_lethal_trifecta(
             "⚠ LETHAL TRIFECTA DETECTED: This session has private data access + \
              untrusted content + exfiltration vectors. Extra caution required."
         );
+        // In A2A networks, lethal loops escalate fast. Native hallucination drop.
+        tracing::error!("A2A Hallucination escalate guard triggered via Lethal Trifecta. Dropping untrusted payloads.");
     }
 
     is_lethal

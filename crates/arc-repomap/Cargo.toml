@@ -11,7 +11,7 @@ repository.workspace = true
 anyhow.workspace = true
 ignore.workspace = true
 tree-sitter.workspace = true
-tree-sitter-rust = "0.24.0"
+tree-sitter-rust = "0.21.0"
 
 [lints]
 workspace = true

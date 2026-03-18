@@ -3,7 +3,7 @@ use std::io::{self, Write};
 use futures::StreamExt;
 use reqwest::Client;
 
-use arc_providers::message::{Message, Role, StreamEvent};
+use arc_providers::message::{Message, Role};
 use arc_providers::traits::Provider;
 use arc_providers::anthropic::AnthropicProvider;
 // use arc_providers::traits::ProviderClient;
@@ -35,6 +35,8 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         Message {
             role: Role::System,
             content: system_prompt,
+            tool_calls: vec![],
+            tool_call_id: None,
         }
     ];
 
@@ -57,6 +59,8 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         session_messages.push(Message {
             role: Role::User,
             content: input.to_string(),
+            tool_calls: vec![],
+            tool_call_id: None,
         });
 
         let mut stream = provider
@@ -70,12 +74,11 @@ pub async fn run_repl(api_key: String) -> Result<()> {
 
         while let Some(chunk_result) = stream.next().await {
             match chunk_result {
-                Ok(StreamEvent::TextDelta(text)) => {
-                    print!("{}", text);
+                Ok(event) => {
+                    print!("{}", event.text_delta);
                     io::stdout().flush()?;
-                    full_response.push_str(&text);
+                    full_response.push_str(&event.text_delta);
                 }
-                Ok(_) => { /* Ignore other stream events for now */ }
                 Err(e) => {
                     eprintln!("\n[Stream Disconnect Error]: {}", e);
                     break;
@@ -87,6 +90,8 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         session_messages.push(Message {
             role: Role::Assistant,
             content: full_response,
+            tool_calls: vec![],
+            tool_call_id: None,
         });
     }
 
