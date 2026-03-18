@@ -6,6 +6,9 @@
 
 pub mod executor;
 pub mod events;
+pub mod executor;
+pub mod rewrite;
+pub mod config;
 
 pub use executor::{HookExecutor, HookConfig};
 pub use events::HookEvent;

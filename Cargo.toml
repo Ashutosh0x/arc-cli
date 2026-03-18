@@ -27,7 +27,7 @@ members = [
     "crates/arc-skills",
     "crates/arc-search",
     "crates/arc-vision",
-    "crates/arc-cloud",
+    "crates/arc-cloud", "crates/arc-repomap",
 ]
 
 [workspace.package]

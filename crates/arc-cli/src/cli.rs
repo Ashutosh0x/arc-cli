@@ -22,6 +22,14 @@ pub struct Cli {
     #[arg(long)]
     pub plan: bool,
 
+    /// Run in non-interactive CI mode
+    #[arg(long)]
+    pub headless: bool,
+
+    /// Output format (text or json)
+    #[arg(long, default_value = "text")]
+    pub output_format: String,
+
     #[command(subcommand)]
     pub command: Option<Command>,
 }

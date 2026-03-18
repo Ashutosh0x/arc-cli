@@ -77,10 +77,27 @@ async fn main() -> Result<()> {
                 arc_core::setup_wizard::run_setup_wizard().await?;
             }
             if let Some(prompt) = cli.prompt {
-                println!("Running one-shot prompt: {}", prompt);
-                let spinner = arc_tui::spinner::Spinner::new().message("Thinking").start();
-                tokio::time::sleep(std::time::Duration::from_secs(2)).await;
-                spinner.finish("Done").await;
+                if cli.headless && cli.output_format == "json" {
+                    use arc_providers::traits::Provider;
+                    use arc_providers::message::{Message, Role};
+                    
+                    let client = reqwest::Client::builder().http2_prior_knowledge().build()?;
+                    let provider = arc_providers::anthropic::AnthropicProvider::new(client, "".to_string());
+                    let msgs = vec![Message { role: Role::User, content: prompt.clone() }];
+                    
+                    let response_text = provider.generate_text("claude-3-5-sonnet-20241022", &msgs).await.unwrap_or_else(|e| e.to_string());
+                    let json_out = serde_json::json!({
+                        "prompt": prompt,
+                        "status": "success",
+                        "response": response_text
+                    });
+                    println!("{}", json_out.to_string());
+                } else {
+                    println!("Running one-shot prompt: {}", prompt);
+                    let spinner = arc_tui::spinner::Spinner::new().message("Thinking").start();
+                    tokio::time::sleep(std::time::Duration::from_secs(2)).await;
+                    spinner.finish("Done").await;
+                }
             } else {
                 repl::run_repl("".to_string()).await?;
             }

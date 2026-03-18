@@ -20,10 +20,21 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         
     let provider = AnthropicProvider::new(client, api_key);
     
+    let mut system_prompt = "You are ARC, a terminal-native autonomous Rust-based agent.".to_string();
+    
+    // Load project-specific instructions from ARC.md or .arc.md
+    for filename in ["ARC.md", ".arc.md", "arc.md"] {
+        if let Ok(content) = std::fs::read_to_string(filename) {
+            system_prompt.push_str(&format!("\n\n=== Project Instructions & Architecture ({}) ===\n{}", filename, content));
+            println!(">>> Loaded project context from {}", filename);
+            break;
+        }
+    }
+
     let mut session_messages = vec![
         Message {
             role: Role::System,
-            content: "You are ARC, a terminal-native autonomous Rust-based agent.".to_string(),
+            content: system_prompt,
         }
     ];
 

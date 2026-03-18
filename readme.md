@@ -51,6 +51,7 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 - [WASM Plugins](docs/plugins.md)
 - [Deep Benchmarking Facts](docs/benchmarks.md)
 - [Phase 7 Subsystems Integrated (Voice, Skills, Loop, Compact)](docs/phase_7.md)
+- [Phase 8 Enterprise Features (Repomap, Hooks, Caching, CI)](docs/phase_8.md)
 
 ## Architecture
 
@@ -63,6 +64,7 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 - `arc-a2a`: Production-grade Agent-to-Agent communication over HTTP/2, SSE streaming, and HMAC/JWT security.
 - `arc-plan`, `arc-worktree`, `arc-diff`: Precision-engineered modules handling codebase dependency mapping and git integration.
 - `arc-voice`, `arc-compact`, `arc-skills`, `arc-search`, `arc-vision`, `arc-sandbox`, `arc-loop`, `arc-cloud`: The Phase 7 Autonomous scale-up providing voice controls, vision grounding, linux OS security barriers, cron loops, and dynamic skill orchestration traits.
+- `arc-repomap` & `arc-hooks`: The Phase 8 Enterprise bridge yielding blazing fast AST `tree-sitter` codebase maps and TOML-configurable sandboxed post-edit webhooks formatting.
 
 ## Benchmarking Facts
 

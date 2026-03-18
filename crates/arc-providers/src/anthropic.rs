@@ -26,6 +26,19 @@ impl AnthropicProvider {
         // Extract system prompt out of messages map, as Anthropic demands it top-level
         let system_msg = messages.iter().find(|m| m.role == Role::System).map(|m| m.content.clone()).unwrap_or_default();
         
+        // Use prompt caching on the system message
+        let system_payload = if system_msg.is_empty() {
+            json!([])
+        } else {
+            json!([
+                {
+                    "type": "text",
+                    "text": system_msg,
+                    "cache_control": {"type": "ephemeral"}
+                }
+            ])
+        };
+        
         let anthropic_msgs: Vec<Value> = messages.iter()
             .filter(|m| m.role != Role::System)
             .map(|m| {
@@ -44,7 +57,7 @@ impl AnthropicProvider {
         json!({
             "model": model,
             "max_tokens": 8192,
-            "system": system_msg,
+            "system": system_payload,
             "messages": anthropic_msgs,
             "stream": true,
         })
@@ -79,6 +92,7 @@ impl Provider for AnthropicProvider {
         let response = self.http_client.post(endpoint)
             .header("x-api-key", &self.api_key)
             .header("anthropic-version", "2023-06-01")
+            .header("anthropic-beta", "prompt-caching-2024-07-31")
             .header("content-type", "application/json")
             .header("accept", "text/event-stream")
             .json(&payload)
