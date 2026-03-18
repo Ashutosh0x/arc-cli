@@ -1,16 +1,15 @@
-# The ARC Routing Engine
+# Dynamic Multi-Provider Routing
 
-The `arc-router` crate acts as the central brain dictating how to communicate with the provider framework.
+A massive single failure point uniquely occurring natively inside production LLM frameworks emerges via model API downtime or dynamic rate-limiting.
 
-## Parallel Probing
+## Fallback Tracker
+An exponential fallback engine maintains native connectivity utilizing `tokio` to detect HTTP limits proactively switching models directly routing logic continuously tracking native success events internally mapping effectively across the REPL avoiding user intervention.
 
-When executing a complex command via `arc ask`, precision and speed are invaluable. 
-When configured, the router utilizes `futures::future::select_ok` to initiate parallel connections.
+## Parallel Provider Racing
+If an ultimate response deadline genuinely governs execution contexts, `arc-router` possesses the ability cleanly instantiating logic mapped aggressively across **ALL** providers parallelly.
+- Submits identical prompt templates simultaneously across Claude, Gemini, and GPT-4o.
+- Selects the absolute fastest HTTP response cleanly leveraging `futures::future::select_ok` binding the pipeline natively towards the `stdout` buffer.
+- Immediately cancels the trailing straggler tasks avoiding wasteful HTTP polling safely securely.
 
-1. The Prompt and Sandbox Context are compressed and serialized.
-2. Identical requests fire over HTTP/2 simultaneously to Anthropic Claude, OpenAI GPT-4, and Google Gemini.
-3. The absolute fastest Time-To-First-Token (TTFT) stream naturally returns first.
-4. The router immediately bridges this open stream back to your shell output, seamlessly terminating the sibling requests to prevent billing overflow.
-
-## Model Selection Engine
-The router calculates requested user features (e.g. Vision support, 128k+ Context requirements) mapped against a static registry of models. If a user asks to scan an image, the Router natively upgrades the target model (e.g. from `gpt-4o-mini` to `gpt-4o` or `gemini-1.5-pro`) dynamically before firing.
+## Semantic Classification Routing
+ARC leverages lightweight internal evaluation models securely directing payloads internally determining optimal parameters natively determining if a specific prompt structurally requires complex coding logic (routing to Claude Opus) vs simple textual classification safely navigating models internally decreasing ultimate operating costs natively.

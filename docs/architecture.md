@@ -1,42 +1,30 @@
-# Architecture Overview
+# ARC Agentic Framework Architecture
 
-ARC CLI is constructed as a modern, multi-crate Rust workspace designed for absolute maximum performance, safety, and strict observability. The system architecture isolates responsibilities across specialized crates, preventing dependency bloat and ensuring zero-cost abstractions where necessary.
+ARC CLI is constructed exclusively for high-performance scale, structured through a modular Crates.io taxonomy.
 
-## Crate Layout
+## 1. System Topology
 
-### 1. arc-cli
-The primary binary entry point.
-- **Duties**: CLI argument parsing via `clap`, terminal output bootstrapping, structured tracing initialization, and interactive chat loop coordination.
-- **Design Philosophy**: Minimal synchronous blocking. Delegates all heavy lifting to the core library crates.
+### `arc-cli`
+The entrypoint process. Uses `ratatui`/`crossterm` for spinning and progress indicators, hosts the primary REPL command loop, and acts as the synchronous controller delegating down to async crates.
 
-### 2. arc-core
-The unified backbone of the system.
-- **Duties**: 
-  - Central configuration and secret management natively linked to the OS cryptographic keychain.
-  - LLM Session handling and database telemetry (`redb`, `hdrhistogram`).
-  - Strict security perimeters spanning Prompt Guards, Context Isolation, and Lethal Trifecta calculations.
-  - Multi-tier Memory Arena subsystem orchestrating Short-Term and Long-Term context windows via `compact_str` and `bumpalo`.
+### `arc-core`
+Hosts foundational components.
+- **`Memory Arenas`**: Uses `bumpalo` to enable ultra-fast scratch allocations for context reduction algorithms without dropping memory dynamically. Context bounds are organized into `Working`, `ShortTerm`, and `LongTerm` layers.
+- **`Security`**: Defines the `PromptGuard` enforcing strict XML tags against Prompt Injection, the `RateLimiter`, and `Data Guards`.
 
-### 3. arc-providers
-The high-speed networking and LLM integration layer.
-- **Duties**: Specialized `struct` and `trait` implementations mapping tightly to OpenAI, Anthropic, Google Gemini, and Ollama specifications.
-- **Design Philosophy**: Extreme speed. JSON payloads are parsed dynamically using zero-copy Server-Sent Events (SSE) bounded by SIMD accelerated buffers to avoid `String` instantiations during heavy streaming generation.
+### `arc-agents`
+The absolute core of autonomous behavior. Exposes the `Orchestrator` struct which dynamically instantiates logical sub-agents:
+- `Reviewer`
+- `Tester`
+- `Coder`
+- `Security Auditor`
+Agents share context cleanly utilizing a highly structured `Agent-to-Agent` (A2A) protocol to prevent context diffusion.
 
-### 4. arc-router
-The intelligent multi-model load balancer.
-- **Duties**: Selects the optimal provider based on token budgets, requested capabilities (e.g., Vision, Tool Calling), and active availability. Supports `race_providers` to concurrently dispatch identical requests globally and seamlessly pivot to the fastest response.
+### `arc-session` & `arc-rewind`
+State preservation layer. Because ARC can run fully autonomous workflows mapping across hundreds of files, it inherently utilizes embedded `redb` local key-value databases to commit physical filesystem hashes mapped against token conversations. If a hallucination event strikes, `arc-rewind` can dynamically travel backwards safely.
 
-### 5. arc-tools & arc-mcp
-The execution and extensibility capabilities.
-- **arc-tools**: Bound tightly into sandboxed environments (`arc-sandbox`). Responsible for executing sub-shells, validating diffs, and reading host file systems securely.
-- **arc-mcp**: Implementation of the Model Context Protocol. Secures third-party plugins with SHA256 manifest pinning and context minimization.
+### `arc-shadow` & `arc-worktree`
+The "Sandboxing" mechanics. `arc-shadow` duplicates the user workspace into a `.arc-shadow/` localized temporary volume leveraging fast file-system hardlinks on Linux/Mac, preventing the LLM from destroying source repositories during unverified autonomous compilations.
 
-### 6. arc-tui
-The professional terminal rendering engine.
-- **Duties**: Abstracting `crossterm` and async UI states. Features a highly efficient `StreamingSpinner` which logs token generation velocities real-time without interrupting the async executor.
-
-## Concurrency Model
-
-ARC CLI primarily runs under a `tokio` multi-threaded async executor. CPU-bound operations (such as token counting using `tiktoken-rs` and memory compression arrays) are either offloaded to `spawn_blocking` or handled via tight SIMD structures when synchronously executing inline. 
-
-All HTTP invocations share a unified, persistent `reqwest::Client` mapped directly into a global `OnceLock`, radically improving HTTPS TLS handshake reuse over successive loops.
+### `arc-io`
+The custom High-Performance proxy targeting platform-specific system calls (like `io_uring` on Linux and `IOCP` on Windows) pushing physical I/O read/write thresholds dramatically higher than default synchronous disk wrappers.

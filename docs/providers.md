@@ -1,18 +1,15 @@
-# Provider Framework Configuration
+# Multi-Model Provider Hub
 
-ARC CLI dynamically interfaces with industry-leading LLMs via the `arc-providers` crate. 
+The `arc-providers` crate maintains a dynamically connected asynchronous framework binding models securely in real-time.
 
-## Supported Providers
-* **Anthropic** (`Claude 3.5 Sonnet`, `Opus`)
-* **OpenAI** (`GPT-4o`, `o1-mini`)
-* **Google Gemini** (`Gemini 1.5 Pro`)
-* **Ollama** (Local execution: `llama3`, `mistral`)
+### Supported Frameworks
+- **Anthropic Claude**: Full `xml` tags and native Tool-Use endpoints utilizing strictly un-polyfilled endpoints.
+- **Google Gemini**: Integrates specifically utilizing `system_instructions` alongside immense context token budgets scaling massively across 1M+ buffers dynamically mapped into raw JSON payloads.
+- **OpenAI**: Legacy universal compatibility.
+- **Ollama**: Natively parses standard base endpoints mapped locally against `127.0.0.1:11434` enabling un-censored model interactions permanently detached from internet protocols securely.
 
-All providers implement a unified `Provider` trait interface executing ultra-fast, zero-copy Server-Sent Events (SSE). 
-
-## Provider Fallbacks
-Providers are securely loaded via the OS-level Keychain. If an API key is heavily rate-limited, the `arc-router` automatically transitions to the next available provider listed within your `~/.arc/config.toml` priority queue.
-
-## Streaming Architecture
-Instead of buffering huge chunks of text or mapping directly heavily via `serde_json`, our custom `SseStream` loop intercepts raw byte chunks on the TCP socket using SIMD `memchr`, slicing the exact array boundaries for the data payload, and feeding it directly to the UI rendering loop. 
-This operates under `async` constraints allowing token display speeds mapping entirely to your physical network bandwidth limits.
+### High-Performance Networking Pipeline
+Throughputs natively handle immense volumes bypassing standard connection lag:
+- Instantiated utilizing a persistent explicit `reqwest::Client` global configuration block. 
+- Mapped forcibly against HTTP/2 (`http2_prior_knowledge = true`) avoiding TCP handshake bloat completely mapping across massive continuous multi-turn LLM reasoning evaluations. 
+- Evaluates utilizing `brotli` payload streams directly slashing network byte transmissions efficiently.
