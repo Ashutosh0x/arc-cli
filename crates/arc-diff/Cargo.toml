@@ -1,0 +1,10 @@
+[package]
+name = "arc-diff"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+anyhow.workspace = true
+similar.workspace = true
+tracing.workspace = true

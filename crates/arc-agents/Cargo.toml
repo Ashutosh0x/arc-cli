@@ -1,0 +1,20 @@
+[package]
+name = "arc-agents"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+arc-mcp = { path = "../arc-mcp" }
+arc-tools = { path = "../arc-tools" }
+arc-providers = { path = "../arc-providers" }
+
+tokio.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+async-trait.workspace = true
+futures.workspace = true

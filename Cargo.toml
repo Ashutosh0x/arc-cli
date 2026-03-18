@@ -1,0 +1,121 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/arc-cli",
+    "crates/arc-core",
+    "crates/arc-providers",
+    "crates/arc-router",
+    "crates/arc-tools",
+    "crates/arc-mcp",
+    "crates/arc-tui",
+    "crates/arc-sandbox",
+    "crates/arc-hooks",        # NEW — Feature #5
+    "crates/arc-plan",         # NEW — Feature #1
+    "crates/arc-session",      # NEW — Feature #3
+    "crates/arc-agents",       # NEW — Feature #4
+    "crates/arc-policy",       # NEW — Feature #16
+    "crates/arc-a2a",          # NEW — Feature #15
+    "crates/arc-voice",        # NEW — Feature #14
+    "crates/arc-bench",        # NEW — Feature #17
+    "crates/arc-io",           # NEW — Feature #6 (io_uring)
+    "crates/arc-shadow",       # NEW — Feature #12
+    "crates/arc-worktree",     # NEW — Feature #11
+    "crates/arc-loop",         # NEW — Feature #10
+    "crates/arc-diff",         # NEW — Feature #8
+]
+
+[workspace.package]
+version = "0.5.0"
+edition = "2024"
+rust-version = "1.85"
+license = "MIT"
+description = "ARC CLI High Performance Agent Framework"
+repository = "https://github.com/project/arc-cli"
+
+[workspace.dependencies]
+tokio = { version = "1.44", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "2.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+reqwest = { version = "0.12", features = ["http2", "rustls-tls", "stream", "brotli", "gzip"] }
+clap = { version = "4.5", features = ["derive", "env"] }
+redb = "2.4"
+bumpalo = { version = "3.16", features = ["allocator_api"] }
+compact_str = "0.8"
+tiktoken-rs = "0.6"
+memchr = "2.7"
+futures = "0.3"
+crossterm = "0.28"
+ratatui = "0.29"
+dialoguer = "0.11"
+toml = "0.8"
+uuid = { version = "1.11", features = ["v4", "fast-rng"] }
+chrono = { version = "0.4", features = ["serde"] }
+sha2 = "0.10"
+similar = "2.6"
+tempfile = "3.14"
+notify = "7.0"
+tokio-tungstenite = "0.26"
+async-trait = "0.1"
+ignore = "0.4"
+color-eyre = "0.6"
+console = "0.15"
+dashmap = "5.5"
+bollard = "0.16"
+syntect = "5.2"
+tree-sitter = "0.22"
+smallvec = "1.13"
+zeroize = "1.7"
+tokio-util = "0.7"
+bytes = "1.5"
+hdrhistogram = "7.5"
+keyring = "2.3"
+dirs = "5.0"
+tracing-opentelemetry = "0.23"
+opentelemetry = "0.22"
+opentelemetry_sdk = "0.22"
+opentelemetry-otlp = "0.15"
+tracing-appender = "0.2"
+base64 = "0.22"
+
+
+oauth2 = "*"
+secrecy = "*"
+rand = "*"
+indicatif = "*"
+url = "*"
+regex = "*"
+once_cell = "*"
+open = "*"
+criterion = "*"
+
+arc-core = { path = "crates/arc-core" }
+arc-providers = { path = "crates/arc-providers" }
+arc-router = { path = "crates/arc-router" }
+arc-tools = { path = "crates/arc-tools" }
+arc-mcp = { path = "crates/arc-mcp" }
+arc-sandbox = { path = "crates/arc-sandbox" }
+arc-tui = { path = "crates/arc-tui" }
+arc-cli = { path = "crates/arc-cli" }
+arc-hooks = { path = "crates/arc-hooks" }
+arc-plan = { path = "crates/arc-plan" }
+arc-session = { path = "crates/arc-session" }
+arc-agents = { path = "crates/arc-agents" }
+arc-policy = { path = "crates/arc-policy" }
+arc-a2a = { path = "crates/arc-a2a" }
+arc-voice = { path = "crates/arc-voice" }
+arc-bench = { path = "crates/arc-bench" }
+arc-io = { path = "crates/arc-io" }
+arc-shadow = { path = "crates/arc-shadow" }
+arc-worktree = { path = "crates/arc-worktree" }
+arc-loop = { path = "crates/arc-loop" }
+arc-diff = { path = "crates/arc-diff" }
+arc-plugins = { path = "crates/arc-plugins" }
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+dbg_macro = "deny"

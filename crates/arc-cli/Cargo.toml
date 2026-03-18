@@ -1,0 +1,45 @@
+[package]
+name = "arc-code"
+version.workspace = true
+edition.workspace = true
+description.workspace = true
+license.workspace = true
+repository.workspace = true
+default-run = "arc"
+
+[[bin]]
+name = "arc"
+path = "src/main.rs"
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+arc-router = { path = "../arc-router" }
+arc-providers = { path = "../arc-providers" }
+arc-tui = { path = "../arc-tui" }
+arc-tools = { path = "../arc-tools" }
+arc-mcp = { path = "../arc-mcp" }
+arc-plugins = { path = "../arc-plugins" }
+arc-sandbox = { path = "../arc-sandbox" }
+
+reqwest = { workspace = true, features = ["rustls-tls"] }
+keyring.workspace = true
+
+clap.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+toml.workspace = true
+dirs.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tracing-opentelemetry.workspace = true
+opentelemetry.workspace = true
+opentelemetry_sdk.workspace = true
+opentelemetry-otlp.workspace = true
+tracing-appender.workspace = true
+color-eyre.workspace = true
+anyhow.workspace = true
+chrono.workspace = true
+
+ctrlc = "3"
+console.workspace = true

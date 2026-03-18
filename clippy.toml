@@ -1,0 +1,5 @@
+# ARC CLI — Clippy configuration
+msrv = "1.85.0"
+too-many-arguments-threshold = 7
+type-complexity-threshold = 350
+cognitive-complexity-threshold = 30

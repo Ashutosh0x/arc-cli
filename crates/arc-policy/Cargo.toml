@@ -1,0 +1,12 @@
+[package]
+name = "arc-policy"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true

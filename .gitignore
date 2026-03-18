@@ -1,0 +1,17 @@
+# Rust
+target/
+Cargo.lock
+
+# ARC CLI
+.arc-shadow/
+*.log
+*.txt
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Idea / VSCode
+.idea/
+.vscode/

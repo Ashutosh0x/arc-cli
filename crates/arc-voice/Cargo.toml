@@ -1,0 +1,14 @@
+[package]
+name = "arc-voice"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tokio-tungstenite.workspace = true
+uuid.workspace = true
+tracing.workspace = true

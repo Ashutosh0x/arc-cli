@@ -1,0 +1,13 @@
+[package]
+name = "arc-loop"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+arc-agents = { path = "../arc-agents" }
+arc-plan = { path = "../arc-plan" }
+arc-session = { path = "../arc-session" }
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true

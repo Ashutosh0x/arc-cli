@@ -1,0 +1,13 @@
+[package]
+name = "arc-shadow"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+arc-io = { path = "../arc-io" }
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+ignore.workspace = true

@@ -1,0 +1,18 @@
+[package]
+name = "arc-session"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+redb.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+chrono.workspace = true
+tokio.workspace = true
+compact_str.workspace = true
+sha2.workspace = true

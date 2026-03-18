@@ -1,0 +1,13 @@
+[package]
+name = "arc-io"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+anyhow.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+tokio-uring = "0.4.0"

@@ -1,0 +1,17 @@
+[package]
+name = "arc-tools"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+async-trait.workspace = true
+syntect.workspace = true
+tree-sitter.workspace = true
+ignore.workspace = true
+anyhow.workspace = true
+arc-providers = { path = "../arc-providers" }

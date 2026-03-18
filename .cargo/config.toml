@@ -1,0 +1,4 @@
+[build]
+# Move build artifacts off OneDrive to prevent file locking
+target-dir = "C:\\rust-target\\arc-cli"
+rustflags = ["--cfg", "auditable"]

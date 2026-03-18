@@ -1,0 +1,17 @@
+[package]
+name = "arc-plan"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+arc-core = { path = "../arc-core" }
+arc-providers = { path = "../arc-providers" }
+arc-tools = { path = "../arc-tools" }
+arc-hooks = { path = "../arc-hooks" }
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+uuid.workspace = true
+chrono.workspace = true
