@@ -40,11 +40,11 @@ anyhow = "1.0"
 thiserror = "2.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-reqwest = { version = "0.12", features = ["http2", "rustls-tls", "stream", "brotli", "gzip"] }
+reqwest = { version = "0.12", features = ["json", "http2", "rustls-tls", "stream", "brotli", "gzip"] }
 clap = { version = "4.5", features = ["derive", "env"] }
 redb = "2.4"
-bumpalo = { version = "3.16", features = ["allocator_api"] }
-compact_str = "0.8"
+bumpalo = "3.16"
+compact_str = { version = "0.8", features = ["serde"] }
 tiktoken-rs = "0.6"
 memchr = "2.7"
 futures = "0.3"
@@ -52,10 +52,21 @@ crossterm = "0.28"
 ratatui = "0.29"
 dialoguer = "0.11"
 toml = "0.8"
-uuid = { version = "1.11", features = ["v4", "fast-rng"] }
+uuid = { version = "1.11", features = ["v4", "fast-rng", "serde"] }
 chrono = { version = "0.4", features = ["serde"] }
 sha2 = "0.10"
 similar = "2.6"
+jsonwebtoken = "9"
+hmac = "0.12"
+hex = "0.4"
+url = "2"
+dashmap = "5"
+rand = "0.8"
+tokio-stream = "0.1"
+axum = { version = "0.7", features = ["ws", "macros"] }
+tower = { version = "0.5", features = ["timeout", "limit"] }
+tower-http = { version = "0.6", features = ["cors", "trace", "compression-gzip", "auth"] }
+hyper = { version = "1", features = ["full"] }
 tempfile = "3.14"
 notify = "7.0"
 tokio-tungstenite = "0.26"
@@ -63,7 +74,7 @@ async-trait = "0.1"
 ignore = "0.4"
 color-eyre = "0.6"
 console = "0.15"
-dashmap = "5.5"
+
 bollard = "0.16"
 syntect = "5.2"
 tree-sitter = "0.22"
@@ -84,9 +95,7 @@ base64 = "0.22"
 
 oauth2 = "*"
 secrecy = "*"
-rand = "*"
 indicatif = "*"
-url = "*"
 regex = "*"
 once_cell = "*"
 open = "*"

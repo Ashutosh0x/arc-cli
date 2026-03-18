@@ -144,7 +144,7 @@ impl CredentialManager {
             let entry = keyring::Entry::new(SERVICE_NAME, &key)
                 .map_err(|e| ArcError::Credential(format!("keyring entry error: {e}")))?;
 
-            match entry.delete_credential() {
+            match entry.delete_password() {
                 Ok(()) | Err(keyring::Error::NoEntry) => {}
                 Err(e) => {
                     return Err(ArcError::Credential(format!(

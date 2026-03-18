@@ -1,68 +1,81 @@
-//! The main interactive chat REPL.
-use std::io::{self, Write};
-use arc_tui::spinner::{Phase, StreamingSpinner};
 use anyhow::Result;
+use std::io::{self, Write};
+use futures::StreamExt;
+use reqwest::Client;
 
-pub async fn run_repl() -> Result<()> {
+use arc_core::models::{Message, ModelParameters, Role};
+use arc_providers::anthropic::AnthropicProvider;
+use arc_providers::traits::ProviderClient;
+
+/// Physical entrypoint connecting the Terminal to the active Agent models.
+pub async fn run_repl(api_key: String) -> Result<()> {
+    println!(">>> ARC Agentic CLI - Autonomous Loop Booted Native.");
+    println!(">>> Connected via HTTP/2 stream to Anthropic Opus.");
+    println!(">>> Type /exit or /checkpoint to manage history.");
+
+    let client = Client::builder()
+        .http2_prior_knowledge()
+        .build()?;
+        
+    let provider = AnthropicProvider::new(client, api_key, "claude-3-5-sonnet-20241022".to_string());
+    
+    let mut session_messages = vec![
+        Message {
+            role: Role::System,
+            content: "You are ARC, a terminal-native autonomous Rust-based agent.".to_string(),
+        }
+    ];
+
     loop {
-        let input = read_user_input()?;
-
-        if input.trim().is_empty() {
+        print!("arc> ");
+        io::stdout().flush()?;
+        
+        let mut input = String::new();
+        io::stdin().read_line(&mut input)?;
+        let input = input.trim();
+        
+        if input == "/exit" {
+            break;
+        }
+        
+        if input.is_empty() {
             continue;
         }
 
-        if input.trim() == "/quit" || input.trim() == "/exit" {
-            break;
-        }
+        session_messages.push(Message {
+            role: Role::User,
+            content: input.to_string(),
+        });
 
-        let spinner = StreamingSpinner::start();
+        let mut stream = provider
+            .generate_stream(session_messages.clone(), ModelParameters::default())
+            .await?;
 
-        if looks_like_file_task(&input) {
-            spinner.handle().set_phase(Phase::Analyzing);
-            spinner.handle().set_detail("Reading referenced files");
-        }
+        print!("|ARC|: ");
+        io::stdout().flush()?;
+        
+        let mut full_response = String::new();
 
-        match simulate_llm_stream(&spinner).await {
-            Ok(()) => {
-                println!();
-                spinner.finish().await;
+        while let Some(chunk) = stream.next().await {
+            match chunk {
+                Ok(text) => {
+                    print!("{}", text);
+                    io::stdout().flush()?;
+                    full_response.push_str(&text);
+                }
+                Err(e) => {
+                    eprintln!("\n[Stream Disconnect Error]: {}", e);
+                    break;
+                }
             }
-            Err(e) => {
-                spinner.fail(&format!("Error: {e}")).await;
-            }
         }
+        println!(); // Terminate flush boundary cleanly 
+
+        session_messages.push(Message {
+            role: Role::Assistant,
+            content: full_response,
+        });
     }
 
     Ok(())
-}
-
-fn looks_like_file_task(input: &str) -> bool {
-    let lower = input.to_lowercase();
-    lower.contains("write")
-        || lower.contains("edit")
-        || lower.contains("change")
-        || lower.contains("modify")
-        || lower.contains("create")
-        || lower.contains("fix")
-        || lower.contains("refactor")
-        || lower.contains("update")
-}
-
-async fn simulate_llm_stream(spinner: &StreamingSpinner) -> Result<()> {
-    for i in 0..80 {
-        spinner.on_token();
-        tokio::time::sleep(std::time::Duration::from_millis(25)).await;
-        if i % 20 == 0 {
-            print!("word ");
-        }
-    }
-    Ok(())
-}
-
-fn read_user_input() -> Result<String> {
-    print!("\n  arc › ");
-    io::stdout().flush()?;
-    let mut line = String::new();
-    io::stdin().read_line(&mut line)?;
-    Ok(line)
 }

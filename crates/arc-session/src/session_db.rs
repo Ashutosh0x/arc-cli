@@ -120,7 +120,7 @@ impl SessionDatabase {
     }
 
     /// Perform maintenance (compaction) to reduce file size.
-    pub fn compact(&self) -> Result<()> {
+    pub fn compact(&mut self) -> Result<()> {
         info!("Compacting session database to reclaim space...");
         self.db.compact()?;
         Ok(())

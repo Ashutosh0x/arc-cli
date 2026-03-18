@@ -20,7 +20,7 @@ pub struct VoiceSession {
 impl VoiceSession {
     /// Send an audio PCM chunk to the LLM
     pub async fn send_audio(&mut self, data: Vec<u8>) -> Result<()> {
-        let msg = Message::Binary(data);
+        let msg = Message::Binary(data.into());
         self.ws_stream.send(msg).await?;
         Ok(())
     }

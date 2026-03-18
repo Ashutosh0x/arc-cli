@@ -11,3 +11,4 @@ pub mod streaming;
 pub mod security;
 pub mod message;
 pub mod traits;
+pub mod stream;

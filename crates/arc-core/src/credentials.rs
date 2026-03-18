@@ -128,7 +128,7 @@ pub fn delete_credential(provider: Provider, kind: CredentialKind) -> ArcResult<
         crate::error::ArcError::Credential("Keyring access failed".to_string())
     })?;
 
-    entry.delete_credential().map_err(|_e: keyring::Error| {
+    entry.delete_password().map_err(|_e: keyring::Error| {
         crate::error::ArcError::Credential("Keyring access failed".to_string())
     })?;
 

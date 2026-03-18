@@ -59,6 +59,7 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 - `arc-memory`: Persistent, tiered (Working, Short-Term, Long-Term) local context mapping.
 - `arc-session`: Fast embedded state storage for checkpointing and rewinding workspace states.
 - `arc-agents`: Top-level sub-agent discovery and delegation routines.
+- `arc-a2a`: Production-grade Agent-to-Agent communication over HTTP/2, SSE streaming, and HMAC/JWT security.
 - `arc-plan`, `arc-worktree`, `arc-diff`: Precision-engineered modules handling codebase dependency mapping and git integration.
 
 ## Benchmarking Facts
