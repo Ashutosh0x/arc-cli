@@ -12,6 +12,7 @@ pub struct OrchestratorConfig {
 }
 
 /// A request from the main engine to delegate a task to one or more subagents.
+#[derive(Debug)]
 pub struct TaskDelegation {
     pub target_agent_id: String,
     pub task_description: String,

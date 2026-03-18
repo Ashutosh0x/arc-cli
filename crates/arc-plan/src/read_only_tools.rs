@@ -77,7 +77,7 @@ impl ReadOnlyToolSet {
 
     /// Read a file's contents as a string.
     #[instrument(skip(self), fields(path = %path.as_ref().display()))]
-    pub async fn read_file(&self, path: impl AsRef<Path>) -> Result<String> {
+    pub async fn read_file(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<String> {
         let validated = self.validate_path(path.as_ref())?;
 
         let metadata = fs::metadata(&validated).await?;
@@ -101,7 +101,7 @@ impl ReadOnlyToolSet {
     #[instrument(skip(self))]
     pub async fn read_file_head(
         &self,
-        path: impl AsRef<Path>,
+        path: impl AsRef<Path> + std::fmt::Debug,
         lines: usize,
     ) -> Result<String> {
         let content = self.read_file(path).await?;
@@ -118,7 +118,7 @@ impl ReadOnlyToolSet {
     pub async fn grep(
         &self,
         pattern: &str,
-        path: impl AsRef<Path>,
+        path: impl AsRef<Path> + std::fmt::Debug,
         max_results: usize,
     ) -> Result<Vec<GrepResult>> {
         let validated = self.validate_path(path.as_ref())?;
@@ -191,7 +191,7 @@ impl ReadOnlyToolSet {
             let excluded = self
                 .exclude_patterns
                 .iter()
-                .any(|p| p.matches_path(relative));
+                .any(|p: &glob::Pattern| p.matches_path(relative));
             if excluded {
                 continue;
             }
@@ -212,12 +212,12 @@ impl ReadOnlyToolSet {
     pub async fn glob_files(&self, pattern: &str) -> Result<Vec<PathBuf>> {
         let full_pattern = format!("{}/{}", self.root.display(), pattern);
         let paths: Vec<PathBuf> = glob::glob(&full_pattern)?
-            .filter_map(|entry| entry.ok())
-            .filter(|path| {
+            .filter_map(|entry: Result<PathBuf, glob::GlobError>| entry.ok())
+            .filter(|path: &PathBuf| {
                 let relative = path.strip_prefix(&self.root).unwrap_or(path);
-                !self.exclude_patterns.iter().any(|p| p.matches_path(relative))
+                !self.exclude_patterns.iter().any(|p: &glob::Pattern| p.matches_path(relative))
             })
-            .map(|path| {
+            .map(|path: PathBuf| {
                 path.strip_prefix(&self.root)
                     .unwrap_or(&path)
                     .to_path_buf()
@@ -229,7 +229,7 @@ impl ReadOnlyToolSet {
 
     /// List the directory tree up to a given depth.
     #[instrument(skip(self))]
-    pub async fn list_tree(&self, path: impl AsRef<Path>, max_depth: usize) -> Result<Vec<TreeEntry>> {
+    pub async fn list_tree(&self, path: impl AsRef<Path> + std::fmt::Debug, max_depth: usize) -> Result<Vec<TreeEntry>> {
         let validated = self.validate_path(path.as_ref())?;
         let mut entries = Vec::new();
         self.walk_tree(&validated, 0, max_depth, &mut entries).await?;
@@ -256,7 +256,7 @@ impl ReadOnlyToolSet {
             let excluded = self
                 .exclude_patterns
                 .iter()
-                .any(|p| p.matches_path(relative));
+                .any(|p: &glob::Pattern| p.matches_path(relative));
             if excluded {
                 continue;
             }
@@ -281,7 +281,7 @@ impl ReadOnlyToolSet {
 
     /// Analyze imports/exports in a Rust file to build dependency information.
     #[instrument(skip(self))]
-    pub async fn analyze_rust_deps(&self, path: impl AsRef<Path>) -> Result<FileDependencies> {
+    pub async fn analyze_rust_deps(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<FileDependencies> {
         let content = self.read_file(path.as_ref()).await?;
 
         let use_regex = regex::Regex::new(r"use\s+([\w:]+(?:::\{[^}]+\})?)")?;
@@ -293,32 +293,32 @@ impl ReadOnlyToolSet {
 
         let imports: Vec<String> = use_regex
             .captures_iter(&content)
-            .filter_map(|c| c.get(1).map(|m| m.as_str().to_string()))
+            .filter_map(|c: regex::Captures| c.get(1).map(|m: regex::Match| m.as_str().to_string()))
             .collect();
 
         let modules: Vec<String> = mod_regex
             .captures_iter(&content)
-            .filter_map(|c| c.get(1).map(|m| m.as_str().to_string()))
+            .filter_map(|c: regex::Captures| c.get(1).map(|m: regex::Match| m.as_str().to_string()))
             .collect();
 
         let pub_functions: Vec<String> = pub_fn_regex
             .captures_iter(&content)
-            .filter_map(|c| c.get(1).map(|m| m.as_str().to_string()))
+            .filter_map(|c: regex::Captures| c.get(1).map(|m: regex::Match| m.as_str().to_string()))
             .collect();
 
         let pub_structs: Vec<String> = pub_struct_regex
             .captures_iter(&content)
-            .filter_map(|c| c.get(1).map(|m| m.as_str().to_string()))
+            .filter_map(|c: regex::Captures| c.get(1).map(|m: regex::Match| m.as_str().to_string()))
             .collect();
 
         let pub_traits: Vec<String> = pub_trait_regex
             .captures_iter(&content)
-            .filter_map(|c| c.get(1).map(|m| m.as_str().to_string()))
+            .filter_map(|c: regex::Captures| c.get(1).map(|m: regex::Match| m.as_str().to_string()))
             .collect();
 
         let impls: Vec<String> = impl_regex
             .captures_iter(&content)
-            .filter_map(|c| c.get(1).map(|m| m.as_str().to_string()))
+            .filter_map(|c: regex::Captures| c.get(1).map(|m: regex::Match| m.as_str().to_string()))
             .collect();
 
         let loc = content.lines().count() as u32;

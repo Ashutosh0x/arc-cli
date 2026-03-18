@@ -7,6 +7,10 @@ edition.workspace = true
 tokio.workspace = true
 serde.workspace = true
 serde_json.workspace = true
+anyhow.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
-bollard.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+landlock = "0.4"
+nix = "0.29"

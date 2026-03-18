@@ -34,7 +34,7 @@ tracing.workspace = true
 tracing-subscriber.workspace = true
 tracing-opentelemetry.workspace = true
 opentelemetry.workspace = true
-opentelemetry_sdk.workspace = true
+opentelemetry_sdk = { workspace = true, features = ["rt-tokio"] }
 opentelemetry-otlp.workspace = true
 tracing-appender.workspace = true
 color-eyre.workspace = true
@@ -43,3 +43,4 @@ chrono.workspace = true
 
 ctrlc = "3"
 console.workspace = true
+futures.workspace = true

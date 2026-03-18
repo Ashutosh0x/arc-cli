@@ -6,6 +6,9 @@
 use anyhow::Result;
 use std::process::Command;
 
+pub mod sparse;
+pub use sparse::SparseCheckout;
+
 pub struct WorktreeManager {
     base_dir: std::path::PathBuf,
 }

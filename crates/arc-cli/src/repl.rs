@@ -3,9 +3,10 @@ use std::io::{self, Write};
 use futures::StreamExt;
 use reqwest::Client;
 
-use arc_core::models::{Message, ModelParameters, Role};
+use arc_providers::message::{Message, Role, StreamEvent};
+use arc_providers::traits::Provider;
 use arc_providers::anthropic::AnthropicProvider;
-use arc_providers::traits::ProviderClient;
+// use arc_providers::traits::ProviderClient;
 
 /// Physical entrypoint connecting the Terminal to the active Agent models.
 pub async fn run_repl(api_key: String) -> Result<()> {
@@ -17,7 +18,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         .http2_prior_knowledge()
         .build()?;
         
-    let provider = AnthropicProvider::new(client, api_key, "claude-3-5-sonnet-20241022".to_string());
+    let provider = AnthropicProvider::new(client, api_key);
     
     let mut session_messages = vec![
         Message {
@@ -48,7 +49,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         });
 
         let mut stream = provider
-            .generate_stream(session_messages.clone(), ModelParameters::default())
+            .stream("claude-3-5-sonnet-20241022", &session_messages, &[])
             .await?;
 
         print!("|ARC|: ");
@@ -56,13 +57,14 @@ pub async fn run_repl(api_key: String) -> Result<()> {
         
         let mut full_response = String::new();
 
-        while let Some(chunk) = stream.next().await {
-            match chunk {
-                Ok(text) => {
+        while let Some(chunk_result) = stream.next().await {
+            match chunk_result {
+                Ok(StreamEvent::TextDelta(text)) => {
                     print!("{}", text);
                     io::stdout().flush()?;
                     full_response.push_str(&text);
                 }
+                Ok(_) => { /* Ignore other stream events for now */ }
                 Err(e) => {
                     eprintln!("\n[Stream Disconnect Error]: {}", e);
                     break;

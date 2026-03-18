@@ -43,6 +43,8 @@ impl SessionDb {
         if let Some(guard) = table.get(session_id)? {
             // Evaluates physically into Vector avoiding structural dropping natively.
             Ok(Some(guard.value().to_vec()))
+        } else {
+            Ok(None)
         }
     }
 }

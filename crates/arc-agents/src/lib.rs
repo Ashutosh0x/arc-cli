@@ -13,6 +13,9 @@ pub use registry::{AgentRegistry, AgentProfile, AgentCapability};
 pub use orchestrator::{Orchestrator, OrchestratorConfig, TaskDelegation};
 pub use sub_agent::{SubAgent, SubAgentResult};
 
+pub mod extensions;
+pub use extensions::*;
+
 // Expose common async traits
 #[async_trait::async_trait]
 pub trait AgentTask {

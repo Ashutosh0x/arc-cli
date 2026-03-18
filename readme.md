@@ -50,6 +50,7 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 - [Parallel Routing Engine](docs/routing.md)
 - [WASM Plugins](docs/plugins.md)
 - [Deep Benchmarking Facts](docs/benchmarks.md)
+- [Phase 7 Subsystems Integrated (Voice, Skills, Loop, Compact)](docs/phase_7.md)
 
 ## Architecture
 
@@ -61,6 +62,7 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 - `arc-agents`: Top-level sub-agent discovery and delegation routines.
 - `arc-a2a`: Production-grade Agent-to-Agent communication over HTTP/2, SSE streaming, and HMAC/JWT security.
 - `arc-plan`, `arc-worktree`, `arc-diff`: Precision-engineered modules handling codebase dependency mapping and git integration.
+- `arc-voice`, `arc-compact`, `arc-skills`, `arc-search`, `arc-vision`, `arc-sandbox`, `arc-loop`, `arc-cloud`: The Phase 7 Autonomous scale-up providing voice controls, vision grounding, linux OS security barriers, cron loops, and dynamic skill orchestration traits.
 
 ## Benchmarking Facts
 

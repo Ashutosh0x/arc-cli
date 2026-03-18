@@ -22,6 +22,12 @@ members = [
     "crates/arc-worktree",     # NEW — Feature #11
     "crates/arc-loop",         # NEW — Feature #10
     "crates/arc-diff",         # NEW — Feature #8
+    "crates/arc-plugins",      # NEW — Feature #something
+    "crates/arc-compact",
+    "crates/arc-skills",
+    "crates/arc-search",
+    "crates/arc-vision",
+    "crates/arc-cloud",
 ]
 
 [workspace.package]
@@ -40,7 +46,7 @@ anyhow = "1.0"
 thiserror = "2.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
-reqwest = { version = "0.12", features = ["json", "http2", "rustls-tls", "stream", "brotli", "gzip"] }
+reqwest = { version = "0.12", features = ["json", "http2", "rustls-tls", "stream", "brotli", "gzip", "multipart"] }
 clap = { version = "4.5", features = ["derive", "env"] }
 redb = "2.4"
 bumpalo = "3.16"
@@ -100,6 +106,12 @@ regex = "*"
 once_cell = "*"
 open = "*"
 criterion = "*"
+
+# NEW PHASE 7 WORKSPACE DEPS
+image = "0.25"
+globset = "0.4"
+flume = "0.11"
+ahas = "0.1"
 
 arc-core = { path = "crates/arc-core" }
 arc-providers = { path = "crates/arc-providers" }

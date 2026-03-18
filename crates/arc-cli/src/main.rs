@@ -82,7 +82,7 @@ async fn main() -> Result<()> {
                 tokio::time::sleep(std::time::Duration::from_secs(2)).await;
                 spinner.finish("Done").await;
             } else {
-                repl::run_repl().await?;
+                repl::run_repl("".to_string()).await?;
             }
         }
         Some(cli::Command::Serve { port }) => {

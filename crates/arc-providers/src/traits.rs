@@ -24,4 +24,9 @@ pub trait Provider: Send + Sync {
 
     /// Downcast to concrete type for specific interactions
     fn as_any(&self) -> &dyn Any;
+
+    /// Helper for simple text completion
+    async fn generate_text(&self, _model: &str, _messages: &[Message]) -> Result<String, anyhow::Error> {
+        Ok(String::new())
+    }
 }

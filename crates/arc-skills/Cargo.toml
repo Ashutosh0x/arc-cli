@@ -1,5 +1,5 @@
 [package]
-name = "arc-loop"
+name = "arc-skills"
 version.workspace = true
 edition.workspace = true
 
@@ -10,5 +10,5 @@ serde_json.workspace = true
 anyhow.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
-chrono.workspace = true
-notify.workspace = true
+async-trait.workspace = true
+dashmap.workspace = true

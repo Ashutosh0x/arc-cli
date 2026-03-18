@@ -1,5 +1,5 @@
 [package]
-name = "arc-loop"
+name = "arc-search"
 version.workspace = true
 edition.workspace = true
 
@@ -10,5 +10,7 @@ serde_json.workspace = true
 anyhow.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
-chrono.workspace = true
-notify.workspace = true
+reqwest.workspace = true
+async-trait.workspace = true
+scraper = "0.20"
+urlencoding = "2.1"

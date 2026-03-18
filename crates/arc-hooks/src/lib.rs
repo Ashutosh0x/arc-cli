@@ -9,3 +9,6 @@ pub mod events;
 
 pub use executor::{HookExecutor, HookConfig};
 pub use events::HookEvent;
+
+pub mod rewrite;
+pub use rewrite::HookSystemRewrite;
