@@ -15,3 +15,6 @@ tree-sitter.workspace = true
 ignore.workspace = true
 anyhow.workspace = true
 arc-providers = { path = "../arc-providers" }
+similar.workspace = true
+dialoguer.workspace = true
+console.workspace = true

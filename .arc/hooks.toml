@@ -1,0 +1,4 @@
+# Configurable Execution Hooks
+
+post_edit = ["cargo check", "cargo fmt"]
+pre_commit = ["cargo clippy -- -D warnings"]

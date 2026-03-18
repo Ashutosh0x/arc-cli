@@ -4,6 +4,11 @@ version.workspace = true
 edition.workspace = true
 
 [dependencies]
+# Dependencies for benchmarking
+
+[[bench]]
+name = "swe_bench"
+harness = false
 arc-core = { path = "../arc-core" }
 anyhow.workspace = true
 serde.workspace = true

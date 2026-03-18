@@ -1,6 +1,6 @@
-# ARC CLI - Phase 7 Architectural Overview
+# ARC CLI - Autonomous Agents Overview
 
-With Phase 7 complete, the ARC CLI has finalized the last 28 advanced agentic features. This document natively details the 8 new subsystem crates integrated into the workspace and how they plug into the unified agent execution loops.
+With the autonomous agent architecture complete, the ARC CLI has finalized the last 28 advanced agentic features. This document natively details the 8 new subsystem crates integrated into the workspace and how they plug into the unified agent execution loops.
 
 ## The Eight Subsystems Integrated:
 

@@ -1,6 +1,10 @@
 #![forbid(unsafe_code)]
+
+#[global_allocator]
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
+
 use anyhow::Result;
-use clap::Parser;
+use clap::{Parser, CommandFactory};
 
 mod cli;
 pub mod commands;
@@ -42,6 +46,24 @@ async fn main() -> Result<()> {
             let data_dir = arc_core::config::ArcConfig::dir().unwrap_or_else(|_| std::path::PathBuf::from(".arc"));
             let config_path = data_dir.join("config.toml");
             commands::doctor::run(&data_dir, &config_path).await?;
+        }
+        Some(cli::Command::Init) => {
+            let cwd = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+            commands::init::run(&cwd).await?;
+        }
+        Some(cli::Command::Fix { max_iterations }) => {
+            commands::fix::run(max_iterations).await?;
+        }
+        Some(cli::Command::Completions { shell }) => {
+            let mut cmd = cli::Cli::command();
+            let name = cmd.get_name().to_string();
+            clap_complete::generate(shell, &mut cmd, name, &mut std::io::stdout());
+        }
+        Some(cli::Command::Update) => {
+            commands::update::run().await?;
+        }
+        Some(cli::Command::Review { base }) => {
+            commands::review::run(&base).await?;
         }
         Some(cli::Command::Auth { action }) => match action {
             cli::AuthAction::Status => print_auth_status(config)?,

@@ -26,6 +26,7 @@ keyring.workspace = true
 
 clap.workspace = true
 tokio.workspace = true
+tokio-util.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 toml.workspace = true
@@ -44,3 +45,10 @@ chrono.workspace = true
 ctrlc = "3"
 console.workspace = true
 futures.workspace = true
+clap_complete = "4.6.0"
+dialoguer = { version = "0.11.0", features = ["fuzzy-select"] }
+walkdir = "2.5.0"
+rustyline = "17.0.2"
+notify-rust = "4.12.0"
+mimalloc = "0.1.48"
+self_update = { version = "0.43.1", features = ["archive-tar", "archive-zip", "compression-zip-bzip2"] }

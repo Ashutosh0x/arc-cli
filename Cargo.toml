@@ -55,7 +55,6 @@ tiktoken-rs = "0.6"
 memchr = "2.7"
 futures = "0.3"
 crossterm = "0.28"
-ratatui = "0.29"
 dialoguer = "0.11"
 toml = "0.8"
 uuid = { version = "1.11", features = ["v4", "fast-rng", "serde"] }
@@ -73,17 +72,14 @@ axum = { version = "0.7", features = ["ws", "macros"] }
 tower = { version = "0.5", features = ["timeout", "limit"] }
 tower-http = { version = "0.6", features = ["cors", "trace", "compression-gzip", "auth"] }
 hyper = { version = "1", features = ["full"] }
-tempfile = "3.14"
 notify = "7.0"
 tokio-tungstenite = "0.26"
 async-trait = "0.1"
 ignore = "0.4"
 color-eyre = "0.6"
 console = "0.15"
-
-bollard = "0.16"
 syntect = "5.2"
-tree-sitter = "0.22"
+tree-sitter = "0.23"
 smallvec = "1.13"
 zeroize = "1.7"
 tokio-util = "0.7"
@@ -109,32 +105,9 @@ criterion = "*"
 
 # NEW PHASE 7 WORKSPACE DEPS
 image = "0.25"
-globset = "0.4"
 flume = "0.11"
-ahas = "0.1"
 
 arc-core = { path = "crates/arc-core" }
-arc-providers = { path = "crates/arc-providers" }
-arc-router = { path = "crates/arc-router" }
-arc-tools = { path = "crates/arc-tools" }
-arc-mcp = { path = "crates/arc-mcp" }
-arc-sandbox = { path = "crates/arc-sandbox" }
-arc-tui = { path = "crates/arc-tui" }
-arc-cli = { path = "crates/arc-cli" }
-arc-hooks = { path = "crates/arc-hooks" }
-arc-plan = { path = "crates/arc-plan" }
-arc-session = { path = "crates/arc-session" }
-arc-agents = { path = "crates/arc-agents" }
-arc-policy = { path = "crates/arc-policy" }
-arc-a2a = { path = "crates/arc-a2a" }
-arc-voice = { path = "crates/arc-voice" }
-arc-bench = { path = "crates/arc-bench" }
-arc-io = { path = "crates/arc-io" }
-arc-shadow = { path = "crates/arc-shadow" }
-arc-worktree = { path = "crates/arc-worktree" }
-arc-loop = { path = "crates/arc-loop" }
-arc-diff = { path = "crates/arc-diff" }
-arc-plugins = { path = "crates/arc-plugins" }
 
 [workspace.lints.clippy]
 unwrap_used = "deny"

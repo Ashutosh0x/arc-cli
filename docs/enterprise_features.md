@@ -1,6 +1,6 @@
-# ARC CLI - Phase 8: Core Subsystem Implementation
+# ARC CLI - Enterprise Core Subsystems
 
-This phase implements specific infrastructure necessary to index codebases, manage context token limits, and integrate the CLI into automated CI/CD workflows.
+This architecture implements specific infrastructure necessary to index codebases, manage context token limits, and integrate the CLI into automated CI/CD workflows.
 
 ## Subsystems Implemented:
 

@@ -10,8 +10,13 @@ repository.workspace = true
 [dependencies]
 anyhow.workspace = true
 ignore.workspace = true
-tree-sitter.workspace = true
-tree-sitter-rust = "0.21.0"
+rayon = "1.11.0"
+tree-sitter = "0.23"
+tree-sitter-cpp = "0.23"
+tree-sitter-go = "0.23"
+tree-sitter-python = "0.23"
+tree-sitter-rust = "0.23"
+tree-sitter-typescript = "0.23"
 
 [lints]
 workspace = true

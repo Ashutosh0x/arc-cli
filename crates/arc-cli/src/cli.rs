@@ -53,8 +53,28 @@ pub enum Command {
     Config,
     /// Interactive provider & authentication setup
     Setup,
+    /// Initialize workspace environment, ARC.md, and hooks.toml
+    Init,
+    /// Generate shell completion scripts (bash, zsh, fish)
+    Completions {
+        #[arg(value_enum)]
+        shell: clap_complete::Shell,
+    },
+    /// Autonomous diagnostic feedback loop that runs tests, parses errors, and writes fixes
+    Fix {
+        #[arg(short, long, default_value = "3")]
+        max_iterations: u32,
+    },
     /// Run system diagnostics and connectivity checks
     Doctor,
+    /// Update ARC CLI to the latest GitHub release version
+    Update,
+    /// Automated PR Review of local changes against origin/main via LLM Swarm
+    Review {
+        /// Base branch to diff against (default: origin/main)
+        #[arg(short, long, default_value = "origin/main")]
+        base: String,
+    },
     /// Display usage analytics: tokens, cost, latency percentiles.
     Stats,
     /// Manage auth credentials
@@ -64,6 +84,7 @@ pub enum Command {
     },
     /// Start a chat session
     Chat,
+    /// View or manage past chat sessions
     /// View or manage past chat sessions
     History {
         #[arg(short, long)]

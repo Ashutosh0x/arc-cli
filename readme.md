@@ -12,33 +12,28 @@
 ![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
 
 ## Overview
-ARC CLI is a next-generation autonomous Agentic CLI framework natively built in Rust for absolute speed, safety, and scale. Going far beyond traditional autocomplete tools, ARC is a true agentic orchestrator that reasons over complex, multi-file codebases natively in your terminal. It is designed to autonomously plan, write, verify, and secure software using a multi-agent delegation model. 
+ARC CLI is an autonomous agentic CLI framework written in Rust. It reasons over local codebases to plan, write, and verify software using a multi-agent delegation model. 
 
-By operating entirely within your terminal as an autonomous agent, ARC accelerates development workflows while maintaining complete structural context awareness of your entire repository.
+## Core Infrastructure
 
-## The Agentic CLI Advantage
+### 1. Multi-Agent Orchestration
+ARC CLI uses an Orchestrator model to dispatch specialized subagents.
+- Runs agents in parallel using the `tokio` async runtime.
+- Agents communicate context using a strictly typed, zero-trust Agent-to-Agent (A2A) protocol over HTTP/2.
 
-### 1. Multi-Agent Orchestration Engine
-A single generalized LLM often struggles with conflicting goals (e.g., writing new features vs. rigorously security-auditing them). ARC CLI deploys a master-worker Orchestrator model:
-- Dispatches hyper-focused persona agents (e.g., `Security Auditor`, `Test Engineer`, `Code Reviewer`).
-- Runs agents in parallel using Rust's async runtime (`tokio`) to concurrently validate workloads across the codebase.
-- Agents communicate context dynamically using a strictly typed Agent-to-Agent (A2A) protocol, ensuring no mental context is dropped during handoffs.
+### 2. State Checkpointing & Rewind
+ARC CLI maintains local session state via a `redb`-backed key-value store.
+- Stores conversation history and agent reasoning locally.
+- Allows you to rewind to a previous session checkpoint, safely reverting affected files on disk.
 
-### 2. Full State Checkpointing & Autonomous Time Travel
-When traditional agents hallucinate, they destroy your context window, forcing you to start over.
-ARC CLI introduces a continuous autonomous feedback loop combined with a `redb`-backed Checkpointing and Rewind subsystem:
-- Stores the entire memory context, conversational history, and agent reasoning automatically.
-- Facilitates instantaneous rewinds (time travel) alongside the physical reversion of any affected files on disk.
-- Capable of reloading a previous deep-context session in microseconds.
+### 3. Low-Latency Streaming
+ARC CLI uses a custom Server-Sent Events (SSE) parsing layer powered by SIMD `memchr`. Paired with globally pooled HTTP/2 connections, this eliminates dynamic string allocations during token streams.
 
-### 3. Zero-Copy Streaming and HTTP/2 Pooling
-ARC is engineered entirely for low-latency agentic thought. Unlike Python-based CLI agents that allocate strings heavily per token, ARC CLI features a custom Zero-Copy Server-Sent Events (SSE) parsing layer powered by SIMD `memchr`. Paired with globally pooled HTTP/2 connections, ARC's time-to-first-token (TTFT) and total reasoning throughput consistently outpaces standard implementations.
-
-### 4. Advanced Security and Sandboxed Exploration
-ARC CLI incorporates intense security protocols to govern autonomous actions safely:
-- **Strict Instruction Hierarchy**: Hardened Prompt Guards use strict XML/Markdown delimiters, ensuring user context mathematically cannot bypass core agent operational instructions via Prompt Injection.
-- **Manifest Pinning**: Ensures Model Context Protocol (MCP) clients strictly verify hash digests to block unauthorized tool injection.
-- **Shadow Workspaces**: Complex autonomous changes are executed inside isolated `.arc-shadow` directories using OS-level hardlinks. The agents test their code internally, totally shielding your actual worktree until verified and approved.
+### 4. Sandboxed Execution Safety
+ARC CLI incorporates security layers to limit autonomous actions:
+- **Instruction Hierarchy**: Uses strict XML delimiters to separate user context from system instructions.
+- **Manifest Pinning**: Model Context Protocol (MCP) clients verify hash digests to block unauthorized tool injection.
+- **Shadow Workspaces**: Autonomous changes run against isolated `.arc-shadow` directories using OS-level hardlinks or Landlock syscall filters on Linux to prevent unauthorized writes.
 
 ## Documentation
 
@@ -54,36 +49,41 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 - [Parallel Routing Engine](docs/routing.md)
 - [WASM Plugins](docs/plugins.md)
 - [Deep Benchmarking Facts](docs/benchmarks.md)
-- [Phase 7 Subsystems Integrated (Voice, Skills, Loop, Compact)](docs/phase_7.md)
-- [Phase 8 Enterprise Features (Repomap, Hooks, Caching, CI)](docs/phase_8.md)
+- [Autonomous Agents & Modality (Voice, Skills, Loop)](docs/autonomous_agents.md)
+- [Enterprise Code Intelligence (Repomap, Hooks, Caching)](docs/enterprise_features.md)
+- [Advanced Tooling & Ergonomics (Syntect, PR Review, Tree-sitter)](docs/advanced_tooling.md)
 
 ## Architecture
 
-- `arc-cli`: The frontend REPL, routing, and console interaction boundary.
-- `arc-core`: Credentials, token budgeting, prompt guards, and configuration loading.
-- `arc-providers`: LLM interaction handlers supporting Deepmind Gemini, Anthropic Claude, OpenAI, and local Ollama deployments.
-- `arc-memory`: Persistent, tiered (Working, Short-Term, Long-Term) local context mapping.
-- `arc-session`: Fast embedded state storage for checkpointing and rewinding workspace states.
-- `arc-agents`: Top-level sub-agent discovery and delegation routines.
-- `arc-a2a`: Production-grade Agent-to-Agent communication over HTTP/2, SSE streaming, and HMAC/JWT security.
-- `arc-plan`, `arc-worktree`, `arc-diff`: Precision-engineered modules handling codebase dependency mapping and git integration.
-- `arc-voice`, `arc-compact`, `arc-skills`, `arc-search`, `arc-vision`, `arc-sandbox`, `arc-loop`, `arc-cloud`: The Phase 7 Autonomous scale-up providing voice controls, vision grounding, linux OS security barriers, cron loops, and dynamic skill orchestration traits.
-- `arc-repomap` & `arc-hooks`: The Phase 8 Enterprise bridge yielding blazing fast AST `tree-sitter` codebase maps and TOML-configurable sandboxed post-edit webhooks formatting.
+| Crate / Module | Responsibility | Key Features |
+| :--- | :--- | :--- |
+| `arc-cli` | **Client Interface** | Frontend REPL, token routing, and `rustyline` plugins. |
+| `arc-core` | **Foundation Layer** | Credentials, config parsing, and Prompt Guard engines. |
+| `arc-providers` | **Model Gateways** | Native Deepmind Gemini, Anthropic Claude, and Ollama clients. |
+| `arc-agents` | **Swarm Delegation** | Orchestrator dispatcher mapping specialized sub-agent routines. |
+| `arc-a2a` | **Agent Protocol** | HTTP/2 SSE communications secured by HMAC/JWT signatures. |
+| `arc-session` | **Persistent Memory** | `redb` embedded K-V storage for atomic checkpoint undo/rewind. |
+| `arc-repomap` | **Code Intelligence** | `tree-sitter` AST extraction powering massive 10x context compressions. |
+| **Subsystems** | **Capability Expansions** | `arc-voice`, `arc-vision`, `arc-sandbox`, `arc-skills` native scale-outs. |
 
 ## Benchmarking Facts
 
 Our end-to-end framework benchmarks have validated the underlying agent engine's raw speed:
 
-- **Config Parsing**: Loads full config matrices across hierarchical layers in exceptionally low time bounds (~56 microseconds).
-- **Streaming Parser**: The SSE byte-slice parser allocates exactly 0 dynamic heap arrays during continuous LLM streaming, yielding 10x memory efficiency over default `serde_json` line parsing.
-- **Cold Start**: With Cargo profiles properly tuned and global static `OnceLock` initializers, ARC boots up to 200 milliseconds faster than Python-based CLIs.
-- **State Checkpointing**: An agentic session containing roughly 200,000 tokens of conversational context can be compressed, flushed to disk, and committed natively in less than 45 milliseconds.
+| Subsystem | Speed Metric | Architectural Advantage |
+| :--- | :--- | :--- |
+| **Config Parsing** | **~56 µs** | Zero-copy matrices loaded across hierarchical TOML/JSON boundaries. |
+| **Streaming Parser** | **0 Allocations** | SIMD `memchr`-powered SSE byte-slicing avoids runtime heap fragmentation. |
+| **Cold Boot** | **< 20 ms** | `OnceLock` and tuned LTO profiles eliminate Python/Node runtime overheads. |
+| **Checkpointing** | **~45 ms** | Commits 200k+ token sessions directly to `redb` block-aligned disk stores. |
 
 ## Supported Capabilities
 
-- Native compliance mapping to the **NIST AI Risk Management Framework 1.0**.
-- Built-in defenses strictly corresponding to the **OWASP Top 10 for LLM Applications**.
-- Complete OpenTelemetry (OTLP) tracing capability spanning LLM request lifecycles, provider latency tracking, and autonomous cost budgeting.
+| Capability Domain | Native Implementation | Specification Reference |
+| :--- | :--- | :--- |
+| **Telemetry** | Full OpenTelemetry (OTLP) metrics for LLM inference streams | Global Observability Standards |
+| **Cybersecurity** | Instruction hierarchies & Agent network kernel-level firewalls | OWASP Top 10 for LLM Apps |
+| **Compliance** | Explicit logging mapped to enterprise requirements natively | NIST AI RMF 1.0 |
 
 ## Getting Started
 
@@ -103,6 +103,32 @@ Interact directly with the agentic loop:
 - `/doctor` to evaluate your workspace and credential configurations safely.
 - `/checkpoint` to snapshot the LLM turn history and file states.
 - `/rewind [id]` to safely time-travel the CLI state backward to correct errant agent behavior.
+- `arc init` to bootstrap ARC rules recursively across un-initialized repos.
+- `arc --stats` for live LLM cost accounting and budget tracking.
+- `arc review` to generate pre-push architectural critiques of your working branches via LLM swarms.
+
+## Keyboard Ergonomics & Flow
+
+ARC CLI is rigorously built for keyboard-only efficiency:
+
+### REPL Shortcuts
+| Keybind | Action | Capability |
+| :--- | :--- | :--- |
+| `Ctrl+C` | **Graceful Agent Halt** | Intercepts HTTP/2 LLM streams globally, preserving existing context natively. |
+| `Ctrl+D` | **Save & Terminate** | Triggers EOF to gracefully snap context to the `redb` state store and yield the CLI. |
+| `Tab` | **Auto-Complete** | Completes subcommands, slash-routines, and `@src/` dynamic fuzzy-file finding hooks. |
+
+### Syntax-Highlighted Diff Review
+When agents autonomously modify codebase files, bypass the naive `Y/n` prompt with our granular `read_key` terminal loop:
+
+| Keybind | Action | Effect |
+| :--- | :--- | :--- |
+| `Enter` / `y` | **Accept** | Stages the current grouped diff patch for execution. |
+| `Esc` / `n` | **Reject** | Drops the current chronologically grouped diff patch. |
+| `a` | **Accept All** | Instantly accepts the current file and *ALL remaining queued files*. |
+| `d` | **Deny All** | Scraps the entire outstanding generation sequence immediately. |
+| `e` | **Open in Editor** | Pops the unified diff directly into `$EDITOR` for manual semantic correction. |
+| `j` / `k` | **Vim Scroll** | Traverses extremely large codebase patches natively. |
 
 ---
 <div align="center">
