@@ -1,5 +1,12 @@
 # ARC: High-Performance Agentic CLI
 
+![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
+![Tokio](https://img.shields.io/badge/Tokio-2B2B2B?style=for-the-badge)
+![Anthropic Claude](https://img.shields.io/badge/Claude-D97757?style=for-the-badge&logo=anthropic&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
+![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)
+![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)
+
 ## Overview
 ARC CLI is a next-generation autonomous Agentic CLI framework natively built in Rust for absolute speed, safety, and scale. Going far beyond traditional autocomplete tools, ARC is a true agentic orchestrator that reasons over complex, multi-file codebases natively in your terminal. It is designed to autonomously plan, write, verify, and secure software using a multi-agent delegation model. 
 
@@ -28,6 +35,21 @@ ARC CLI incorporates intense security protocols to govern autonomous actions saf
 - **Strict Instruction Hierarchy**: Hardened Prompt Guards use strict XML/Markdown delimiters, ensuring user context mathematically cannot bypass core agent operational instructions via Prompt Injection.
 - **Manifest Pinning**: Ensures Model Context Protocol (MCP) clients strictly verify hash digests to block unauthorized tool injection.
 - **Shadow Workspaces**: Complex autonomous changes are executed inside isolated `.arc-shadow` directories using OS-level hardlinks. The agents test their code internally, totally shielding your actual worktree until verified and approved.
+
+## Documentation
+
+Explore the extreme depth of ARC CLI's architecture and usage:
+- [Getting Started](docs/getting-started.md)
+- [Installation](docs/installation.md)
+- [Setup & Configuration](docs/setup.md)
+- [Advanced Usage](docs/usage.md)
+- [Architecture & Memory](docs/architecture.md)
+- [Model Context Protocol (MCP)](docs/mcp.md)
+- [Authentication & Security](docs/authentication.md)
+- [Multi-Provider Hub](docs/providers.md)
+- [Parallel Routing Engine](docs/routing.md)
+- [WASM Plugins](docs/plugins.md)
+- [Deep Benchmarking Facts](docs/benchmarks.md)
 
 ## Architecture
 
@@ -72,3 +94,10 @@ Interact directly with the agentic loop:
 - `/doctor` to evaluate your workspace and credential configurations safely.
 - `/checkpoint` to snapshot the LLM turn history and file states.
 - `/rewind [id]` to safely time-travel the CLI state backward to correct errant agent behavior.
+
+---
+<div align="center">
+
+Built with ❤️ for autonomous agents
+
+</div>
