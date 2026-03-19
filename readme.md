@@ -13,6 +13,7 @@
 
 ## Overview
 ARC CLI is an autonomous agentic CLI framework written in Rust. It reasons over local codebases to plan, write, and verify software using a multi-agent delegation model. 
+<img width="1444" height="1127" alt="image" src="https://github.com/user-attachments/assets/14510ed0-e668-42fc-a637-48406bfd36e1" />
 
 ## Core Infrastructure
 
