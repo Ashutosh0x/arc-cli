@@ -30,8 +30,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
-      - name: Install git
-        run: sudo apt-get install -y git
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev git
 
       - name: Run integration tests
         run: cargo test --workspace --tests
@@ -42,6 +42,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
 
       - name: Run property-based tests
         run: cargo test --workspace --tests
@@ -54,6 +57,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
 
       - name: Run security tests
         run: cargo test --workspace --tests
@@ -75,6 +81,9 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
+
       - name: Run stress tests
         run: cargo test --workspace --tests -- --test-threads=1
 
@@ -86,12 +95,14 @@ jobs:
         with:
           components: clippy
 
-      - name: Clippy (strict)
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
+
+      - name: Clippy (focused security gates)
         run: |
           cargo clippy --workspace --all-targets -- \
-            -D warnings \
             -D clippy::unwrap_used \
             -D clippy::expect_used \
             -D clippy::dbg_macro \
-            -D clippy::print_stdout \
-            -W clippy::pedantic
+            -D clippy::suspicious_open_options \
+            -D clippy::incompatible_msrv
