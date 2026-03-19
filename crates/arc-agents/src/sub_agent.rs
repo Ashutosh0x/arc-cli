@@ -14,12 +14,12 @@ pub struct SubAgentResult {
 
 pub struct SubAgent {
     profile: AgentProfile,
-    client: Arc<StreamingClient>,
+    client: Arc<dyn StreamingClient>,
     context_files: Vec<String>,
 }
 
 impl SubAgent {
-    pub fn new(profile: AgentProfile, client: Arc<StreamingClient>) -> Self {
+    pub fn new(profile: AgentProfile, client: Arc<dyn StreamingClient>) -> Self {
         Self {
             profile,
             client,

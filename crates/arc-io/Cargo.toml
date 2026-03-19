@@ -11,3 +11,6 @@ tracing.workspace = true
 
 [target.'cfg(target_os = "linux")'.dependencies]
 tokio-uring = "0.4.0"
+
+[lints]
+workspace = true

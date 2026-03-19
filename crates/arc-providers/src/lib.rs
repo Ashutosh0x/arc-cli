@@ -7,8 +7,14 @@ pub mod openai;
 pub mod gemini;
 pub mod ollama;
 pub mod router;
-pub mod streaming;
+pub mod stream;
 pub mod security;
 pub mod message;
 pub mod traits;
-pub mod stream;
+
+pub mod breaker;
+pub mod routing;
+pub mod mock;
+pub mod streaming {
+    pub use crate::stream::{StreamingClient, StreamEvent};
+}

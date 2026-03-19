@@ -14,3 +14,6 @@ tracing.workspace = true
 [target.'cfg(target_os = "linux")'.dependencies]
 landlock = "0.4"
 nix = "0.29"
+
+[lints]
+workspace = true

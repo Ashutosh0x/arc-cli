@@ -93,7 +93,7 @@ impl Tool for FileEditTool {
             }
             for op in group {
                 for change in diff.iter_changes(op) {
-                    let (sign, styled_sign, hl_line): (&'static str, console::StyledObject<&'static str>, String) = match change.tag() {
+                    let (_sign, styled_sign, hl_line): (&'static str, console::StyledObject<&'static str>, String) = match change.tag() {
                         similar::ChangeTag::Delete => {
                             let line = hl_old.get(change.old_index().unwrap()).cloned().unwrap_or_default();
                             ("-", console::style("-").red(), line)

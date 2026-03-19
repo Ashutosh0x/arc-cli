@@ -14,3 +14,6 @@ reqwest.workspace = true
 async-trait.workspace = true
 scraper = "0.20"
 urlencoding = "2.1"
+
+[lints]
+workspace = true

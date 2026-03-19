@@ -1,6 +1,5 @@
-use anyhow::{Context, Result};
+use anyhow::Result;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use tracing::{debug, info};
 use uuid::Uuid;
 

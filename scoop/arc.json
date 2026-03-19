@@ -1,0 +1,14 @@
+{
+    "version": "0.5.0",
+    "description": "ARC - Agent for Rapid Coding",
+    "homepage": "https://github.com/Ashutosh0x/arc-cli",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/Ashutosh0x/arc-cli/releases/download/v0.5.0/arc-x86_64-pc-windows-msvc.zip",
+            "hash": "REPLACE_WITH_ACTUAL_SHA256"
+        }
+    },
+    "bin": "arc.exe",
+    "checkver": "github"
+}

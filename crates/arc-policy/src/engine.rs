@@ -1,7 +1,5 @@
 use crate::rules::{PolicyRule, RuleSeverity};
-use anyhow::Result;
 use std::path::PathBuf;
-use tracing::warn;
 
 pub struct PolicyViolation {
     pub rule_name: String,

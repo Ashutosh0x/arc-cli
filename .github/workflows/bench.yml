@@ -1,0 +1,55 @@
+name: Benchmarks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+
+      - name: Run benchmarks
+        run: cargo bench --bench sse_parser --bench config_parsing --bench checkpoint_io --bench hook_execution -- --output-format bencher | tee benchmark_results.txt
+
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-results
+          path: |
+            benchmark_results.txt
+            target/criterion/
+
+      # Performance regression detection
+      - name: Check for regressions
+        run: |
+          echo "=== Benchmark Summary ==="
+          cat benchmark_results.txt
+          echo "========================="
+
+  performance-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run performance gate tests
+        run: cargo test --test regression -- --ignored

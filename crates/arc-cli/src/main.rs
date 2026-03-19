@@ -21,15 +21,45 @@ fn get_config() -> &'static ArcConfig {
 async fn main() -> Result<()> {
     color_eyre::install().unwrap_or(());
     
+    // Bind global standard interrupt code (130)
+    ctrlc::set_handler(move || {
+        eprintln!("\n⚠️ Interrupted by user");
+        std::process::exit(130);
+    }).unwrap_or_else(|e| tracing::warn!("Failed to set SIGINT handler: {}", e));
+    
+    let cli = cli::Cli::parse();
+    
+    // Support NO_COLOR organically natively via console
+    if cli.no_color {
+        console::set_colors_enabled(false);
+    }
+
     let log_dir = arc_core::config::ArcConfig::dir().unwrap_or_else(|_| std::path::PathBuf::from(".arc")).join("logs");
-    let _telemetry_guard = telemetry::init_telemetry(log_dir).unwrap_or_else(|e| {
+    let _telemetry_guard = telemetry::init_telemetry(log_dir, cli.verbose, cli.quiet).unwrap_or_else(|e| {
         eprintln!("Failed to initialize telemetry: {}", e);
         std::process::exit(1);
     });
 
-    let cli = cli::Cli::parse();
     // Load config early to handle auth/doctor seamlessly
     let config = get_config();
+
+    // Prevent concurrent ARC operations in the same dir
+    let cwd = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
+    let _lock = arc_core::instance_lock::InstanceLock::acquire(&cwd).unwrap_or_else(|e| {
+        eprintln!("Failed to acquire lock: {}", e);
+        std::process::exit(1);
+    });
+
+    let connectivity = arc_core::network::probe_connectivity(&config.providers).await;
+    match connectivity {
+        arc_core::network::ConnectivityState::Offline => {
+            println!("  ⚠️ ARC is offline. Could not reach cloud providers.");
+        }
+        arc_core::network::ConnectivityState::Degraded { reachable } => {
+            tracing::warn!("Degraded network. Reachable providers: {:?}", reachable);
+        }
+        _ => {}
+    }
 
     let profile_dir = ArcConfig::dir().ok();
     let mut memory = arc_core::memory::MemoryManager::new(config.memory.clone(), profile_dir)?;
@@ -46,6 +76,10 @@ async fn main() -> Result<()> {
             let data_dir = arc_core::config::ArcConfig::dir().unwrap_or_else(|_| std::path::PathBuf::from(".arc"));
             let config_path = data_dir.join("config.toml");
             commands::doctor::run(&data_dir, &config_path).await?;
+        }
+        Some(cli::Command::Diagnostic) => {
+            let data_dir = arc_core::config::ArcConfig::dir().unwrap_or_else(|_| std::path::PathBuf::from(".arc"));
+            commands::diagnostic::run(&data_dir).await?;
         }
         Some(cli::Command::Init) => {
             let cwd = std::env::current_dir().unwrap_or_else(|_| std::path::PathBuf::from("."));
@@ -132,8 +166,8 @@ async fn main() -> Result<()> {
         Some(cli::Command::Serve { port }) => {
             println!("Starting ARC server on port {port}");
         }
-        Some(cli::Command::Config) => {
-            println!("Config management not implemented yet.");
+        Some(cli::Command::Config { action }) => {
+            commands::config::run(action).await?;
         }
     }
 

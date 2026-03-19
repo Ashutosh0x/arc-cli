@@ -14,7 +14,7 @@ impl Drop for TelemetryGuard {
     }
 }
 
-pub fn init_telemetry(log_dir: PathBuf) -> Result<TelemetryGuard> {
+pub fn init_telemetry(log_dir: PathBuf, verbose: bool, quiet: bool) -> Result<TelemetryGuard> {
     // Ensure log directory exists
     std::fs::create_dir_all(&log_dir).context("Failed to create log directory")?;
 
@@ -31,8 +31,16 @@ pub fn init_telemetry(log_dir: PathBuf) -> Result<TelemetryGuard> {
     let cli_layer = tracing_subscriber::fmt::layer()
         .with_target(false)
         .with_thread_ids(false)
-        .with_level(false)
-        .with_filter(EnvFilter::new("warn")); // Keep CLI quiet except warnings
+        .with_level(false);
+
+    // Apply strict filtering
+    let cli_layer = if quiet {
+        cli_layer.with_filter(EnvFilter::new("error"))
+    } else if verbose {
+        cli_layer.with_filter(EnvFilter::new("arc=trace"))
+    } else {
+        cli_layer.with_filter(EnvFilter::new("warn"))
+    };
 
     // 3. OpenTelemetry OTLP Exporter (if enabled)
     /*

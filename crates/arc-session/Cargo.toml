@@ -17,3 +17,6 @@ tokio.workspace = true
 compact_str.workspace = true
 sha2.workspace = true
 bincode = "1.3.3"
+
+[lints]
+workspace = true

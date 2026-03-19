@@ -4,3 +4,5 @@ pub mod init;
 pub mod fix;
 pub mod update;
 pub mod review;
+pub mod diagnostic;
+pub mod config;

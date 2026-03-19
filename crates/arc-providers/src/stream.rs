@@ -5,7 +5,23 @@ use memchr::memmem;
 use reqwest::Response;
 use std::pin::Pin;
 use std::task::{Context, Poll};
-use tracing::trace;
+use async_trait::async_trait;
+
+#[derive(Debug, Clone)]
+pub enum StreamEvent {
+    TextDelta(String),
+    Done,
+    Error(String),
+}
+
+#[async_trait]
+pub trait StreamingClient: Send + Sync {
+    async fn stream_completion(
+        &self,
+        system_prompt: &str,
+        user_prompt: &str,
+    ) -> anyhow::Result<tokio::sync::mpsc::Receiver<StreamEvent>>;
+}
 
 /// Extremely fast Zero-Copy Server-Sent Events (SSE) stream parser.
 /// Prevents dynamic `String` heap allocations by scanning byte streams 

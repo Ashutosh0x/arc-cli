@@ -36,6 +36,13 @@ ARC CLI incorporates security layers to limit autonomous actions:
 - **Manifest Pinning**: Model Context Protocol (MCP) clients verify hash digests to block unauthorized tool injection.
 - **Shadow Workspaces**: Autonomous changes run against isolated `.arc-shadow` directories using OS-level hardlinks or Landlock syscall filters on Linux to prevent unauthorized writes.
 
+### 5. Algorithmic Context Management (New)
+ARC CLI implements advanced context preservation algorithms inspired by the latest Gemini research:
+- **Verified Summarization**: A dual-phase compression loop that validates all technical facts and file paths before committing to long-term memory.
+- **Reverse Token Budgeting**: Automatically offloads older massive tool outputs to temporary disk stores to prioritize fresh prompt context, preventing the "forgetting" of recent user instructions.
+- **Graceful State Recovery**: Injects a specialized "final turn" prompt when agents hit execution limits, allowing them to cleanly summarize and checkpoint status instead of hard-failing.
+- **Native AST Safety**: Uses tree-sitter for Bash and native PowerShell AST walkers for Windows to audit shell commands at the syntax level, blocking destructive operations before they hit the kernel.
+
 ## Documentation
 
 Explore the extreme depth of ARC CLI's architecture and usage:

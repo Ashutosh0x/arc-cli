@@ -1,4 +1,5 @@
 use crate::decoder::ImageDecoder;
+use arc_providers::message::{Message, Role};
 use arc_providers::traits::Provider;
 use anyhow::Result;
 use std::sync::Arc;
@@ -25,7 +26,13 @@ impl VisionAnalyzer {
         // In a true implementation, we would attach the base64 content 
         // using the Provider interface's vision capabilities.
         let modified_prompt = format!("[Attached Image Data - MOCKED]\n\n{}", prompt);
-        let analysis = self.provider.generate_text(&modified_prompt).await?;
+        let msg = Message {
+            role: Role::User,
+            content: modified_prompt,
+            tool_calls: vec![],
+            tool_call_id: None,
+        };
+        let analysis = self.provider.generate_text("default", &[msg]).await?;
         
         Ok(VisionResult {
             description: analysis,

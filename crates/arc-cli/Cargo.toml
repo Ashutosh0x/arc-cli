@@ -12,6 +12,7 @@ name = "arc"
 path = "src/main.rs"
 
 [dependencies]
+arc-ui = { path = "../arc-ui" }
 arc-core = { path = "../arc-core" }
 arc-router = { path = "../arc-router" }
 arc-providers = { path = "../arc-providers" }
@@ -41,6 +42,7 @@ tracing-appender.workspace = true
 color-eyre.workspace = true
 anyhow.workspace = true
 chrono.workspace = true
+open = "5.3.2"
 
 ctrlc = "3"
 console.workspace = true
@@ -52,3 +54,6 @@ rustyline = "17.0.2"
 notify-rust = "4.12.0"
 mimalloc = "0.1.48"
 self_update = { version = "0.43.1", features = ["archive-tar", "archive-zip", "compression-zip-bzip2"] }
+
+[lints]
+workspace = true

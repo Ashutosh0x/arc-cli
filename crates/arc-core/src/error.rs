@@ -43,6 +43,10 @@ pub enum ArcError {
     /// User cancelled the operation.
     #[error("operation cancelled")]
     Cancelled,
+
+    /// Multiple instances of ARC running in same directory
+    #[error("instance conflict: {0}")]
+    InstanceConflict(String),
 }
 
 impl From<std::io::Error> for ArcError {

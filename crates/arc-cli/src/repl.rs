@@ -284,3 +284,29 @@ fn resolve_mentions(input: &str) -> String {
     }
     resolved_input
 }
+
+pub struct FileChange {
+    pub path: String,
+    pub old_content: String,
+    pub new_content: String,
+}
+
+pub async fn handle_agent_output(changes: Vec<FileChange>) {
+    use arc_ui::{TerminalUi, diff::compute_diff};
+    let mut ui = TerminalUi::new().unwrap();
+
+    let diffs: Vec<_> = changes
+        .iter()
+        .map(|ch| compute_diff(&ch.path, &ch.old_content, &ch.new_content))
+        .collect();
+
+    let result = ui.enter_review(diffs).unwrap();
+
+    for path in &result.accepted {
+        println!("Accepted changes to {}", path);
+    }
+
+    for path in &result.rejected {
+        tracing::info!("Rejected changes to {}", path);
+    }
+}

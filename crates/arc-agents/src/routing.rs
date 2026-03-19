@@ -5,11 +5,11 @@ use serde_json::Value;
 /// Determines which specialized agent is best suited for a given user prompt.
 pub struct AgentRouter {
     registry: AgentRegistry,
-    llm_client: std::sync::Arc<arc_providers::streaming::StreamingClient>,
+    llm_client: std::sync::Arc<dyn arc_providers::streaming::StreamingClient>,
 }
 
 impl AgentRouter {
-    pub fn new(llm_client: std::sync::Arc<arc_providers::streaming::StreamingClient>) -> Self {
+    pub fn new(llm_client: std::sync::Arc<dyn arc_providers::streaming::StreamingClient>) -> Self {
         Self {
             registry: AgentRegistry::new(),
             llm_client,

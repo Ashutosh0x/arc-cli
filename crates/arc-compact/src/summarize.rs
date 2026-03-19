@@ -1,4 +1,4 @@
-use arc_providers::message::Message;
+use arc_providers::message::{Message, Role};
 use arc_providers::traits::Provider;
 use anyhow::Result;
 use std::sync::Arc;
@@ -25,7 +25,13 @@ impl Summarizer {
             history_text
         );
 
-        let summary: String = self.provider.generate_text("default", &[Message::user(prompt)]).await?;
+        let msg = Message {
+            role: Role::User,
+            content: prompt,
+            tool_calls: vec![],
+            tool_call_id: None,
+        };
+        let summary: String = self.provider.generate_text("default", &[msg]).await?;
         info!("History summarized. Compressed {} messages into {} characters.", messages.len(), summary.len());
         Ok(summary)
     }

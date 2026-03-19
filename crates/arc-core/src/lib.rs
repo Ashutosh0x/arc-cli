@@ -12,5 +12,8 @@ pub mod telemetry;
 pub mod setup_wizard;
 pub mod auth;
 
+pub mod network;
+pub mod budget;
+pub mod instance_lock;
 // Re-export the error for convenience.
 pub use error::ArcError;

@@ -43,7 +43,7 @@ tiktoken-rs.workspace = true
 hdrhistogram.workspace = true
 zeroize = { version = "1", features = ["derive"] }
 tokio-util = { version = "0.7", features = ["rt"] }
-
+fs2 = "0.4.3"
 [dev-dependencies]
 tokio = { workspace = true, features = ["test-util"] }
 tempfile = "3.14"

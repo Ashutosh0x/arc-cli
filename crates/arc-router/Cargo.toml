@@ -13,3 +13,6 @@ tracing.workspace = true
 dashmap.workspace = true
 anyhow.workspace = true
 futures.workspace = true
+
+[lints]
+workspace = true

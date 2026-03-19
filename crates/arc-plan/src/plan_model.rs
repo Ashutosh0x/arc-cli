@@ -184,7 +184,7 @@ impl Plan {
 
         let mut queue: std::collections::VecDeque<Uuid> = in_degree
             .iter()
-            .filter(|(_, &deg)| deg == 0)
+            .filter(|&(_, &deg)| deg == 0)
             .map(|(&id, _)| id)
             .collect();
 

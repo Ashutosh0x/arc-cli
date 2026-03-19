@@ -13,3 +13,6 @@ tracing.workspace = true
 image.workspace = true
 base64.workspace = true
 arc-providers = { path = "../arc-providers" }
+
+[lints]
+workspace = true

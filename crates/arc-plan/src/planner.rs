@@ -2,7 +2,6 @@ use crate::dependency_mapper::DependencyMapper;
 use crate::plan_model::*;
 use crate::read_only_tools::ReadOnlyToolSet;
 use anyhow::Result;
-use arc_core::session::Session;
 use arc_providers::streaming::{StreamEvent, StreamingClient};
 use chrono::Utc;
 use serde_json::Value;
@@ -15,7 +14,7 @@ use uuid::Uuid;
 /// No file writes, no command execution, no side effects.
 pub struct Planner {
     tools: ReadOnlyToolSet,
-    streaming_client: StreamingClient,
+    streaming_client: std::sync::Arc<dyn StreamingClient>,
     project_root: PathBuf,
 }
 
@@ -43,7 +42,7 @@ pub enum PlanEvent {
 impl Planner {
     pub fn new(
         project_root: PathBuf,
-        streaming_client: StreamingClient,
+        streaming_client: std::sync::Arc<dyn StreamingClient>,
     ) -> Self {
         Self {
             tools: ReadOnlyToolSet::new(project_root.clone()),

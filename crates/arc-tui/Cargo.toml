@@ -12,3 +12,6 @@ color-eyre = "0.6"
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }
 color-eyre = "0.6"
+
+[lints]
+workspace = true

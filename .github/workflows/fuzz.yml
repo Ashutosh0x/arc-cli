@@ -1,0 +1,24 @@
+name: Fuzz Testing
+
+on:
+  schedule:
+    - cron: '0 3 * * 1'  # Weekly on Monday at 3 AM
+  workflow_dispatch:
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target: [sse_parser, config_parser, hook_config, plugin_manifest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@nightly
+
+      - name: Install cargo-fuzz
+        run: cargo install cargo-fuzz
+
+      - name: Run fuzzer (${{ matrix.target }})
+        run: |
+          cd fuzz
+          cargo +nightly fuzz run ${{ matrix.target }} -- -max_total_time=300

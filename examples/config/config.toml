@@ -1,0 +1,46 @@
+# Example ARC Application Configuration
+# Save this at `~/.arc/config.toml` or purely local at `<project>/.arc/config.toml`
+
+[providers.anthropic]
+enabled = true
+default_model = "claude-3-5-sonnet-20241022"
+timeout_secs = 60
+max_retries = 3
+
+[providers.openai]
+enabled = true
+default_model = "gpt-4o"
+timeout_secs = 30
+max_retries = 2
+
+[providers.gemini]
+enabled = true
+default_model = "gemini-1.5-pro-002"
+
+[providers.ollama]
+enabled = false
+default_model = "llama3:latest"
+base_url = "http://127.0.0.1:11434"
+
+# Routing defines which models are used for which tasks
+[routing]
+strategy = "cost-optimized"
+planner_model = "gpt-4o"
+coder_model = "claude-3-5-sonnet-20241022"
+reviewer_model = "gpt-4o-mini"
+fallback_chain = ["claude-3-5-sonnet-20241022", "gpt-4o", "gemini-1.5-pro-002"]
+
+[memory]
+context_window = 120000
+auto_compress = true
+compression_threshold = 80000
+
+[workspace]
+shadow_workspace = true
+diff_algorithm = "myers"
+ignore_files_larger_than_mb = 1.0
+
+[ui]
+theme = "dark"
+color_blind_safe = false
+disable_animations = false

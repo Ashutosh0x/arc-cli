@@ -6,12 +6,10 @@
 
 pub mod executor;
 pub mod events;
-pub mod executor;
 pub mod rewrite;
 pub mod config;
+pub mod git_intel;
 
 pub use executor::{HookExecutor, HookConfig};
 pub use events::HookEvent;
-
-pub mod rewrite;
 pub use rewrite::HookSystemRewrite;

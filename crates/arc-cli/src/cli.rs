@@ -38,6 +38,18 @@ pub struct Cli {
     #[arg(long)]
     pub vision: Option<String>,
 
+    /// Disable ANSI color output
+    #[arg(long, env = "NO_COLOR")]
+    pub no_color: bool,
+
+    /// Quiet mode (errors only)
+    #[arg(short, long)]
+    pub quiet: bool,
+
+    /// Verbose trace mode
+    #[arg(short, long)]
+    pub verbose: bool,
+
     #[command(subcommand)]
     pub command: Option<Command>,
 }
@@ -50,7 +62,10 @@ pub enum Command {
         port: u16,
     },
     /// Manage config
-    Config,
+    Config {
+        #[command(subcommand)]
+        action: ConfigAction,
+    },
     /// Interactive provider & authentication setup
     Setup,
     /// Initialize workspace environment, ARC.md, and hooks.toml
@@ -67,6 +82,8 @@ pub enum Command {
     },
     /// Run system diagnostics and connectivity checks
     Doctor,
+    /// Generate a diagnostic bundle for bug reports
+    Diagnostic,
     /// Update ARC CLI to the latest GitHub release version
     Update,
     /// Automated PR Review of local changes against origin/main via LLM Swarm
@@ -112,6 +129,16 @@ pub enum AuthAction {
     SetKey {
         provider: String,
     },
+}
+
+#[derive(Subcommand, Debug, Clone)]
+pub enum ConfigAction {
+    /// Open config file in default editor
+    Edit,
+    /// Validate current config structure
+    Validate,
+    /// Reset to defaults (backs up current)
+    Reset,
 }
 
 #[derive(Subcommand, Debug, Clone)]

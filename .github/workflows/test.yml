@@ -1,0 +1,97 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+jobs:
+  unit-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run unit tests
+        run: cargo test --workspace --lib
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install git
+        run: sudo apt-get install -y git
+
+      - name: Run integration tests
+        run: cargo test --test "integration_*"
+
+  property-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run property-based tests
+        run: cargo test --test "property_*"
+        env:
+          PROPTEST_CASES: 1000
+
+  security-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run security tests
+        run: cargo test --test "security_*"
+
+      - name: Run cargo-audit
+        run: |
+          cargo install cargo-audit
+          cargo audit
+
+      - name: Run cargo-deny
+        run: |
+          cargo install cargo-deny
+          cargo deny check
+
+  stress-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Run stress tests
+        run: cargo test --test "stress_*" -- --test-threads=1
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+
+      - name: Clippy (strict)
+        run: |
+          cargo clippy --workspace --all-targets -- \
+            -D warnings \
+            -D clippy::unwrap_used \
+            -D clippy::expect_used \
+            -D clippy::dbg_macro \
+            -D clippy::print_stdout \
+            -W clippy::pedantic

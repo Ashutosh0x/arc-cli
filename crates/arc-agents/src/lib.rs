@@ -8,6 +8,7 @@ pub mod registry;
 pub mod orchestrator;
 pub mod sub_agent;
 pub mod routing;
+pub mod contracts;
 
 pub use registry::{AgentRegistry, AgentProfile, AgentCapability};
 pub use orchestrator::{Orchestrator, OrchestratorConfig, TaskDelegation};

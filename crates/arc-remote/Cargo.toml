@@ -1,0 +1,25 @@
+[package]
+name = "arc-remote"
+version = "0.1.0"
+edition = "2021"
+description = "Remote session control and multiplexing for ARC CLI"
+
+[dependencies]
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+tracing = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+axum = { workspace = true }
+reqwest = { workspace = true }
+futures-util = "0.3"
+tokio-tungstenite = { workspace = true }
+tower-http = { workspace = true }
+hmac = { workspace = true }
+sha2 = { workspace = true }
+jsonwebtoken = { workspace = true }
+
+[lints]
+workspace = true

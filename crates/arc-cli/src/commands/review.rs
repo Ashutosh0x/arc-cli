@@ -106,7 +106,6 @@ pub async fn run(base: &str) -> Result<()> {
     println!("\n\n{}\n", style("────────────────────").bold());
 
     // Fallback best-effort desktop notification
-    #[cfg(feature = "notify")] // Or just try it silently if it errors
     let _ = notify_rust::Notification::new()
         .summary("ARC PR Review")
         .body("Code review subagent has finished architectural critique.")
