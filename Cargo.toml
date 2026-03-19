@@ -101,7 +101,7 @@ indicatif = "*"
 regex = "*"
 once_cell = "*"
 open = "*"
-criterion = "*"
+criterion = { version = "0.8", features = ["async_tokio"] }
 
 # NEW PHASE 7 WORKSPACE DEPS
 image = "0.25"

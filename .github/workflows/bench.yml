@@ -52,4 +52,4 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Run performance gate tests
-        run: cargo test --test regression -- --ignored
+        run: cargo test --workspace --tests -- --ignored

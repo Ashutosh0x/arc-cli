@@ -3,7 +3,7 @@
 
 use crate::config::ArcConfig;
 use crate::error::ArcResult;
-use tracing::info;
+use tracing::{info, warn};
 
 /// Check that the config directory and file have safe permissions.
 pub fn check_config_permissions() -> ArcResult<Vec<String>> {

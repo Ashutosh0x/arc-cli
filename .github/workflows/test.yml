@@ -34,7 +34,7 @@ jobs:
         run: sudo apt-get install -y git
 
       - name: Run integration tests
-        run: cargo test --test "integration_*"
+        run: cargo test --workspace --tests
 
   property-tests:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Run property-based tests
-        run: cargo test --test "property_*"
+        run: cargo test --workspace --tests
         env:
           PROPTEST_CASES: 1000
 
@@ -56,7 +56,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Run security tests
-        run: cargo test --test "security_*"
+        run: cargo test --workspace --tests
 
       - name: Run cargo-audit
         run: |
@@ -76,7 +76,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
 
       - name: Run stress tests
-        run: cargo test --test "stress_*" -- --test-threads=1
+        run: cargo test --workspace --tests -- --test-threads=1
 
   clippy:
     runs-on: ubuntu-latest

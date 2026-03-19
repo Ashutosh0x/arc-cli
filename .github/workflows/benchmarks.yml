@@ -21,8 +21,6 @@ jobs:
 
     - name: Set up Rust
       uses: dtolnay/rust-toolchain@stable
-      with:
-        toolchain: 1.85.0
         
     - name: Cache Cargo Registry
       uses: actions/cache@v3
