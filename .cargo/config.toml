@@ -1,4 +1,4 @@
 [build]
-# Move build artifacts off OneDrive to prevent file locking
-target-dir = "C:\\rust-target\\arc-cli"
+# Keep artifacts in the repository-local target directory for cross-platform CI compatibility.
+target-dir = "target"
 rustflags = ["--cfg", "auditable"]
