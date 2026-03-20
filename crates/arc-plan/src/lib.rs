@@ -10,6 +10,9 @@ mod plan_model;
 mod dependency_mapper;
 mod plan_renderer;
 
+// Phase 28: Persistent Task Tracker with DAG validation
+pub mod tracker;
+
 pub use planner::Planner;
 pub use plan_model::{Plan, PlanStep, PlanPhase, StepStatus, DependencyGraph};
 pub use read_only_tools::ReadOnlyToolSet;

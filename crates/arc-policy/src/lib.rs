@@ -7,5 +7,8 @@
 pub mod engine;
 pub mod rules;
 
+// Phase 28: Conseca Dynamic Safety Checker
+pub mod conseca;
+
 pub use engine::{PolicyEngine, PolicyResult, PolicyViolation};
 pub use rules::{PolicyRule, RuleSeverity};

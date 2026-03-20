@@ -15,6 +15,11 @@ pub mod traits;
 pub mod breaker;
 pub mod routing;
 pub mod mock;
+
+// Phase 28: Model Availability & Fallback
+pub mod availability;
+pub mod fallback;
+
 pub mod streaming {
     pub use crate::stream::{StreamingClient, StreamEvent};
 }
