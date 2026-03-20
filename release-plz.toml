@@ -1,0 +1,6 @@
+[workspace]
+# Disable changelog generation until we're ready to publish to crates.io
+changelog_update = false
+
+# Don't try to publish — we're not on crates.io yet
+publish = false

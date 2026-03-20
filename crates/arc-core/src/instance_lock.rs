@@ -21,6 +21,7 @@ impl InstanceLock {
         let file = std::fs::OpenOptions::new()
             .write(true)
             .create(true)
+            .truncate(true)
             .open(&lock_path)
             .map_err(|e| ArcError::System(e.to_string()))?;
 

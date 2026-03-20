@@ -17,7 +17,12 @@ impl SecretSanitizer {
         let jwt_re = JWT_RE.get_or_init(|| {
             Regex::new(r#"ey[A-Za-z0-9-_=]+\.[A-Za-z0-9-_=]+\.?[A-Za-z0-9-_.+/=]*"#).unwrap()
         });
-        let pk_re = PRIVATE_KEY_RE.get_or_init(|| Regex::new(r#"-----BEGIN (RSA|EC|DSA|OPENSSH) PRIVATE KEY-----[\s\S]*?-----END \1 PRIVATE KEY-----"#).unwrap());
+        let pk_re = PRIVATE_KEY_RE.get_or_init(|| {
+            Regex::new(
+                r#"-----BEGIN (?:RSA|EC|DSA|OPENSSH) PRIVATE KEY-----[\s\S]*?-----END (?:RSA|EC|DSA|OPENSSH) PRIVATE KEY-----"#,
+            )
+            .unwrap()
+        });
 
         let mut output = input.to_string();
         output = aws_re
