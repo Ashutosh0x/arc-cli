@@ -1,4 +1,5 @@
 # ARC: High-Performance Agentic CLI
+<img width="2048" height="861" alt="arc cli" src="https://github.com/user-attachments/assets/4952031a-b3fa-4074-8573-18fe7a9832d8" />
 
 ![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
 ![Features](https://img.shields.io/badge/Features-120+-blue?style=for-the-badge)
