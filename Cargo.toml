@@ -75,7 +75,7 @@ axum = { version = "0.7", features = ["ws", "macros"] }
 tower = { version = "0.5", features = ["timeout", "limit"] }
 tower-http = { version = "0.6", features = ["cors", "trace", "compression-gzip", "auth"] }
 hyper = { version = "1", features = ["full"] }
-notify = "7.0"
+notify = "8.2"
 tokio-tungstenite = "0.26"
 async-trait = "0.1"
 ignore = "0.4"
