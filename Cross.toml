@@ -1,0 +1,14 @@
+[build.env]
+passthrough = [
+    "OPENSSL_STATIC",
+    "OPENSSL_VENDORED",
+    "OPENSSL_DIR",
+    "OPENSSL_LIB_DIR",
+    "OPENSSL_INCLUDE_DIR",
+]
+
+[target.x86_64-unknown-linux-musl]
+image = "ghcr.io/cross-rs/x86_64-unknown-linux-musl:main"
+
+[target.aarch64-unknown-linux-musl]
+image = "ghcr.io/cross-rs/aarch64-unknown-linux-musl:main"
