@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-crossterm = "0.28"
+crossterm = "0.29"
 syntect = "5"
 unicode-width = "0.2"
 textwrap = "0.16"
