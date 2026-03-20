@@ -106,3 +106,25 @@ jobs:
             -D clippy::dbg_macro \
             -D clippy::suspicious_open_options \
             -D clippy::incompatible_msrv
+
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+  msrv:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.85.0
+      - uses: Swatinem/rust-cache@v2
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
+      - name: Check MSRV
+        run: cargo check --workspace
+

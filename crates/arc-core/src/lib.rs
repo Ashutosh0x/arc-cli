@@ -52,6 +52,11 @@ pub mod security_review;
 pub mod tool_search;
 pub mod ralph_loop;
 pub mod pr_review;
+// Phase 34: Audit gap closures — HTTP hooks, hot-reload, wildcards, extended features
+pub mod http_hooks;
+pub mod hot_reload_skills;
+pub mod wildcard_permissions;
+pub mod extended_features;
 
 // Re-export the error for convenience.
 pub use error::ArcError;

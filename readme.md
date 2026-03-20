@@ -18,6 +18,45 @@
 ARC CLI is an autonomous agentic CLI framework written in Rust. It reasons over local codebases to plan, write, and verify software using a multi-agent delegation model. 
 <img width="1444" height="1127" alt="image" src="https://github.com/user-attachments/assets/14510ed0-e668-42fc-a637-48406bfd36e1" />
 
+## Installation
+
+### Quick Install (Recommended)
+
+**Linux / macOS:**
+```sh
+curl -fsSL https://raw.githubusercontent.com/Ashutosh0x/arc-cli/main/install.sh | sh
+```
+
+**Windows (PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/Ashutosh0x/arc-cli/main/install.ps1 | iex
+```
+
+**From Source:**
+```sh
+cargo install --git https://github.com/Ashutosh0x/arc-cli --locked
+```
+
+| Platform | Command |
+|----------|---------|
+| Homebrew | `brew install arc-cli` |
+| Scoop | `scoop install arc-cli` |
+| Cargo | `cargo install arc-cli` |
+| AUR | `yay -S arc-cli` |
+
+## Why ARC?
+
+| | ARC CLI | Claude Code | Gemini CLI |
+|---|---------|-------------|------------|
+| **Language** | Rust (native binary) | Node.js | Node.js |
+| **Cold Boot** | <20ms | ~500ms | ~400ms |
+| **Runtime Deps** | None | Node 18+ | Node 18+ |
+| **Offline Support** | ✅ Ollama | ❌ | ❌ |
+| **Multi-Provider** | ✅ 4 providers | ❌ Anthropic only | ❌ Google only |
+| **Memory Safety** | `#![forbid(unsafe_code)]` | N/A | N/A |
+| **Binary Size** | ~15MB static | ~200MB+ | ~150MB+ |
+
+
 ## Core Infrastructure
 
 ### 1. Multi-Agent Orchestration
