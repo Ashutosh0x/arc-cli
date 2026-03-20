@@ -28,6 +28,9 @@ members = [
     "crates/arc-search",
     "crates/arc-vision",
     "crates/arc-cloud", "crates/arc-repomap",
+    "crates/arc-fork",
+    "crates/arc-remote",
+    "crates/arc-ui",
 ]
 
 [workspace.package]
@@ -36,7 +39,7 @@ edition = "2024"
 rust-version = "1.85"
 license = "MIT"
 description = "ARC CLI High Performance Agent Framework"
-repository = "https://github.com/project/arc-cli"
+repository = "https://github.com/Ashutosh0x/arc-cli"
 
 [workspace.dependencies]
 tokio = { version = "1.44", features = ["full"] }
