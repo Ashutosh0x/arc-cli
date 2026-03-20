@@ -20,7 +20,7 @@ chrono.workspace = true
 reqwest.workspace = true
 flume.workspace = true
 cpal = "0.15"
-rubato = "0.15"
+rubato = "1.0"
 hound = "3.5"
 
 [lints]
