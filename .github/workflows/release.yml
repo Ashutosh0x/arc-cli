@@ -9,98 +9,164 @@ permissions:
   contents: write
 
 jobs:
-  build-release:
-    name: ${{ matrix.job.target }} (${{ matrix.job.os }})
-    runs-on: ${{ matrix.job.os }}
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        job:
-          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, use-cross: true }
-          - { target: aarch64-unknown-linux-musl, os: ubuntu-latest, use-cross: true }
-          - { target: x86_64-apple-darwin, os: macos-13 }
-          - { target: aarch64-apple-darwin, os: macos-14 }
-          - { target: x86_64-pc-windows-msvc, os: windows-latest }
-    env:
-      BUILD_CMD: cargo
+        include:
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            ext: .exe
+            archive: zip
+
+          - target: x86_64-apple-darwin
+            os: macos-13
+            ext: ""
+            archive: tar.gz
+
+          - target: aarch64-apple-darwin
+            os: macos-14
+            ext: ""
+            archive: tar.gz
+
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            ext: ""
+            archive: tar.gz
+
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            ext: ""
+            archive: tar.gz
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract version from tag
-        shell: bash
-        run: |
-          echo "PROJECT_VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
-
-      - name: Install Rust toolchain
+      - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          targets: ${{ matrix.job.target }}
+          targets: ${{ matrix.target }}
 
-      - name: Rust cache
+      - name: Install cross (Linux cross-compilation)
+        if: contains(matrix.target, 'linux')
+        run: cargo install cross --locked
+
+      - name: Cache
         uses: Swatinem/rust-cache@v2
         with:
-          key: ${{ matrix.job.target }}
+          key: ${{ matrix.target }}
 
-      - name: Install cross (if needed)
-        if: matrix.job.use-cross
-        shell: bash
-        run: |
-          cargo install cross --locked
-          echo "BUILD_CMD=cross" >> $GITHUB_ENV
+      - name: Build (native)
+        if: "!contains(matrix.target, 'linux')"
+        run: cargo build --release --locked --target ${{ matrix.target }}
 
-      - name: Build
+      - name: Build (cross - Linux)
+        if: contains(matrix.target, 'linux')
+        run: cross build --release --locked --target ${{ matrix.target }}
+
+      - name: Extract version
+        id: version
         shell: bash
-        run: $BUILD_CMD build --release --locked --target ${{ matrix.job.target }}
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Package (Unix)
-        if: runner.os != 'Windows'
+        if: matrix.archive == 'tar.gz'
         shell: bash
         run: |
-          BIN_NAME="arc"
-          ARCHIVE="arc-v${{ env.PROJECT_VERSION }}-${{ matrix.job.target }}.tar.gz"
-          mkdir staging
-          cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" staging/
-          cp README.md LICENSE staging/ 2>/dev/null || true
-          cd staging
-          tar czf "../${ARCHIVE}" *
-          cd ..
-          echo "ASSET=${ARCHIVE}" >> $GITHUB_ENV
+          STAGING="arc-v${{ steps.version.outputs.VERSION }}-${{ matrix.target }}"
+          mkdir -p "$STAGING"
+          cp "target/${{ matrix.target }}/release/arc${{ matrix.ext }}" "$STAGING/"
+          cp README.md LICENSE CHANGELOG.md "$STAGING/" 2>/dev/null || true
+          tar czf "$STAGING.tar.gz" "$STAGING"
+          echo "ASSET=$STAGING.tar.gz" >> $GITHUB_ENV
 
       - name: Package (Windows)
-        if: runner.os == 'Windows'
+        if: matrix.archive == 'zip'
         shell: pwsh
         run: |
-          $BIN_NAME = "arc.exe"
-          $ARCHIVE = "arc-v${{ env.PROJECT_VERSION }}-${{ matrix.job.target }}.zip"
-          New-Item -ItemType Directory -Path staging
-          Copy-Item "target/${{ matrix.job.target }}/release/$BIN_NAME" staging/
-          Copy-Item README.md, LICENSE staging/ -ErrorAction SilentlyContinue
-          Compress-Archive -Path staging/* -DestinationPath $ARCHIVE
-          echo "ASSET=$ARCHIVE" >> $env:GITHUB_ENV
+          $staging = "arc-v${{ steps.version.outputs.VERSION }}-${{ matrix.target }}"
+          New-Item -ItemType Directory -Path $staging
+          Copy-Item "target/${{ matrix.target }}/release/arc${{ matrix.ext }}" $staging/
+          Copy-Item README.md, LICENSE, CHANGELOG.md $staging/ -ErrorAction SilentlyContinue
+          Compress-Archive -Path "$staging/*" -DestinationPath "$staging.zip"
+          echo "ASSET=$staging.zip" >> $env:GITHUB_ENV
 
-      - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
         with:
-          files: ${{ env.ASSET }}
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: arc-${{ matrix.target }}
+          path: ${{ env.ASSET }}
 
-  checksums:
-    name: Generate checksums
-    needs: build-release
+  publish:
+    name: Publish Release
+    needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
-        continue-on-error: true
-      - name: Generate SHA256SUMS
+        with:
+          path: artifacts
+
+      - name: Collect assets
         run: |
-          sha256sum arc-v* > SHA256SUMS.txt 2>/dev/null || echo "No artifacts to checksum" > SHA256SUMS.txt
-      - name: Upload checksums
+          mkdir -p release-assets
+          find artifacts -type f \( -name "*.tar.gz" -o -name "*.zip" \) -exec mv {} release-assets/ \;
+          cd release-assets
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: SHA256SUMS.txt
+          files: release-assets/*
+          generate_release_notes: true
+          body: |
+            ## 🚀 ARC CLI v${{ github.ref_name }}
+
+            The first production release of ARC — a high-performance agentic CLI framework in Rust.
+
+            ### Highlights
+            - **120+ features** across 31 modular crates
+            - **32/32 Claude Code feature parity** plus 6 areas where ARC leads
+            - **Multi-provider**: Anthropic Claude, Google Gemini, OpenAI, Ollama (offline)
+            - **<20ms cold boot** — single static binary, zero runtime dependencies
+            - **Zero unsafe code** — `#![forbid(unsafe_code)]` across entire workspace
+
+            ### Installation
+
+            **Linux / macOS:**
+            ```sh
+            curl -fsSL https://raw.githubusercontent.com/Ashutosh0x/arc-cli/main/install.sh | sh
+            ```
+
+            **Windows (PowerShell):**
+            ```powershell
+            irm https://raw.githubusercontent.com/Ashutosh0x/arc-cli/main/install.ps1 | iex
+            ```
+
+            **From source:**
+            ```sh
+            cargo install --git https://github.com/Ashutosh0x/arc-cli --locked
+            ```
+
+            ### Binaries
+
+            | Platform | File |
+            |----------|------|
+            | Windows x64 | `arc-${{ github.ref_name }}-x86_64-pc-windows-msvc.zip` |
+            | macOS Intel | `arc-${{ github.ref_name }}-x86_64-apple-darwin.tar.gz` |
+            | macOS ARM (M1/M2/M3) | `arc-${{ github.ref_name }}-aarch64-apple-darwin.tar.gz` |
+            | Linux x64 | `arc-${{ github.ref_name }}-x86_64-unknown-linux-musl.tar.gz` |
+            | Linux ARM64 | `arc-${{ github.ref_name }}-aarch64-unknown-linux-musl.tar.gz` |
+
+            Verify checksums: `sha256sum -c SHA256SUMS.txt`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
