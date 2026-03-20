@@ -30,7 +30,7 @@ jobs:
         run: cargo bench --bench sse_parser --bench config_parsing --bench checkpoint_io --bench hook_execution -- --output-format bencher | tee benchmark_results.txt
 
       - name: Upload benchmark results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: benchmark-results
           path: |
