@@ -68,7 +68,7 @@ jsonwebtoken = "9"
 hmac = "0.12"
 hex = "0.4"
 url = "2"
-dashmap = "5"
+dashmap = "6"
 rand = "0.8"
 tokio-stream = "0.1"
 axum = { version = "0.7", features = ["ws", "macros"] }
