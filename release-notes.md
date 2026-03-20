@@ -4,6 +4,8 @@
 
 **High-Performance Agentic CLI Framework in Rust**
 
+<img src="https://raw.githubusercontent.com/Ashutosh0x/arc-cli/main/docs/arc-cli.png" alt="ARC CLI" width="800">
+
 [![Rust](https://img.shields.io/badge/Rust-1.85+-DEA584?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![Tokio](https://img.shields.io/badge/Tokio-Async_Runtime-2B2B2B?style=for-the-badge)](https://tokio.rs/)
 [![License](https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge)](LICENSE)
