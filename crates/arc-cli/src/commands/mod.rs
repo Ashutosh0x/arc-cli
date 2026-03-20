@@ -6,3 +6,5 @@ pub mod update;
 pub mod review;
 pub mod diagnostic;
 pub mod config;
+pub mod security_doctor;
+pub mod extensions;

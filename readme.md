@@ -43,6 +43,21 @@ ARC CLI implements advanced context preservation algorithms inspired by the late
 - **Graceful State Recovery**: Injects a specialized "final turn" prompt when agents hit execution limits, allowing them to cleanly summarize and checkpoint status instead of hard-failing.
 - **Native AST Safety**: Uses tree-sitter for Bash and native PowerShell AST walkers for Windows to audit shell commands at the syntax level, blocking destructive operations before they hit the kernel.
 
+### 6. Runtime Intelligence (New — Phase 28)
+Production-grade systems ported from deep analysis of Gemini CLI's 500+ file codebase:
+- **3-Layer Loop Detection**: SHA-256 tool call dedup → sliding-window content chanting → LLM double-check with adaptive intervals. Prevents runaway sessions without blunt timeouts.
+- **Tool Output Masking**: Hybrid Backward-Scanned FIFO with 50k token protection window and 30k batch thresholds. Offloads large outputs to `.arc/tool-outputs/` with head+tail previews.
+- **Environment Sanitization**: Regex-based blocking of 15+ secret patterns (JWT, AWS `AKIA*`, GitHub `ghp_*`, RSA keys, Stripe, Slack tokens) with strict CI mode.
+- **Conseca Dynamic Safety**: LLM-generated SecurityPolicies per user prompt — adapts tool permissions, arg constraints, and path restrictions per request.
+- **Model Availability & Fallback**: Terminal vs sticky-retry health tracking with policy-driven fallback chains (retry_always, retry_once, stop, upgrade intents).
+- **JIT Context Loading**: Dynamically discovers and injects `ARC.md` files as the agent navigates subdirectories via high-intent tools.
+- **IDE Detection**: Auto-detects 20+ IDEs (VS Code, Cursor, Zed, JetBrains suite, Xcode, Neovim, Emacs) for environment-aware suggestions.
+- **Session Summaries**: Auto-generates ≤80 char session titles via fast-model sliding-window analysis.
+- **Extensions CLI**: Full plugin lifecycle (install, uninstall, link, update, configure, enable, disable, validate, new).
+- **Billing & Quota**: Cost estimation per model, credit balance tracking, overage strategies.
+- **Prompt Registry**: Versioned prompt templates with variable substitution and 6 built-in prompts.
+- **Advanced Telemetry**: ActivityDetector, MemoryMonitor, StartupProfiler, HighWaterMarkTracker.
+
 ## Documentation
 
 Explore the extreme depth of ARC CLI's architecture and usage:
@@ -65,12 +80,15 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 
 | Crate / Module | Responsibility | Key Features |
 | :--- | :--- | :--- |
-| `arc-cli` | **Client Interface** | Frontend REPL, token routing, and `rustyline` plugins. |
-| `arc-core` | **Foundation Layer** | Credentials, config parsing, and Prompt Guard engines. |
-| `arc-providers` | **Model Gateways** | Native Deepmind Gemini, Anthropic Claude, and Ollama clients. |
+| `arc-cli` | **Client Interface** | Frontend REPL, token routing, extensions CLI, and `rustyline` plugins. |
+| `arc-core` | **Foundation Layer** | Credentials, config, loop detection, tool masking, JIT context, IDE detect, billing, prompt registry. |
+| `arc-providers` | **Model Gateways** | Native Gemini, Claude, OpenAI clients + model availability + fallback handler. |
 | `arc-agents` | **Swarm Delegation** | Orchestrator dispatcher mapping specialized sub-agent routines. |
 | `arc-a2a` | **Agent Protocol** | HTTP/2 SSE communications secured by HMAC/JWT signatures. |
-| `arc-session` | **Persistent Memory** | `redb` embedded K-V storage for atomic checkpoint undo/rewind. |
+| `arc-session` | **Persistent Memory** | `redb` K-V storage, checkpoint undo/rewind, auto session summaries. |
+| `arc-policy` | **Safety Engine** | Conseca dynamic policies, static rule engine, LLM-generated SecurityPolicy. |
+| `arc-plan` | **Planning Mode** | Read-only analysis, persistent task tracker with DAG validation. |
+| `arc-diff` | **Structural Diffing** | Semantic diffs, context snippet generator, patch engine. |
 | `arc-repomap` | **Code Intelligence** | `tree-sitter` AST extraction powering massive 10x context compressions. |
 | **Subsystems** | **Capability Expansions** | `arc-voice`, `arc-vision`, `arc-sandbox`, `arc-skills` native scale-outs. |
 

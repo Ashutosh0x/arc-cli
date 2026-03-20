@@ -3,7 +3,7 @@
 //! Scans a workspace directory for local configurations before granting trust.
 //! Discovers commands, MCPs, hooks, skills, agents, and collects security warnings.
 
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 const ARC_DIR: &str = ".arc";
 

@@ -288,13 +288,15 @@ impl LoopDetectionService {
 
     fn analyze_content_chunks(&mut self) -> bool {
         while self.last_content_index + CONTENT_CHUNK_SIZE <= self.stream_content_history.len() {
-            let chunk = &self.stream_content_history
-                [self.last_content_index..self.last_content_index + CONTENT_CHUNK_SIZE];
+            // Clone to owned String to avoid borrow conflict with &mut self
+            let chunk_owned = self.stream_content_history
+                [self.last_content_index..self.last_content_index + CONTENT_CHUNK_SIZE]
+                .to_string();
             let mut hasher = Sha256::new();
-            hasher.update(chunk.as_bytes());
+            hasher.update(chunk_owned.as_bytes());
             let chunk_hash = hex::encode(hasher.finalize());
 
-            if self.is_loop_for_chunk(chunk, &chunk_hash) {
+            if self.is_loop_for_chunk(&chunk_owned, &chunk_hash) {
                 return true;
             }
             self.last_content_index += 1;

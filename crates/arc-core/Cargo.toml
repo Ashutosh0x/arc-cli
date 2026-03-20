@@ -42,6 +42,7 @@ compact_str.workspace = true
 tiktoken-rs.workspace = true
 hdrhistogram.workspace = true
 zeroize = { version = "1", features = ["derive"] }
+hex.workspace = true
 tokio-util = { version = "0.7", features = ["rt"] }
 fs2 = "0.4.3"
 [dev-dependencies]
