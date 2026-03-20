@@ -12,7 +12,7 @@ jobs:
       matrix:
         target: [sse_parser, config_parser, hook_config, plugin_manifest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: dtolnay/rust-toolchain@nightly
 
       - name: Install cargo-fuzz
