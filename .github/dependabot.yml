@@ -1,12 +1,24 @@
 version: 2
 updates:
+  # Cargo dependencies - conservative
   - package-ecosystem: cargo
     directory: "/"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 10
+      day: monday
+    open-pull-requests-limit: 3
+    versioning-strategy: lockfile-only
+    labels:
+      - "dependencies"
+      - "cargo"
+
+  # GitHub Actions - safe to auto-update
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "ci"
