@@ -12,7 +12,7 @@ thiserror.workspace = true
 tracing.workspace = true
 reqwest.workspace = true
 async-trait.workspace = true
-scraper = "0.20"
+scraper = "0.26"
 urlencoding = "2.1"
 
 [lints]
