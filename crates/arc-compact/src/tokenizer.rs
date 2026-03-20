@@ -20,8 +20,10 @@ impl Tokenizer {
         if tokens.len() <= max_tokens {
             return text.to_string();
         }
-        
+
         let truncated_tokens = &tokens[..max_tokens];
-        self.bpe.decode(truncated_tokens.to_vec()).unwrap_or_else(|_| text.to_string())
+        self.bpe
+            .decode(truncated_tokens.to_vec())
+            .unwrap_or_else(|_| text.to_string())
     }
 }

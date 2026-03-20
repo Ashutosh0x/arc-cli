@@ -34,9 +34,7 @@ impl VoiceSession {
         let ptt = PushToTalkController::new(ptt_tx);
 
         // PTT thread (blocking keyboard events)
-        let ptt_handle = std::thread::spawn(move || {
-            ptt.run_blocking()
-        });
+        let ptt_handle = std::thread::spawn(move || ptt.run_blocking());
 
         // Transcription loop
         let capture = self.capture.clone();
@@ -49,7 +47,7 @@ impl VoiceSession {
                     PttEvent::Started => {
                         capture.set_recording(true);
                         info!("🎤 Recording... (release spacebar to send)");
-                    }
+                    },
                     PttEvent::Stopped => {
                         capture.set_recording(false);
                         info!("⏹️  Processing speech...");
@@ -60,24 +58,24 @@ impl VoiceSession {
                                     Ok(text) if !text.trim().is_empty() => {
                                         info!("📝 Transcribed: {text}");
                                         let _ = tx.send_async(text).await;
-                                    }
+                                    },
                                     Ok(_) => {
                                         info!("(no speech detected)");
-                                    }
+                                    },
                                     Err(e) => {
                                         error!("Transcription error: {e}");
-                                    }
+                                    },
                                 }
-                            }
+                            },
                             Ok(_) => info!("(recording too short)"),
                             Err(e) => error!("WAV encoding error: {e}"),
                         }
-                    }
+                    },
                     PttEvent::Cancelled => {
                         capture.set_recording(false);
                         info!("Voice mode cancelled");
                         break;
-                    }
+                    },
                 }
             }
         });

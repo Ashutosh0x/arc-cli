@@ -44,7 +44,11 @@ impl WildcardPermissionEngine {
         }
         let tool = rule_str[..open].trim().to_string();
         let pattern = rule_str[open + 1..close].trim().to_string();
-        Some(WildcardPermission { tool, pattern, action })
+        Some(WildcardPermission {
+            tool,
+            pattern,
+            action,
+        })
     }
 
     /// Check if a tool invocation matches any permission rule
@@ -129,7 +133,8 @@ mod tests {
 
     #[test]
     fn test_parse_rule() {
-        let rule = WildcardPermissionEngine::parse_rule("Bash(npm *)", PermissionAction::Allow).unwrap();
+        let rule =
+            WildcardPermissionEngine::parse_rule("Bash(npm *)", PermissionAction::Allow).unwrap();
         assert_eq!(rule.tool, "Bash");
         assert_eq!(rule.pattern, "npm *");
     }

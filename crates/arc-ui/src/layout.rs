@@ -6,14 +6,14 @@ use crate::state::UiState;
 use crate::theme::Theme;
 
 pub struct Layout {
-    theme:  Theme,
+    theme: Theme,
     buffer: Vec<u8>,
 }
 
 impl Layout {
     pub fn new() -> Self {
         Self {
-            theme:  Theme::default(),
+            theme: Theme::default(),
             buffer: Vec::with_capacity(8192),
         }
     }

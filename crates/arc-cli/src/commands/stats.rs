@@ -71,7 +71,11 @@ pub async fn run(data_dir: &Path) -> Result<()> {
     println!();
     print_kv(
         "Database",
-        &format!("{} ({} records)", store.path().display(), store.record_count()?),
+        &format!(
+            "{} ({} records)",
+            store.path().display(),
+            store.record_count()?
+        ),
     );
     println!();
 

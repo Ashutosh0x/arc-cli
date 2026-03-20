@@ -26,32 +26,34 @@ impl TelemetryStore {
     /// The actual file will be `<dir>/telemetry.redb`.
     pub fn open(dir: &Path) -> Result<Self, ArcError> {
         std::fs::create_dir_all(dir).map_err(|e| {
-            ArcError::System(format!("cannot create telemetry dir {}: {e}", dir.display()))
+            ArcError::System(format!(
+                "cannot create telemetry dir {}: {e}",
+                dir.display()
+            ))
         })?;
 
         let path = dir.join("telemetry.redb");
         let db = Database::create(&path).map_err(|e| {
-            ArcError::Database(format!(
-                "cannot open telemetry db {}: {e}",
-                path.display()
-            ))
+            ArcError::Database(format!("cannot open telemetry db {}: {e}", path.display()))
         })?;
 
         // Ensure tables exist.
-        let txn = db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let txn = db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let _ = txn.open_table(REQUESTS);
             let _ = txn.open_table(META);
         }
-        txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        txn.commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
 
         Ok(Self { db, path })
     }
 
     /// Record a completed LLM request.
     pub fn record(&self, record: &RequestRecord) -> Result<(), ArcError> {
-        let encoded =
-            serde_json::to_vec(record).map_err(|e| ArcError::System(e.to_string()))?;
+        let encoded = serde_json::to_vec(record).map_err(|e| ArcError::System(e.to_string()))?;
 
         let txn = self
             .db
@@ -112,7 +114,10 @@ impl TelemetryStore {
             last_record_ms: None,
         };
 
-        for entry in table.iter().map_err(|e| ArcError::Database(e.to_string()))? {
+        for entry in table
+            .iter()
+            .map_err(|e| ArcError::Database(e.to_string()))?
+        {
             let (_key, value) = entry.map_err(|e| ArcError::Database(e.to_string()))?;
             let record: RequestRecord = serde_json::from_slice(value.value())
                 .map_err(|e| ArcError::System(format!("corrupt telemetry record: {e}")))?;

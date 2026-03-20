@@ -24,13 +24,17 @@ pub async fn run(cwd: &Path) -> Result<()> {
     // 2. Generate ARC.md rules
     let arc_md_path = cwd.join("ARC.md");
     if arc_md_path.exists() {
-        println!("  {} {} already exists. Skipping.", style("ℹ").cyan(), style("ARC.md").bold());
+        println!(
+            "  {} {} already exists. Skipping.",
+            style("ℹ").cyan(),
+            style("ARC.md").bold()
+        );
     } else {
         let mut rules = String::from("# Project Instructions (ARC.md)\n\n");
         rules.push_str("These instructions are automatically prepended to the system prompt of every agent.\n\n");
         rules.push_str("## Core Constraints\n");
         rules.push_str("- Always break down tasks before implementing them.\n");
-        
+
         if is_rust {
             rules.push_str("- This is a Rust project. Prioritize `std` when possible, use explicit error propagation (`?`), and document all public traits.\n");
             rules.push_str("- Format code with `cargo fmt`.\n");
@@ -44,7 +48,11 @@ pub async fn run(cwd: &Path) -> Result<()> {
         }
 
         fs::write(&arc_md_path, rules)?;
-        println!("  {} Generated {}", style("✓").green(), style("ARC.md").bold());
+        println!(
+            "  {} Generated {}",
+            style("✓").green(),
+            style("ARC.md").bold()
+        );
     }
 
     // 3. Generate .arc/hooks.toml
@@ -55,10 +63,14 @@ pub async fn run(cwd: &Path) -> Result<()> {
 
     let hooks_path = arc_dir.join("hooks.toml");
     if hooks_path.exists() {
-        println!("  {} {} already exists. Skipping.", style("ℹ").cyan(), style(".arc/hooks.toml").bold());
+        println!(
+            "  {} {} already exists. Skipping.",
+            style("ℹ").cyan(),
+            style(".arc/hooks.toml").bold()
+        );
     } else {
         let mut hooks_config = String::from("# Configurable Execution Hooks\n\n");
-        
+
         if is_rust {
             hooks_config.push_str("post_edit = [\"cargo check\", \"cargo fmt\"]\n");
             hooks_config.push_str("pre_commit = [\"cargo clippy -- -D warnings\"]\n");
@@ -69,17 +81,27 @@ pub async fn run(cwd: &Path) -> Result<()> {
         }
 
         fs::write(&hooks_path, hooks_config)?;
-        println!("  {} Generated {}", style("✓").green(), style(".arc/hooks.toml").bold());
+        println!(
+            "  {} Generated {}",
+            style("✓").green(),
+            style(".arc/hooks.toml").bold()
+        );
     }
 
     // 4. Validate OS Sandbox support explicitly mapping `arc doctor` logic
     println!("\n  Evaluating Sandboxed Operations bounds:");
     #[cfg(target_os = "linux")]
-    println!("  {} OS path restrictions bounded via Landlock syscall injection", style("✓").green());
+    println!(
+        "  {} OS path restrictions bounded via Landlock syscall injection",
+        style("✓").green()
+    );
     #[cfg(not(target_os = "linux"))]
-    println!("  {} OS path restrictions bounded natively in software wrapper", style("✓").green());
+    println!(
+        "  {} OS path restrictions bounded natively in software wrapper",
+        style("✓").green()
+    );
 
     println!("\n  {} Workspace is ARC-ready.", style("🎉").yellow());
-    
+
     Ok(())
 }

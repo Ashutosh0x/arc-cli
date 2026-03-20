@@ -6,7 +6,7 @@
 [![Downloads](https://img.shields.io/github/downloads/Ashutosh0x/arc-cli/total?style=for-the-badge&logo=github)](https://github.com/Ashutosh0x/arc-cli/releases)
 [![Build](https://img.shields.io/github/actions/workflow/status/Ashutosh0x/arc-cli/test.yml?branch=main&style=for-the-badge&logo=github-actions&label=CI)](https://github.com/Ashutosh0x/arc-cli/actions)
 [![License](https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge)](LICENSE)
-![Rust](https://img.shields.io/badge/Rust_1.85+-DEA584?style=for-the-badge&logo=rust&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust_1.86+-DEA584?style=for-the-badge&logo=rust&logoColor=white)
 
 A native agentic CLI that reasons over codebases. One binary. No runtime. Works offline.
 

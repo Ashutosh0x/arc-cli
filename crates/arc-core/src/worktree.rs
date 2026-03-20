@@ -3,8 +3,8 @@
 //! `--worktree` flag support: sparse-checkout, Enter/ExitWorktree tools,
 //! auto-cleanup stale worktrees.
 
-use std::path::PathBuf;
 use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
 /// Worktree session configuration.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -20,7 +20,12 @@ pub struct WorktreeConfig {
 
 impl Default for WorktreeConfig {
     fn default() -> Self {
-        Self { enabled: false, sparse_paths: Vec::new(), auto_cleanup: true, branch_prefix: "arc-agent/".into() }
+        Self {
+            enabled: false,
+            sparse_paths: Vec::new(),
+            auto_cleanup: true,
+            branch_prefix: "arc-agent/".into(),
+        }
     }
 }
 
@@ -44,13 +49,26 @@ pub struct WorktreeManager {
 
 impl WorktreeManager {
     pub fn new(repo_root: PathBuf, config: WorktreeConfig) -> Self {
-        Self { config, repo_root, active_worktrees: Vec::new() }
+        Self {
+            config,
+            repo_root,
+            active_worktrees: Vec::new(),
+        }
     }
 
     /// Create a new isolated worktree for an agent session.
-    pub fn create_worktree(&mut self, session_id: &str, branch_name: Option<&str>) -> Result<WorktreeInstance, String> {
-        let branch = branch_name.map(|b| b.to_string())
-            .unwrap_or_else(|| format!("{}session-{}", self.config.branch_prefix, &session_id[..8.min(session_id.len())]));
+    pub fn create_worktree(
+        &mut self,
+        session_id: &str,
+        branch_name: Option<&str>,
+    ) -> Result<WorktreeInstance, String> {
+        let branch = branch_name.map(|b| b.to_string()).unwrap_or_else(|| {
+            format!(
+                "{}session-{}",
+                self.config.branch_prefix,
+                &session_id[..8.min(session_id.len())]
+            )
+        });
         let wt_dir = self.repo_root.join(".arc-worktrees").join(&branch);
 
         // Create worktree via git.
@@ -62,7 +80,10 @@ impl WorktreeManager {
             .map_err(|e| format!("Failed to create worktree: {e}"))?;
 
         if !output.status.success() {
-            return Err(format!("git worktree add failed: {}", String::from_utf8_lossy(&output.stderr)));
+            return Err(format!(
+                "git worktree add failed: {}",
+                String::from_utf8_lossy(&output.stderr)
+            ));
         }
 
         // Apply sparse-checkout if configured.
@@ -82,7 +103,8 @@ impl WorktreeManager {
             session_id: session_id.to_string(),
             created_at: std::time::SystemTime::now()
                 .duration_since(std::time::UNIX_EPOCH)
-                .unwrap_or_default().as_secs(),
+                .unwrap_or_default()
+                .as_secs(),
         };
 
         self.active_worktrees.push(instance.clone());
@@ -113,5 +135,7 @@ impl WorktreeManager {
         Ok(removed)
     }
 
-    pub fn active_worktrees(&self) -> &[WorktreeInstance] { &self.active_worktrees }
+    pub fn active_worktrees(&self) -> &[WorktreeInstance] {
+        &self.active_worktrees
+    }
 }

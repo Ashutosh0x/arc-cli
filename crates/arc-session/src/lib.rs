@@ -5,9 +5,9 @@
 //! compared to cold start.
 
 mod checkpoint;
+mod rewind;
 mod session_db;
 mod session_model;
-mod rewind;
 
 // Phase 28: Session Summary Service
 pub mod summary;
@@ -15,10 +15,10 @@ pub mod summary;
 // Phase 30: Session Fork/Branch
 pub mod fork;
 
-pub use checkpoint::{CheckpointManager, CheckpointConfig};
+pub use checkpoint::{CheckpointConfig, CheckpointManager};
+pub use rewind::RewindManager;
 pub use session_db::SessionDatabase;
 pub use session_model::{
-    SessionState, SessionMetadata, ConversationTurn, TurnRole,
-    ToolCallRecord, MemorySnapshot, CheckpointId,
+    CheckpointId, ConversationTurn, MemorySnapshot, SessionMetadata, SessionState, ToolCallRecord,
+    TurnRole,
 };
-pub use rewind::RewindManager;

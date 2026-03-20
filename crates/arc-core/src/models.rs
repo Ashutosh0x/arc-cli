@@ -82,7 +82,8 @@ impl ModelRegistry {
 
 /// Fetch models from Anthropic's API.
 async fn fetch_anthropic_models(client: &reqwest::Client) -> ArcResult<Vec<ModelInfo>> {
-    let key: String = match credentials::get_credential(Provider::Anthropic, CredentialKind::ApiKey) {
+    let key: String = match credentials::get_credential(Provider::Anthropic, CredentialKind::ApiKey)
+    {
         Ok(k) => k.to_string(),
         Err(_) => return Ok(vec![]),
     };
@@ -193,8 +194,9 @@ async fn fetch_openai_models(client: &reqwest::Client) -> ArcResult<Vec<ModelInf
 /// Fetch models from Google Gemini API.
 async fn fetch_gemini_models(client: &reqwest::Client) -> ArcResult<Vec<ModelInfo>> {
     let key: String = match credentials::get_credential(Provider::Gemini, CredentialKind::ApiKey)
-        .or_else(|_| credentials::get_credential(Provider::Gemini, CredentialKind::OAuthAccessToken))
-    {
+        .or_else(|_| {
+            credentials::get_credential(Provider::Gemini, CredentialKind::OAuthAccessToken)
+        }) {
         Ok(k) => k.to_string(),
         Err(_) => return Ok(vec![]),
     };

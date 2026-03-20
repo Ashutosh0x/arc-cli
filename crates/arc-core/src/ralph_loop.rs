@@ -3,12 +3,18 @@
 //! `/ralph-loop` with `--max-iterations` and `--completion-promise`.
 //! Stop-hook-driven autonomous iteration that prevents session exit.
 
-use std::time::{Duration, Instant};
 use serde::{Deserialize, Serialize};
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum LoopStatus { Running, Paused, Completed, MaxIterationsReached, Error }
+pub enum LoopStatus {
+    Running,
+    Paused,
+    Completed,
+    MaxIterationsReached,
+    Error,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct RalphLoopConfig {
@@ -20,11 +26,18 @@ pub struct RalphLoopConfig {
     pub stop_on_error: bool,
 }
 
-fn default_cooldown() -> u64 { 2000 }
+fn default_cooldown() -> u64 {
+    2000
+}
 
 impl Default for RalphLoopConfig {
     fn default() -> Self {
-        Self { max_iterations: 10, completion_promise: "Task is fully complete".into(), cooldown_ms: 2000, stop_on_error: true }
+        Self {
+            max_iterations: 10,
+            completion_promise: "Task is fully complete".into(),
+            cooldown_ms: 2000,
+            stop_on_error: true,
+        }
     }
 }
 
@@ -47,11 +60,20 @@ pub struct RalphLoop {
 
 impl RalphLoop {
     pub fn new(config: RalphLoopConfig) -> Self {
-        Self { config, status: LoopStatus::Running, iterations_completed: 0, history: Vec::new(), started_at: None }
+        Self {
+            config,
+            status: LoopStatus::Running,
+            iterations_completed: 0,
+            history: Vec::new(),
+            started_at: None,
+        }
     }
 
     /// Start the loop.
-    pub fn start(&mut self) { self.started_at = Some(Instant::now()); self.status = LoopStatus::Running; }
+    pub fn start(&mut self) {
+        self.started_at = Some(Instant::now());
+        self.status = LoopStatus::Running;
+    }
 
     /// Check if another iteration should run.
     pub fn should_continue(&self) -> bool {
@@ -61,17 +83,34 @@ impl RalphLoop {
     /// Generate the next iteration prompt.
     pub fn next_prompt(&self) -> String {
         if self.iterations_completed == 0 {
-            format!("Begin working towards: {}\nCompletion criteria: {}\nMax iterations: {}", 
-                self.config.completion_promise, self.config.completion_promise, self.config.max_iterations)
+            format!(
+                "Begin working towards: {}\nCompletion criteria: {}\nMax iterations: {}",
+                self.config.completion_promise,
+                self.config.completion_promise,
+                self.config.max_iterations
+            )
         } else {
-            let prev = self.history.last().map(|r| r.result_summary.as_str()).unwrap_or("No previous output");
-            format!("Continue working. Iteration {}/{}.\nPrevious result: {prev}\nCompletion criteria: {}\nIf complete, say DONE.",
-                self.iterations_completed + 1, self.config.max_iterations, self.config.completion_promise)
+            let prev = self
+                .history
+                .last()
+                .map(|r| r.result_summary.as_str())
+                .unwrap_or("No previous output");
+            format!(
+                "Continue working. Iteration {}/{}.\nPrevious result: {prev}\nCompletion criteria: {}\nIf complete, say DONE.",
+                self.iterations_completed + 1,
+                self.config.max_iterations,
+                self.config.completion_promise
+            )
         }
     }
 
     /// Record an iteration result.
-    pub fn record_iteration(&mut self, result_summary: &str, files_changed: Vec<String>, duration_ms: u64) {
+    pub fn record_iteration(
+        &mut self,
+        result_summary: &str,
+        files_changed: Vec<String>,
+        duration_ms: u64,
+    ) {
         self.iterations_completed += 1;
         self.history.push(IterationRecord {
             iteration: self.iterations_completed,
@@ -91,16 +130,32 @@ impl RalphLoop {
 
     /// Record an error.
     pub fn record_error(&mut self) {
-        if self.config.stop_on_error { self.status = LoopStatus::Error; }
+        if self.config.stop_on_error {
+            self.status = LoopStatus::Error;
+        }
     }
 
     /// Pause the loop.
-    pub fn pause(&mut self) { self.status = LoopStatus::Paused; }
+    pub fn pause(&mut self) {
+        self.status = LoopStatus::Paused;
+    }
     /// Resume the loop.
-    pub fn resume(&mut self) { if self.status == LoopStatus::Paused { self.status = LoopStatus::Running; } }
+    pub fn resume(&mut self) {
+        if self.status == LoopStatus::Paused {
+            self.status = LoopStatus::Running;
+        }
+    }
 
-    pub fn status(&self) -> LoopStatus { self.status }
-    pub fn iterations(&self) -> u32 { self.iterations_completed }
-    pub fn history(&self) -> &[IterationRecord] { &self.history }
-    pub fn elapsed(&self) -> Duration { self.started_at.map(|s| s.elapsed()).unwrap_or_default() }
+    pub fn status(&self) -> LoopStatus {
+        self.status
+    }
+    pub fn iterations(&self) -> u32 {
+        self.iterations_completed
+    }
+    pub fn history(&self) -> &[IterationRecord] {
+        &self.history
+    }
+    pub fn elapsed(&self) -> Duration {
+        self.started_at.map(|s| s.elapsed()).unwrap_or_default()
+    }
 }

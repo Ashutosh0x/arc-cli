@@ -2,7 +2,7 @@
 //! Supports JWT bearer tokens and HMAC-SHA256 request signing.
 
 use hmac::{Hmac, Mac};
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode};
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 use tracing::{debug, warn};
@@ -64,11 +64,11 @@ pub fn validate_jwt(token: &str, secret: &[u8], my_agent_id: &str) -> A2AResult<
 
     let token_data = decode::<AgentClaims>(token, &DecodingKey::from_secret(secret), &validation)
         .map_err(|e| match e.kind() {
-            jsonwebtoken::errors::ErrorKind::ExpiredSignature => A2AError::TokenExpired {
-                agent_id: "unknown".into(),
-            },
-            _ => A2AError::AuthFailed(format!("JWT validation failed: {e}")),
-        })?;
+        jsonwebtoken::errors::ErrorKind::ExpiredSignature => A2AError::TokenExpired {
+            agent_id: "unknown".into(),
+        },
+        _ => A2AError::AuthFailed(format!("JWT validation failed: {e}")),
+    })?;
 
     debug!(agent = %token_data.claims.sub, "JWT validated successfully");
     Ok(token_data.claims)
@@ -100,8 +100,7 @@ pub fn verify_signature(msg: &A2AMessage, secret: &[u8]) -> A2AResult<()> {
         .as_ref()
         .ok_or_else(|| A2AError::SignatureInvalid)?;
 
-    let sig_bytes =
-        hex::decode(sig_hex).map_err(|_| A2AError::SignatureInvalid)?;
+    let sig_bytes = hex::decode(sig_hex).map_err(|_| A2AError::SignatureInvalid)?;
 
     // Rebuild the message without signature for verification
     let mut verify_msg = msg.clone();
@@ -130,20 +129,14 @@ pub enum Credential {
     /// No authentication
     None,
     /// JWT bearer token (auto-generated)
-    Jwt {
-        secret: Vec<u8>,
-        ttl_secs: u64,
-    },
+    Jwt { secret: Vec<u8>, ttl_secs: u64 },
     /// HMAC signing key
     Hmac {
         secret: Vec<u8>,
         header_name: String,
     },
     /// Static API key
-    ApiKey {
-        key: String,
-        header_name: String,
-    },
+    ApiKey { key: String, header_name: String },
 }
 
 impl Credential {
@@ -159,14 +152,14 @@ impl Credential {
             Credential::Jwt { secret, ttl_secs } => {
                 let token = generate_jwt(sender_id, target_id, secret, *ttl_secs)?;
                 Ok(req.bearer_auth(token))
-            }
+            },
             Credential::ApiKey { key, header_name } => {
                 Ok(req.header(header_name.as_str(), key.as_str()))
-            }
+            },
             Credential::Hmac { .. } => {
                 // HMAC is applied after body serialization — handled in client
                 Ok(req)
-            }
+            },
         }
     }
 }

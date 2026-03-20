@@ -5,9 +5,9 @@
 //! - Value patterns: RSA keys, JWTs, GitHub tokens, AWS keys, Stripe keys
 //! - Strict mode for CI environments (only explicit allowlist passes)
 
+use once_cell::sync::Lazy;
 use regex::Regex;
 use std::collections::{HashMap, HashSet};
-use once_cell::sync::Lazy;
 
 // ── Always-allowed variables ────────────────────────────────────────────────
 
@@ -16,14 +16,27 @@ static ALWAYS_ALLOWED: Lazy<HashSet<&'static str>> = Lazy::new(|| {
         // Cross-platform
         "PATH",
         // Windows
-        "SYSTEMROOT", "COMSPEC", "PATHEXT", "WINDIR", "TEMP", "TMP",
-        "USERPROFILE", "SYSTEMDRIVE",
+        "SYSTEMROOT",
+        "COMSPEC",
+        "PATHEXT",
+        "WINDIR",
+        "TEMP",
+        "TMP",
+        "USERPROFILE",
+        "SYSTEMDRIVE",
         // Unix/macOS
-        "HOME", "LANG", "SHELL", "TMPDIR", "USER", "LOGNAME",
+        "HOME",
+        "LANG",
+        "SHELL",
+        "TMPDIR",
+        "USER",
+        "LOGNAME",
         // Terminal
-        "TERM", "COLORTERM",
+        "TERM",
+        "COLORTERM",
         // ARC CLI
-        "ARC_CLI_CONFIG", "ARC_CLI_DEBUG",
+        "ARC_CLI_CONFIG",
+        "ARC_CLI_DEBUG",
     ]
     .into_iter()
     .collect()
@@ -33,10 +46,18 @@ static ALWAYS_ALLOWED: Lazy<HashSet<&'static str>> = Lazy::new(|| {
 
 static NEVER_ALLOWED_NAMES: Lazy<HashSet<&'static str>> = Lazy::new(|| {
     [
-        "CLIENT_ID", "DB_URI", "CONNECTION_STRING",
-        "AWS_DEFAULT_REGION", "AZURE_CLIENT_ID", "AZURE_TENANT_ID",
-        "SLACK_WEBHOOK_URL", "TWILIO_ACCOUNT_SID", "DATABASE_URL",
-        "GOOGLE_CLOUD_PROJECT", "GOOGLE_CLOUD_ACCOUNT", "FIREBASE_PROJECT_ID",
+        "CLIENT_ID",
+        "DB_URI",
+        "CONNECTION_STRING",
+        "AWS_DEFAULT_REGION",
+        "AZURE_CLIENT_ID",
+        "AZURE_TENANT_ID",
+        "SLACK_WEBHOOK_URL",
+        "TWILIO_ACCOUNT_SID",
+        "DATABASE_URL",
+        "GOOGLE_CLOUD_PROJECT",
+        "GOOGLE_CLOUD_ACCOUNT",
+        "FIREBASE_PROJECT_ID",
     ]
     .into_iter()
     .collect()
@@ -45,11 +66,21 @@ static NEVER_ALLOWED_NAMES: Lazy<HashSet<&'static str>> = Lazy::new(|| {
 // ── Name patterns (regex) ───────────────────────────────────────────────────
 
 static NAME_PATTERNS: Lazy<Vec<Regex>> = Lazy::new(|| {
-    ["TOKEN", "SECRET", "PASSWORD", "PASSWD", "KEY", "AUTH",
-     "CREDENTIAL", "CREDS", "PRIVATE", "CERT"]
-        .iter()
-        .map(|p| Regex::new(&format!("(?i){p}")).expect("valid regex"))
-        .collect()
+    [
+        "TOKEN",
+        "SECRET",
+        "PASSWORD",
+        "PASSWD",
+        "KEY",
+        "AUTH",
+        "CREDENTIAL",
+        "CREDS",
+        "PRIVATE",
+        "CERT",
+    ]
+    .iter()
+    .map(|p| Regex::new(&format!("(?i){p}")).expect("valid regex"))
+    .collect()
 });
 
 // ── Value patterns (detect secrets in env var values) ───────────────────────
@@ -69,7 +100,8 @@ static VALUE_PATTERNS: Lazy<Vec<Regex>> = Lazy::new(|| {
         // AWS Access Key ID
         Regex::new(r"AKIA[A-Z0-9]{16}").expect("valid"),
         // JWT tokens
-        Regex::new(r"eyJ[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}").expect("valid"),
+        Regex::new(r"eyJ[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}\.[a-zA-Z0-9_\-]{10,}")
+            .expect("valid"),
         // Stripe API keys
         Regex::new(r"(s|r)k_(live|test)_[0-9a-zA-Z]{24}").expect("valid"),
         // Slack tokens
@@ -211,7 +243,10 @@ mod tests {
     #[test]
     fn test_blocks_github_token_in_value() {
         let mut env = HashMap::new();
-        env.insert("MY_VAR".to_string(), "ghp_abcdefghijklmnopqrstuvwxyz1234567890".to_string());
+        env.insert(
+            "MY_VAR".to_string(),
+            "ghp_abcdefghijklmnopqrstuvwxyz1234567890".to_string(),
+        );
         let result = sanitize_environment(&env, &SanitizationConfig::default());
         assert!(!result.contains_key("MY_VAR"));
     }

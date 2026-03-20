@@ -1,26 +1,26 @@
 #![forbid(unsafe_code)]
 
-pub mod provider;
 pub mod anthropic;
-pub mod openai;
 pub mod gemini;
-pub mod ollama;
-pub mod router;
-pub mod stream;
-pub mod security;
 pub mod message;
+pub mod ollama;
+pub mod openai;
+pub mod provider;
+pub mod router;
+pub mod security;
+pub mod stream;
 pub mod traits;
 
 pub mod breaker;
-pub mod routing;
 pub mod mock;
+pub mod routing;
 
 // Phase 28: Model Availability & Fallback
 pub mod availability;
 pub mod fallback;
 
 pub mod streaming {
-    pub use crate::stream::{StreamingClient, StreamEvent};
+    pub use crate::stream::{StreamEvent, StreamingClient};
 
     /// A parsed SSE event with event type and data fields.
     #[derive(Debug, Clone)]
@@ -57,9 +57,15 @@ pub mod streaming {
                 continue;
             }
 
-            if let Some(event_type) = line.strip_prefix("event: ").or_else(|| line.strip_prefix("event:")) {
+            if let Some(event_type) = line
+                .strip_prefix("event: ")
+                .or_else(|| line.strip_prefix("event:"))
+            {
                 current_event_type = event_type.trim().to_string();
-            } else if let Some(data) = line.strip_prefix("data: ").or_else(|| line.strip_prefix("data:")) {
+            } else if let Some(data) = line
+                .strip_prefix("data: ")
+                .or_else(|| line.strip_prefix("data:"))
+            {
                 current_data_lines.push(data.to_string());
             }
             // Ignore comments (lines starting with :), id fields, and other non-standard lines
@@ -76,4 +82,3 @@ pub mod streaming {
         events
     }
 }
-

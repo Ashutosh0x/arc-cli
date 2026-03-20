@@ -9,7 +9,10 @@ fn default_config_roundtrip() {
     let parsed: ArcConfig = toml::from_str(&toml_str).expect("deserialize");
 
     // Verify key fields survived the round-trip.
-    assert_eq!(config.general.default_provider, parsed.general.default_provider);
+    assert_eq!(
+        config.general.default_provider,
+        parsed.general.default_provider
+    );
     assert_eq!(config.general.default_model, parsed.general.default_model);
 }
 
@@ -36,12 +39,18 @@ host = "http://localhost:11434"
 "#;
 
     let config: ArcConfig = toml::from_str(toml_input).expect("parse config");
-    assert_eq!(config.general.default_provider.as_deref(), Some("anthropic"));
+    assert_eq!(
+        config.general.default_provider.as_deref(),
+        Some("anthropic")
+    );
 
     // Roundtrip back.
     let serialized = toml::to_string_pretty(&config).expect("serialize");
     let reparsed: ArcConfig = toml::from_str(&serialized).expect("re-parse");
-    assert_eq!(config.general.default_provider, reparsed.general.default_provider);
+    assert_eq!(
+        config.general.default_provider,
+        reparsed.general.default_provider
+    );
 }
 
 #[test]

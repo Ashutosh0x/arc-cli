@@ -8,8 +8,8 @@ use serde::Serialize;
 use std::convert::Infallible;
 use std::time::Duration;
 use tokio::sync::watch;
-use tokio_stream::wrappers::WatchStream;
 use tokio_stream::StreamExt;
+use tokio_stream::wrappers::WatchStream;
 use tracing::debug;
 use uuid::Uuid;
 
@@ -86,16 +86,15 @@ pub fn heartbeat_stream(
     active: u32,
     interval: Duration,
 ) -> Sse<impl Stream<Item = Result<Event, Infallible>> + Send + 'static> {
-
-    let stream = tokio_stream::wrappers::IntervalStream::new(tokio::time::interval(interval))
-        .map(move |_| {
+    let stream = tokio_stream::wrappers::IntervalStream::new(tokio::time::interval(interval)).map(
+        move |_| {
             let update = SseUpdate::Heartbeat {
                 active_tasks: active,
             };
             let data = serde_json::to_string(&update).unwrap_or_default();
             Ok(Event::default().event("heartbeat").data(data))
-        });
+        },
+    );
 
-    Sse::new(stream)
-        .keep_alive(KeepAlive::new().interval(Duration::from_secs(30)))
+    Sse::new(stream).keep_alive(KeepAlive::new().interval(Duration::from_secs(30)))
 }

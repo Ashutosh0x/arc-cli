@@ -1,7 +1,7 @@
-use std::collections::HashMap;
 use anyhow::Result;
-use serde_json::Value;
 use async_trait::async_trait;
+use serde_json::Value;
+use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
 pub struct SkillContext {
@@ -19,13 +19,13 @@ pub struct SkillResult {
 pub trait Skill: Send + Sync {
     /// The unique name of the skill (e.g. `github_pr_create`)
     fn name(&self) -> &str;
-    
+
     /// A human-readable and LLM-readable description of what the skill does
     fn description(&self) -> &str;
-    
+
     /// JSON schema describing the required and optional parameters
     fn parameters_schema(&self) -> Value;
-    
+
     /// Execute the skill with the given context
     async fn execute(&self, ctx: SkillContext) -> Result<SkillResult>;
 }

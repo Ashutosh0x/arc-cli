@@ -1,5 +1,5 @@
-use similar::{ChangeTag, TextDiff};
 use crate::state::{DiffBlock, DiffLine, Hunk};
+use similar::{ChangeTag, TextDiff};
 
 /// Compute a structured DiffBlock from raw old/new content
 pub fn compute_diff(file_path: &str, old: &str, new: &str) -> DiffBlock {
@@ -20,15 +20,15 @@ pub fn compute_diff(file_path: &str, old: &str, new: &str) -> DiffBlock {
             for change in text_diff.iter_changes(op) {
                 let line = change.value().trim_end_matches('\n').to_string();
                 match change.tag() {
-                    ChangeTag::Equal  => hunk.context.push(DiffLine::Context(line)),
+                    ChangeTag::Equal => hunk.context.push(DiffLine::Context(line)),
                     ChangeTag::Insert => {
                         hunk.context.push(DiffLine::Add(line));
                         additions += 1;
-                    }
+                    },
                     ChangeTag::Delete => {
                         hunk.context.push(DiffLine::Del(line));
                         deletions += 1;
-                    }
+                    },
                 }
             }
         }

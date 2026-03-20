@@ -68,7 +68,10 @@ impl Tool for ShellTool {
         }
 
         if result.is_empty() {
-            result.push_str(&format!("Command completed successfully with code {}", output.status));
+            result.push_str(&format!(
+                "Command completed successfully with code {}",
+                output.status
+            ));
         }
 
         Ok(result)

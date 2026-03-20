@@ -10,11 +10,11 @@ pub mod state;
 pub mod theme;
 
 use crossterm::terminal;
-use std::io::{self, stdout};
 use state::{Phase, UiState};
+use std::io::{self, stdout};
 
 pub struct TerminalUi {
-    state:  UiState,
+    state: UiState,
     layout: layout::Layout,
 }
 
@@ -22,7 +22,7 @@ impl TerminalUi {
     pub fn new() -> io::Result<Self> {
         let (w, h) = terminal::size()?;
         Ok(Self {
-            state:  UiState::new(w, h),
+            state: UiState::new(w, h),
             layout: layout::Layout::new(),
         })
     }
@@ -69,12 +69,16 @@ impl TerminalUi {
         terminal::disable_raw_mode()?;
 
         Ok(ReviewResult {
-            accepted: self.state.diff_blocks
+            accepted: self
+                .state
+                .diff_blocks
                 .iter()
                 .filter(|d| d.accepted == Some(true))
                 .map(|d| d.file_path.clone())
                 .collect(),
-            rejected: self.state.diff_blocks
+            rejected: self
+                .state
+                .diff_blocks
                 .iter()
                 .filter(|d| d.accepted == Some(false))
                 .map(|d| d.file_path.clone())

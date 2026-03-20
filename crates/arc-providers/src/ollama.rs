@@ -1,7 +1,7 @@
 //! Ollama local inference provider.
 
 use crate::provider::*;
-use arc_core::error::{ArcResult, ArcError};
+use arc_core::error::{ArcError, ArcResult};
 use async_trait::async_trait;
 use serde_json::json;
 
@@ -18,7 +18,9 @@ impl OllamaProvider {
 
 #[async_trait]
 impl Provider for OllamaProvider {
-    fn name(&self) -> &str { "ollama" }
+    fn name(&self) -> &str {
+        "ollama"
+    }
 
     fn capabilities(&self) -> ProviderCapabilities {
         ProviderCapabilities {
@@ -43,7 +45,8 @@ impl Provider for OllamaProvider {
         });
 
         let url = format!("{}/api/chat", self.host);
-        let resp = self.client
+        let resp = self
+            .client
             .post(&url)
             .json(&body)
             .timeout(std::time::Duration::from_secs(120))
@@ -52,7 +55,10 @@ impl Provider for OllamaProvider {
             .map_err(|_| ArcError::Provider("Provider Unavailable".to_string()))?;
 
         let data: serde_json::Value = resp.json().await?;
-        let content = data["message"]["content"].as_str().unwrap_or("").to_string();
+        let content = data["message"]["content"]
+            .as_str()
+            .unwrap_or("")
+            .to_string();
 
         Ok(ChatResponse {
             content,
@@ -65,7 +71,13 @@ impl Provider for OllamaProvider {
 
     async fn health_check(&self) -> ArcResult<bool> {
         let url = format!("{}/api/tags", self.host);
-        match self.client.get(&url).timeout(std::time::Duration::from_secs(3)).send().await {
+        match self
+            .client
+            .get(&url)
+            .timeout(std::time::Duration::from_secs(3))
+            .send()
+            .await
+        {
             Ok(resp) => Ok(resp.status().is_success()),
             Err(_) => Ok(false),
         }

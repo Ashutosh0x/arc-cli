@@ -1,11 +1,11 @@
 use futures::future::select_ok;
+use futures::stream::BoxStream;
 use std::collections::HashMap;
 use std::time::{Duration, Instant};
 use tokio::time::timeout;
-use futures::stream::BoxStream;
 
+use arc_providers::message::{Message, StreamEvent, ToolDefinition};
 use arc_providers::traits::Provider;
-use arc_providers::message::{Message, ToolDefinition, StreamEvent};
 
 /// Race multiple streaming providers simultaneously — return first successful response stream
 pub async fn race_providers(
@@ -14,15 +14,18 @@ pub async fn race_providers(
     tools: &[ToolDefinition],
     model_overrides: &HashMap<String, String>,
     deadline: Duration,
-) -> anyhow::Result<(BoxStream<'static, Result<StreamEvent, anyhow::Error>>, String, Duration)> {
-    
+) -> anyhow::Result<(
+    BoxStream<'static, Result<StreamEvent, anyhow::Error>>,
+    String,
+    Duration,
+)> {
     // We create a vector of futures wrapped in Box::pin for select_ok
     let futures = providers.iter().map(|p| {
         let model = model_overrides
             .get(p.name())
             .cloned()
             .unwrap_or_else(|| "default".to_string());
-            
+
         let msgs = messages.to_vec();
         let tls = tools.to_vec();
 
@@ -41,6 +44,6 @@ pub async fn race_providers(
 
     // select_ok semantics — first success wins, cancel the rest immediately
     let (result, _remaining_futures) = select_ok(futures).await?;
-    
+
     Ok(result)
 }

@@ -1,7 +1,7 @@
 use crate::delegation::CloudDelegator;
 use anyhow::Result;
 use std::sync::Arc;
-use tokio::time::{sleep, Duration};
+use tokio::time::{Duration, sleep};
 use tracing::{info, warn};
 
 pub struct ResultPoller {
@@ -26,10 +26,10 @@ impl ResultPoller {
                         info!("Cloud task {} terminal status reached: {}", task_id, status);
                         return Ok(status);
                     }
-                }
+                },
                 Err(e) => {
                     warn!("Error getting status for task {}: {}", task_id, e);
-                }
+                },
             }
             sleep(self.poll_interval).await;
         }

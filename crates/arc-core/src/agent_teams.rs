@@ -3,21 +3,36 @@
 //! Multi-agent orchestration with leader coordination, background workers,
 //! and worktree-based isolation per agent.
 
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum AgentRole { Leader, Teammate, Background }
+pub enum AgentRole {
+    Leader,
+    Teammate,
+    Background,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum AgentStatus { Idle, Working, Waiting, Completed, Failed, Killed }
+pub enum AgentStatus {
+    Idle,
+    Working,
+    Waiting,
+    Completed,
+    Failed,
+    Killed,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum IsolationMode { None, Worktree, Process }
+pub enum IsolationMode {
+    None,
+    Worktree,
+    Process,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TeamAgent {
@@ -49,21 +64,40 @@ pub struct AgentTeam {
 
 impl AgentTeam {
     pub fn new(max_agents: usize) -> Self {
-        Self { agents: HashMap::new(), leader_id: None, messages: Vec::new(), max_agents }
+        Self {
+            agents: HashMap::new(),
+            leader_id: None,
+            messages: Vec::new(),
+            max_agents,
+        }
     }
 
     /// Spawn a new agent in the team.
-    pub fn spawn_agent(&mut self, name: &str, role: AgentRole, isolation: IsolationMode) -> Result<String, String> {
+    pub fn spawn_agent(
+        &mut self,
+        name: &str,
+        role: AgentRole,
+        isolation: IsolationMode,
+    ) -> Result<String, String> {
         if self.agents.len() >= self.max_agents {
             return Err(format!("Max agents ({}) reached", self.max_agents));
         }
         let id = format!("agent-{}-{}", name, self.agents.len());
         let agent = TeamAgent {
-            id: id.clone(), name: name.to_string(), role, status: AgentStatus::Idle,
-            isolation, worktree_path: None, model: None, current_task: None, output: Vec::new(),
+            id: id.clone(),
+            name: name.to_string(),
+            role,
+            status: AgentStatus::Idle,
+            isolation,
+            worktree_path: None,
+            model: None,
+            current_task: None,
+            output: Vec::new(),
         };
         if role == AgentRole::Leader {
-            if self.leader_id.is_some() { return Err("Team already has a leader".into()); }
+            if self.leader_id.is_some() {
+                return Err("Team already has a leader".into());
+            }
             self.leader_id = Some(id.clone());
         }
         self.agents.insert(id.clone(), agent);
@@ -80,13 +114,26 @@ impl AgentTeam {
 
     /// Send a message between agents.
     pub fn send_message(&mut self, from: &str, to: &str, content: &str) {
-        let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs();
-        self.messages.push(TeamMessage { from: from.to_string(), to: to.to_string(), content: content.to_string(), timestamp: now });
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        self.messages.push(TeamMessage {
+            from: from.to_string(),
+            to: to.to_string(),
+            content: content.to_string(),
+            timestamp: now,
+        });
     }
 
     /// Kill a background agent.
     pub fn kill_agent(&mut self, agent_id: &str) -> bool {
-        if let Some(agent) = self.agents.get_mut(agent_id) { agent.status = AgentStatus::Killed; true } else { false }
+        if let Some(agent) = self.agents.get_mut(agent_id) {
+            agent.status = AgentStatus::Killed;
+            true
+        } else {
+            false
+        }
     }
 
     /// Complete an agent's current task.
@@ -98,17 +145,31 @@ impl AgentTeam {
         }
     }
 
-    pub fn agents(&self) -> Vec<&TeamAgent> { self.agents.values().collect() }
+    pub fn agents(&self) -> Vec<&TeamAgent> {
+        self.agents.values().collect()
+    }
     pub fn leader(&self) -> Option<&TeamAgent> {
         self.leader_id.as_ref().and_then(|id| self.agents.get(id))
     }
     pub fn background_agents(&self) -> Vec<&TeamAgent> {
-        self.agents.values().filter(|a| a.role == AgentRole::Background).collect()
+        self.agents
+            .values()
+            .filter(|a| a.role == AgentRole::Background)
+            .collect()
     }
-    pub fn messages(&self) -> &[TeamMessage] { &self.messages }
+    pub fn messages(&self) -> &[TeamMessage] {
+        &self.messages
+    }
     pub fn active_count(&self) -> usize {
-        self.agents.values().filter(|a| a.status == AgentStatus::Working).count()
+        self.agents
+            .values()
+            .filter(|a| a.status == AgentStatus::Working)
+            .count()
     }
 }
 
-impl Default for AgentTeam { fn default() -> Self { Self::new(8) } }
+impl Default for AgentTeam {
+    fn default() -> Self {
+        Self::new(8)
+    }
+}

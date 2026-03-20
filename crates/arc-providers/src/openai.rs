@@ -2,7 +2,7 @@
 
 use crate::provider::*;
 use arc_core::credentials::{CredentialKind, Provider as CredProvider};
-use arc_core::error::{ArcResult, ArcError};
+use arc_core::error::{ArcError, ArcResult};
 use arc_core::security::env_keys;
 use async_trait::async_trait;
 use serde_json::json;
@@ -19,7 +19,9 @@ impl OpenAIProvider {
 
 #[async_trait]
 impl Provider for OpenAIProvider {
-    fn name(&self) -> &str { "openai" }
+    fn name(&self) -> &str {
+        "openai"
+    }
 
     fn capabilities(&self) -> ProviderCapabilities {
         ProviderCapabilities {
@@ -48,7 +50,8 @@ impl Provider for OpenAIProvider {
             "max_tokens": 8192,
         });
 
-        let resp = self.client
+        let resp = self
+            .client
             .post("https://api.openai.com/v1/chat/completions")
             .bearer_auth(key.as_str())
             .json(&body)
@@ -72,13 +75,20 @@ impl Provider for OpenAIProvider {
             content,
             model: data["model"].as_str().unwrap_or(model).to_string(),
             input_tokens: data["usage"]["prompt_tokens"].as_u64().map(|v| v as u32),
-            output_tokens: data["usage"]["completion_tokens"].as_u64().map(|v| v as u32),
-            finish_reason: data["choices"][0]["finish_reason"].as_str().map(String::from),
+            output_tokens: data["usage"]["completion_tokens"]
+                .as_u64()
+                .map(|v| v as u32),
+            finish_reason: data["choices"][0]["finish_reason"]
+                .as_str()
+                .map(String::from),
         })
     }
 
     async fn health_check(&self) -> ArcResult<bool> {
-        match env_keys::get_credential_with_env_override(CredProvider::OpenAI, CredentialKind::ApiKey) {
+        match env_keys::get_credential_with_env_override(
+            CredProvider::OpenAI,
+            CredentialKind::ApiKey,
+        ) {
             Ok(_) => Ok(true),
             Err(_) => Ok(false),
         }

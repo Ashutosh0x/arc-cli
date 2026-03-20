@@ -42,10 +42,7 @@ pub enum A2AError {
     HttpError(#[from] reqwest::Error),
 
     #[error("Remote agent returned {status}: {body}")]
-    RemoteError {
-        status: u16,
-        body: String,
-    },
+    RemoteError { status: u16, body: String },
 
     #[error("Connection to {endpoint} failed after {attempts} attempts")]
     ConnectionExhausted { endpoint: String, attempts: u32 },

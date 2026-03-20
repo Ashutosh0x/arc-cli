@@ -39,7 +39,7 @@ impl HookExecutor {
 arc run-hook pre-commit
 "#;
         std::fs::write(&pre_commit_path, pre_commit_script)?;
-        
+
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
@@ -64,11 +64,11 @@ arc run-hook pre-commit
                 info!("Post-commit hook triggered. Generating summary...");
                 // In full implementation, this calls the LLM to write a summary
                 Ok(())
-            }
+            },
             HookEvent::OnSave { ref file } => {
                 info!("File saved: {}. Running fast format/lint.", file);
                 Ok(())
-            }
+            },
         }
     }
 
@@ -81,7 +81,7 @@ arc run-hook pre-commit
                 .arg("--check")
                 .current_dir(&self.workspace_root)
                 .status()?;
-            
+
             if !status.success() {
                 warn!("Cargo fmt failed, rejecting commit.");
                 std::process::exit(1);

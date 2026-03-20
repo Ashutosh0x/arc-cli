@@ -8,12 +8,10 @@ use tokio::time::sleep;
 use tracing::{info, warn};
 use uuid::Uuid;
 
-use crate::auth::{sign_message, Credential};
+use crate::auth::{Credential, sign_message};
 use crate::discovery::DiscoveryService;
 use crate::error::{A2AError, A2AResult};
-use crate::protocol::{
-    A2AMessage, AgentCard, MessageBuilder, MessagePayload,
-};
+use crate::protocol::{A2AMessage, AgentCard, MessageBuilder, MessagePayload};
 use crate::task::TrackedTask;
 
 /// Configuration for the A2A client.
@@ -115,11 +113,7 @@ impl A2AClient {
     }
 
     /// Query the status of a task on a remote agent.
-    pub async fn get_task_status(
-        &self,
-        endpoint: &str,
-        task_id: Uuid,
-    ) -> A2AResult<TrackedTask> {
+    pub async fn get_task_status(&self, endpoint: &str, task_id: Uuid) -> A2AResult<TrackedTask> {
         let url = format!("{}/a2a/tasks/{}", endpoint.trim_end_matches('/'), task_id);
 
         let response = self
@@ -140,11 +134,7 @@ impl A2AClient {
     }
 
     /// Cancel a task on a remote agent.
-    pub async fn cancel_task(
-        &self,
-        endpoint: &str,
-        task_id: Uuid,
-    ) -> A2AResult<()> {
+    pub async fn cancel_task(&self, endpoint: &str, task_id: Uuid) -> A2AResult<()> {
         let url = format!(
             "{}/a2a/tasks/{}/cancel",
             endpoint.trim_end_matches('/'),
@@ -244,14 +234,14 @@ impl A2AClient {
                         status: status_code,
                         body,
                     });
-                }
+                },
                 Err(e) => {
                     if e.is_timeout() || e.is_connect() {
                         last_err = Some(A2AError::HttpError(e));
                     } else {
                         return Err(A2AError::HttpError(e));
                     }
-                }
+                },
             }
         }
 

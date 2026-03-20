@@ -28,7 +28,7 @@ impl<'a> DependencyMapper<'a> {
                 Ok(deps) => all_deps.push(deps),
                 Err(e) => {
                     tracing::warn!("Failed to analyze {}: {}", file.display(), e);
-                }
+                },
             }
         }
 
@@ -106,11 +106,7 @@ impl<'a> DependencyMapper<'a> {
     }
 
     /// Find all files that would be affected by changes to a given file.
-    pub fn impact_analysis(
-        &self,
-        graph: &DependencyGraph,
-        changed_file: &str,
-    ) -> Vec<String> {
+    pub fn impact_analysis(&self, graph: &DependencyGraph, changed_file: &str) -> Vec<String> {
         let mut affected = Vec::new();
         let mut visited = std::collections::HashSet::new();
         let mut queue = std::collections::VecDeque::new();

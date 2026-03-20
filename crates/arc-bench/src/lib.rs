@@ -7,5 +7,5 @@
 pub mod evaluator;
 pub mod suites;
 
-pub use evaluator::{Evaluator, EvaluationResult, EvaluationMetrics};
+pub use evaluator::{EvaluationMetrics, EvaluationResult, Evaluator};
 pub use suites::{BenchmarkSuite, TestCase};

@@ -73,7 +73,10 @@ impl ExitWorktreeTool {
     /// Exit the current worktree session and return to the original working directory.
     pub fn exit(worktree_path: &Path, original_cwd: &Path) -> Result<(), String> {
         if !worktree_path.exists() {
-            return Err(format!("Worktree path does not exist: {}", worktree_path.display()));
+            return Err(format!(
+                "Worktree path does not exist: {}",
+                worktree_path.display()
+            ));
         }
 
         // Run git worktree remove
@@ -86,7 +89,7 @@ impl ExitWorktreeTool {
             Ok(s) if s.success() => {
                 tracing::info!("Exited worktree: {}", worktree_path.display());
                 Ok(())
-            }
+            },
             Ok(s) => Err(format!("git worktree remove failed with status: {}", s)),
             Err(e) => Err(format!("Failed to run git: {}", e)),
         }
@@ -95,7 +98,12 @@ impl ExitWorktreeTool {
     /// Force-remove a worktree (even if dirty)
     pub fn force_exit(worktree_path: &Path, original_cwd: &Path) -> Result<(), String> {
         let status = std::process::Command::new("git")
-            .args(["worktree", "remove", "--force", &worktree_path.to_string_lossy()])
+            .args([
+                "worktree",
+                "remove",
+                "--force",
+                &worktree_path.to_string_lossy(),
+            ])
             .current_dir(original_cwd)
             .status();
 
@@ -163,27 +171,55 @@ pub struct BundledCommands;
 impl BundledCommands {
     pub fn list() -> Vec<(&'static str, &'static str)> {
         vec![
-            ("/simplify", "Simplify the selected code — make it shorter and clearer"),
+            (
+                "/simplify",
+                "Simplify the selected code — make it shorter and clearer",
+            ),
             ("/batch", "Run multiple prompts from a file, one per line"),
             ("/explain", "Explain the selected code or concept in detail"),
-            ("/review", "Review code for bugs, security issues, and improvements"),
-            ("/refactor", "Refactor the selected code with best practices"),
+            (
+                "/review",
+                "Review code for bugs, security issues, and improvements",
+            ),
+            (
+                "/refactor",
+                "Refactor the selected code with best practices",
+            ),
             ("/test", "Generate unit tests for the selected code"),
             ("/doc", "Generate documentation for the selected code"),
-            ("/fix", "Fix the error or issue described in the last output"),
+            (
+                "/fix",
+                "Fix the error or issue described in the last output",
+            ),
         ]
     }
 
     pub fn get_prompt(command: &str) -> Option<&'static str> {
         match command {
-            "/simplify" => Some("Simplify this code. Remove unnecessary complexity, reduce line count, and improve clarity while maintaining the same behavior. Show the simplified version."),
-            "/batch" => Some("Execute each line of the following file as a separate prompt, collecting results:"),
-            "/explain" => Some("Explain this code in detail. Cover: what it does, how it works, key design decisions, potential issues, and suggestions for improvement."),
-            "/review" => Some("Review this code thoroughly. Check for: bugs, security vulnerabilities, performance issues, code style, error handling, and suggest concrete improvements."),
-            "/refactor" => Some("Refactor this code following best practices. Improve naming, structure, error handling, and maintainability while preserving behavior."),
-            "/test" => Some("Generate comprehensive unit tests for this code. Cover happy paths, edge cases, error cases, and boundary conditions."),
-            "/doc" => Some("Generate documentation for this code. Include: module-level docs, function docs with examples, type descriptions, and usage notes."),
-            "/fix" => Some("Fix the error described above. Identify the root cause, explain why it happened, and provide the corrected code."),
+            "/simplify" => Some(
+                "Simplify this code. Remove unnecessary complexity, reduce line count, and improve clarity while maintaining the same behavior. Show the simplified version.",
+            ),
+            "/batch" => Some(
+                "Execute each line of the following file as a separate prompt, collecting results:",
+            ),
+            "/explain" => Some(
+                "Explain this code in detail. Cover: what it does, how it works, key design decisions, potential issues, and suggestions for improvement.",
+            ),
+            "/review" => Some(
+                "Review this code thoroughly. Check for: bugs, security vulnerabilities, performance issues, code style, error handling, and suggest concrete improvements.",
+            ),
+            "/refactor" => Some(
+                "Refactor this code following best practices. Improve naming, structure, error handling, and maintainability while preserving behavior.",
+            ),
+            "/test" => Some(
+                "Generate comprehensive unit tests for this code. Cover happy paths, edge cases, error cases, and boundary conditions.",
+            ),
+            "/doc" => Some(
+                "Generate documentation for this code. Include: module-level docs, function docs with examples, type descriptions, and usage notes.",
+            ),
+            "/fix" => Some(
+                "Fix the error described above. Identify the root cause, explain why it happened, and provide the corrected code.",
+            ),
             _ => None,
         }
     }
@@ -335,7 +371,9 @@ pub struct DemoMode;
 
 impl DemoMode {
     pub fn is_active() -> bool {
-        std::env::var("IS_DEMO").map(|v| v == "1" || v.to_lowercase() == "true").unwrap_or(false)
+        std::env::var("IS_DEMO")
+            .map(|v| v == "1" || v.to_lowercase() == "true")
+            .unwrap_or(false)
     }
 
     pub fn redact_email(text: &str) -> String {
@@ -415,7 +453,9 @@ impl ClipboardCompat {
             .spawn()
             .map_err(|e| format!("tmux copy failed: {}", e))?;
         if let Some(mut stdin) = child.stdin.take() {
-            stdin.write_all(text.as_bytes()).map_err(|e| e.to_string())?;
+            stdin
+                .write_all(text.as_bytes())
+                .map_err(|e| e.to_string())?;
         }
         child.wait().map_err(|e| e.to_string())?;
         Ok(())
@@ -442,7 +482,9 @@ impl ClipboardCompat {
             .map_err(|e| format!("PowerShell clipboard failed: {}", e))?;
         if let Some(mut stdin) = child.stdin.take() {
             // Write as UTF-8 — PowerShell Set-Clipboard handles CJK/emoji correctly
-            stdin.write_all(text.as_bytes()).map_err(|e| e.to_string())?;
+            stdin
+                .write_all(text.as_bytes())
+                .map_err(|e| e.to_string())?;
         }
         child.wait().map_err(|e| e.to_string())?;
         Ok(())
@@ -455,7 +497,9 @@ impl ClipboardCompat {
             .spawn()
             .map_err(|e| format!("pbcopy failed: {}", e))?;
         if let Some(mut stdin) = child.stdin.take() {
-            stdin.write_all(text.as_bytes()).map_err(|e| e.to_string())?;
+            stdin
+                .write_all(text.as_bytes())
+                .map_err(|e| e.to_string())?;
         }
         child.wait().map_err(|e| e.to_string())?;
         Ok(())
@@ -472,12 +516,18 @@ impl ClipboardCompat {
         };
 
         let mut child = std::process::Command::new(cmd)
-            .args(if cmd == "xclip" { vec!["-selection", "clipboard"] } else { vec!["--clipboard", "--input"] })
+            .args(if cmd == "xclip" {
+                vec!["-selection", "clipboard"]
+            } else {
+                vec!["--clipboard", "--input"]
+            })
             .stdin(std::process::Stdio::piped())
             .spawn()
             .map_err(|e| format!("{} failed: {}", cmd, e))?;
         if let Some(mut stdin) = child.stdin.take() {
-            stdin.write_all(text.as_bytes()).map_err(|e| e.to_string())?;
+            stdin
+                .write_all(text.as_bytes())
+                .map_err(|e| e.to_string())?;
         }
         child.wait().map_err(|e| e.to_string())?;
         Ok(())
@@ -531,7 +581,11 @@ impl TodoTracker {
     }
 
     pub fn progress(&self) -> (usize, usize) {
-        let done = self.items.iter().filter(|i| i.status == TodoStatus::Done).count();
+        let done = self
+            .items
+            .iter()
+            .filter(|i| i.status == TodoStatus::Done)
+            .count();
         (done, self.items.len())
     }
 

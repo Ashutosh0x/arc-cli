@@ -2,8 +2,8 @@
 //!
 //! Reduces initial context by loading tool schemas on demand.
 
-use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ToolSchema {
@@ -29,7 +29,11 @@ pub struct ToolSearchEngine {
 
 impl ToolSearchEngine {
     pub fn new(max_initial: usize) -> Self {
-        Self { registry: HashMap::new(), loaded: Vec::new(), max_initial }
+        Self {
+            registry: HashMap::new(),
+            loaded: Vec::new(),
+            max_initial,
+        }
     }
 
     pub fn register(&mut self, tool: ToolSchema) {
@@ -40,22 +44,29 @@ impl ToolSearchEngine {
     /// Get tools for initial context (non-deferred only, up to max).
     pub fn initial_tools(&mut self) -> Vec<&ToolSchema> {
         self.loaded.clear();
-        let tools: Vec<&ToolSchema> = self.registry.values()
+        let tools: Vec<&ToolSchema> = self
+            .registry
+            .values()
             .filter(|t| !t.deferred)
             .take(self.max_initial)
             .collect();
-        for t in &tools { self.loaded.push(t.name.clone()); }
+        for t in &tools {
+            self.loaded.push(t.name.clone());
+        }
         tools
     }
 
     /// Search for a tool by name or description (deferred loading).
     pub fn search(&self, query: &str) -> Vec<&ToolSchema> {
         let query_lower = query.to_lowercase();
-        self.registry.values()
+        self.registry
+            .values()
             .filter(|t| {
                 t.name.to_lowercase().contains(&query_lower)
                     || t.description.to_lowercase().contains(&query_lower)
-                    || t.tags.iter().any(|tag| tag.to_lowercase().contains(&query_lower))
+                    || t.tags
+                        .iter()
+                        .any(|tag| tag.to_lowercase().contains(&query_lower))
             })
             .collect()
     }
@@ -70,12 +81,25 @@ impl ToolSearchEngine {
 
     /// Get currently loaded tool schemas for prompt tail.
     pub fn loaded_schemas(&self) -> Vec<&ToolSchema> {
-        self.loaded.iter().filter_map(|n| self.registry.get(n)).collect()
+        self.loaded
+            .iter()
+            .filter_map(|n| self.registry.get(n))
+            .collect()
     }
 
-    pub fn all(&self) -> Vec<&ToolSchema> { self.registry.values().collect() }
-    pub fn loaded_count(&self) -> usize { self.loaded.len() }
-    pub fn total_count(&self) -> usize { self.registry.len() }
+    pub fn all(&self) -> Vec<&ToolSchema> {
+        self.registry.values().collect()
+    }
+    pub fn loaded_count(&self) -> usize {
+        self.loaded.len()
+    }
+    pub fn total_count(&self) -> usize {
+        self.registry.len()
+    }
 }
 
-impl Default for ToolSearchEngine { fn default() -> Self { Self::new(20) } }
+impl Default for ToolSearchEngine {
+    fn default() -> Self {
+        Self::new(20)
+    }
+}

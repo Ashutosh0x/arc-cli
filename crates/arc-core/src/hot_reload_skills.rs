@@ -99,7 +99,9 @@ impl HotReloadSkillRegistry {
     /// Handle a file deletion event
     pub fn on_delete(&self, deleted_path: &Path) {
         let mut skills = self.skills.write().unwrap_or_else(|e| e.into_inner());
-        let dir_name = deleted_path.file_name().map(|n| n.to_string_lossy().to_string());
+        let dir_name = deleted_path
+            .file_name()
+            .map(|n| n.to_string_lossy().to_string());
         if let Some(name) = dir_name {
             if skills.remove(&name).is_some() {
                 tracing::info!("Unloaded skill: {}", name);

@@ -13,10 +13,7 @@ pub async fn authenticate_provider(provider: Provider, method: &str) -> ArcResul
         "oauth" => oauth_google::authenticate_with_oauth(provider).await,
         other => {
             tracing::error!("Unknown auth method: {other}");
-            Err(crate::error::ArcError::Auth(format!(
-                "Unknown auth method: {other}"
-            ))
-            .into())
-        }
+            Err(crate::error::ArcError::Auth(format!("Unknown auth method: {other}")).into())
+        },
     }
 }

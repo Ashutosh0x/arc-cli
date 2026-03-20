@@ -17,7 +17,7 @@ pub async fn read_file_fast(path: impl AsRef<Path>) -> Result<Vec<u8>> {
         // For CLI simplicity, we fallback to tokio::fs if not in a uring context.
         match std::fs::read(path.as_ref()) {
             Ok(data) => Ok(data),
-            Err(e) => Err(anyhow::anyhow!("File read error: {}", e))
+            Err(e) => Err(anyhow::anyhow!("File read error: {}", e)),
         }
     }
 
@@ -34,7 +34,7 @@ pub async fn write_file_fast(path: impl AsRef<Path>, data: &[u8]) -> Result<()> 
     {
         match std::fs::write(path.as_ref(), data) {
             Ok(_) => Ok(()),
-            Err(e) => Err(anyhow::anyhow!("File write error: {}", e))
+            Err(e) => Err(anyhow::anyhow!("File write error: {}", e)),
         }
     }
 

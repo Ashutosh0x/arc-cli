@@ -38,14 +38,14 @@ pub struct ModelAvailabilityService {
 
 impl ModelAvailabilityService {
     pub fn new() -> Self {
-        Self { health: HashMap::new() }
+        Self {
+            health: HashMap::new(),
+        }
     }
 
     pub fn mark_terminal(&mut self, model: &str, reason: UnavailabilityReason) {
-        self.health.insert(
-            model.to_string(),
-            HealthState::Terminal { reason },
-        );
+        self.health
+            .insert(model.to_string(), HealthState::Terminal { reason });
     }
 
     pub fn mark_healthy(&mut self, model: &str) {
@@ -62,7 +62,8 @@ impl ModelAvailabilityService {
             Some(HealthState::StickyRetry { consumed }) => *consumed,
             _ => false,
         };
-        self.health.insert(model.to_string(), HealthState::StickyRetry { consumed });
+        self.health
+            .insert(model.to_string(), HealthState::StickyRetry { consumed });
     }
 
     pub fn consume_sticky_attempt(&mut self, model: &str) {
@@ -73,7 +74,10 @@ impl ModelAvailabilityService {
 
     pub fn snapshot(&self, model: &str) -> AvailabilitySnapshot {
         match self.health.get(model) {
-            None => AvailabilitySnapshot { available: true, reason: None },
+            None => AvailabilitySnapshot {
+                available: true,
+                reason: None,
+            },
             Some(HealthState::Terminal { reason }) => AvailabilitySnapshot {
                 available: false,
                 reason: Some(reason.clone()),
@@ -105,10 +109,17 @@ impl ModelAvailabilityService {
                     skipped,
                 };
             } else {
-                skipped.push((model.clone(), snap.reason.unwrap_or(UnavailabilityReason::Unknown)));
+                skipped.push((
+                    model.clone(),
+                    snap.reason.unwrap_or(UnavailabilityReason::Unknown),
+                ));
             }
         }
-        ModelSelectionResult { selected_model: None, attempts: None, skipped }
+        ModelSelectionResult {
+            selected_model: None,
+            attempts: None,
+            skipped,
+        }
     }
 
     /// Reset turn-level state (un-consume sticky retries).

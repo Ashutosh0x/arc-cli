@@ -1,7 +1,7 @@
 use anyhow::Result;
 use futures::StreamExt;
 use reqwest::Client;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use std::any::Any;
 use tracing::{debug, error};
 
@@ -24,8 +24,12 @@ impl AnthropicProvider {
 
     fn construct_payload(&self, model: &str, messages: &[Message]) -> Value {
         // Extract system prompt out of messages map, as Anthropic demands it top-level
-        let system_msg = messages.iter().find(|m| m.role == Role::System).map(|m| m.content.clone()).unwrap_or_default();
-        
+        let system_msg = messages
+            .iter()
+            .find(|m| m.role == Role::System)
+            .map(|m| m.content.clone())
+            .unwrap_or_default();
+
         // Use prompt caching on the system message
         let system_payload = if system_msg.is_empty() {
             json!([])
@@ -38,8 +42,9 @@ impl AnthropicProvider {
                 }
             ])
         };
-        
-        let anthropic_msgs: Vec<Value> = messages.iter()
+
+        let anthropic_msgs: Vec<Value> = messages
+            .iter()
             .filter(|m| m.role != Role::System)
             .map(|m| {
                 let role_str = match m.role {
@@ -52,7 +57,8 @@ impl AnthropicProvider {
                     "role": role_str,
                     "content": m.content,
                 })
-            }).collect();
+            })
+            .collect();
 
         json!({
             "model": model,
@@ -75,7 +81,10 @@ impl Provider for AnthropicProvider {
     }
 
     fn models(&self) -> Vec<String> {
-        vec!["claude-3-5-sonnet-20241022".to_string(), "claude-3-opus-20240229".to_string()]
+        vec![
+            "claude-3-5-sonnet-20241022".to_string(),
+            "claude-3-opus-20240229".to_string(),
+        ]
     }
 
     async fn stream(
@@ -83,13 +92,18 @@ impl Provider for AnthropicProvider {
         model: &str,
         messages: &[Message],
         _tools: &[ToolDefinition],
-    ) -> Result<futures::stream::BoxStream<'static, Result<StreamEvent, anyhow::Error>>, anyhow::Error> {
+    ) -> Result<
+        futures::stream::BoxStream<'static, Result<StreamEvent, anyhow::Error>>,
+        anyhow::Error,
+    > {
         let payload = self.construct_payload(model, messages);
         let endpoint = "https://api.anthropic.com/v1/messages";
 
         debug!("Connecting to Anthropic SSE endpoint");
 
-        let response = self.http_client.post(endpoint)
+        let response = self
+            .http_client
+            .post(endpoint)
             .header("x-api-key", &self.api_key)
             .header("anthropic-version", "2023-06-01")
             .header("anthropic-beta", "prompt-caching-2024-07-31")
@@ -106,27 +120,26 @@ impl Provider for AnthropicProvider {
             anyhow::bail!("Anthropic Reject [{}]: {}", status, body);
         }
 
-        let sse_stream = SseStream::new(response)
-            .filter_map(|json_res| async move {
-                match json_res {
-                    Ok(json_str) => {
-                        if json_str == "[DONE]" {
-                            return None;
-                        }
-                        if let Ok(parsed) = serde_json::from_str::<Value>(&json_str) {
-                            if let Some(delta) = parsed.get("delta") {
-                                if let Some(text) = delta.get("text") {
-                                    return Some(Ok(StreamEvent {
-                                        text_delta: text.as_str().unwrap_or("").to_string(),
-                                    }));
-                                }
+        let sse_stream = SseStream::new(response).filter_map(|json_res| async move {
+            match json_res {
+                Ok(json_str) => {
+                    if json_str == "[DONE]" {
+                        return None;
+                    }
+                    if let Ok(parsed) = serde_json::from_str::<Value>(&json_str) {
+                        if let Some(delta) = parsed.get("delta") {
+                            if let Some(text) = delta.get("text") {
+                                return Some(Ok(StreamEvent {
+                                    text_delta: text.as_str().unwrap_or("").to_string(),
+                                }));
                             }
                         }
-                        None
                     }
-                    Err(e) => Some(Err(e)),
-                }
-            });
+                    None
+                },
+                Err(e) => Some(Err(e)),
+            }
+        });
 
         Ok(Box::pin(sse_stream))
     }

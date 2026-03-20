@@ -1,7 +1,7 @@
 use crate::skill::Skill;
+use anyhow::{Result, anyhow};
 use dashmap::DashMap;
 use std::sync::Arc;
-use anyhow::{anyhow, Result};
 
 #[derive(Default)]
 pub struct SkillRegistry {
@@ -26,6 +26,9 @@ impl SkillRegistry {
     }
 
     pub fn unregister(&self, name: &str) -> Result<()> {
-        self.skills.remove(name).map(|_| ()).ok_or_else(|| anyhow!("Skill not found"))
+        self.skills
+            .remove(name)
+            .map(|_| ())
+            .ok_or_else(|| anyhow!("Skill not found"))
     }
 }

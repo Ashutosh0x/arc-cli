@@ -50,9 +50,7 @@ impl ProviderStats {
         }
         let mut sorted = self.latencies_ms.clone();
         sorted.sort_unstable();
-        let idx = ((p / 100.0) * (sorted.len() as f64 - 1.0))
-            .round()
-            .max(0.0) as usize;
+        let idx = ((p / 100.0) * (sorted.len() as f64 - 1.0)).round().max(0.0) as usize;
         sorted.get(idx).copied()
     }
 
@@ -99,7 +97,7 @@ impl TelemetrySummary {
         match (self.first_record_ms, self.last_record_ms) {
             (Some(first), Some(last)) if last > first => {
                 (last - first) as f64 / (1000.0 * 60.0 * 60.0 * 24.0)
-            }
+            },
             _ => 0.0,
         }
     }

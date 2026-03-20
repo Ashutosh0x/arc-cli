@@ -109,15 +109,15 @@ pub fn parse_bash_subcommands(command: &str) -> Vec<String> {
             '\\' if !in_single_quote => {
                 escape_next = true;
                 current.push(c);
-            }
+            },
             '\'' if !in_double_quote => {
                 in_single_quote = !in_single_quote;
                 current.push(c);
-            }
+            },
             '"' if !in_single_quote => {
                 in_double_quote = !in_double_quote;
                 current.push(c);
-            }
+            },
             '&' if !in_single_quote && !in_double_quote => {
                 if chars.peek() == Some(&'&') {
                     chars.next();
@@ -129,7 +129,7 @@ pub fn parse_bash_subcommands(command: &str) -> Vec<String> {
                 } else {
                     current.push(c);
                 }
-            }
+            },
             '|' if !in_single_quote && !in_double_quote => {
                 if chars.peek() == Some(&'|') {
                     chars.next();
@@ -146,17 +146,17 @@ pub fn parse_bash_subcommands(command: &str) -> Vec<String> {
                     }
                     current.clear();
                 }
-            }
+            },
             ';' if !in_single_quote && !in_double_quote => {
                 let trimmed = current.trim().to_string();
                 if !trimmed.is_empty() {
                     commands.push(trimmed);
                 }
                 current.clear();
-            }
+            },
             _ => {
                 current.push(c);
-            }
+            },
         }
     }
 
@@ -216,17 +216,73 @@ impl PermissionManager {
             bypass_allowed: true,
             session_allows: Vec::new(),
             safe_commands: vec![
-                "ls", "cat", "head", "tail", "wc", "grep", "find", "which", "whoami",
-                "pwd", "echo", "date", "env", "uname", "id", "hostname", "df", "du",
-                "file", "stat", "readlink", "basename", "dirname", "sort", "uniq",
-                "cut", "tr", "sed", "awk", "diff", "tee", "xargs", "test",
-                "git status", "git log", "git diff", "git branch", "git remote",
-                "git show", "git rev-parse", "git ls-files", "git describe",
-                "cargo check", "cargo build", "cargo test", "cargo clippy",
-                "npm test", "npm run", "npm list",
-                "python --version", "node --version", "rustc --version",
-                "lsof", "pgrep", "tput", "ss", "fd", "fdfind", "rg",
-                "fmt", "comm", "cmp", "numfmt", "expr", "printf", "seq", "tsort",
+                "ls",
+                "cat",
+                "head",
+                "tail",
+                "wc",
+                "grep",
+                "find",
+                "which",
+                "whoami",
+                "pwd",
+                "echo",
+                "date",
+                "env",
+                "uname",
+                "id",
+                "hostname",
+                "df",
+                "du",
+                "file",
+                "stat",
+                "readlink",
+                "basename",
+                "dirname",
+                "sort",
+                "uniq",
+                "cut",
+                "tr",
+                "sed",
+                "awk",
+                "diff",
+                "tee",
+                "xargs",
+                "test",
+                "git status",
+                "git log",
+                "git diff",
+                "git branch",
+                "git remote",
+                "git show",
+                "git rev-parse",
+                "git ls-files",
+                "git describe",
+                "cargo check",
+                "cargo build",
+                "cargo test",
+                "cargo clippy",
+                "npm test",
+                "npm run",
+                "npm list",
+                "python --version",
+                "node --version",
+                "rustc --version",
+                "lsof",
+                "pgrep",
+                "tput",
+                "ss",
+                "fd",
+                "fdfind",
+                "rg",
+                "fmt",
+                "comm",
+                "cmp",
+                "numfmt",
+                "expr",
+                "printf",
+                "seq",
+                "tsort",
             ],
         }
     }
@@ -280,11 +336,18 @@ impl PermissionManager {
         let descriptor = self.build_descriptor(tool_name, tool_input);
 
         // Check rules in priority order: Managed > Project > User > Session.
-        let priority_order = [RuleSource::Managed, RuleSource::Project, RuleSource::User, RuleSource::Session];
+        let priority_order = [
+            RuleSource::Managed,
+            RuleSource::Project,
+            RuleSource::User,
+            RuleSource::Session,
+        ];
 
         for source in &priority_order {
             for rule in &self.rules {
-                if rule.source == *source && self.matches_pattern(&rule.pattern, &descriptor, tool_name) {
+                if rule.source == *source
+                    && self.matches_pattern(&rule.pattern, &descriptor, tool_name)
+                {
                     // Managed deny cannot be overridden.
                     if rule.source == RuleSource::Managed && rule.level == PermissionLevel::Deny {
                         return PermissionDecision {
@@ -298,7 +361,8 @@ impl PermissionManager {
                         level: rule.level,
                         matched_rule: Some(rule.clone()),
                         allow_prefix: if tool_name == "Bash" {
-                            tool_input.get("command")
+                            tool_input
+                                .get("command")
                                 .and_then(|v| v.as_str())
                                 .map(|cmd| compute_allow_prefix(cmd))
                         } else {
@@ -324,9 +388,9 @@ impl PermissionManager {
         if tool_name == "Bash" {
             if let Some(cmd) = tool_input.get("command").and_then(|v| v.as_str()) {
                 let sub_cmds = parse_bash_subcommands(cmd);
-                let all_safe = sub_cmds.iter().all(|sub| {
-                    self.safe_commands.iter().any(|safe| sub.starts_with(safe))
-                });
+                let all_safe = sub_cmds
+                    .iter()
+                    .all(|sub| self.safe_commands.iter().any(|safe| sub.starts_with(safe)));
                 if all_safe {
                     return PermissionDecision {
                         level: PermissionLevel::Allow,
@@ -342,7 +406,8 @@ impl PermissionManager {
             level: PermissionLevel::Ask,
             matched_rule: None,
             allow_prefix: if tool_name == "Bash" {
-                tool_input.get("command")
+                tool_input
+                    .get("command")
                     .and_then(|v| v.as_str())
                     .map(|cmd| compute_allow_prefix(cmd))
             } else {
@@ -395,7 +460,9 @@ impl PermissionManager {
                 return true;
             }
             // Check compound: "Bash(cmd:git *)" vs descriptor.
-            if let (Some(pat_start), Some(desc_start)) = (pattern.find("(cmd:"), descriptor.find("(cmd:")) {
+            if let (Some(pat_start), Some(desc_start)) =
+                (pattern.find("(cmd:"), descriptor.find("(cmd:"))
+            {
                 let pat_cmd = &pattern[pat_start + 5..pattern.len() - 2]; // before *)
                 let desc_cmd_end = descriptor.find(')').unwrap_or(descriptor.len());
                 let desc_cmd = &descriptor[desc_start + 5..desc_cmd_end];

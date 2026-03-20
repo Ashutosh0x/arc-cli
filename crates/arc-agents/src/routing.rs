@@ -20,7 +20,7 @@ impl AgentRouter {
     /// agent should handle the prompt. Returns the Agent ID.
     pub async fn route_prompt(&self, prompt: &str) -> Result<String> {
         let agents = self.registry.list();
-        
+
         // Build JSON representation of available agents
         let mut options = Vec::new();
         for agent in agents {
@@ -50,7 +50,8 @@ impl AgentRouter {
             }
         }
 
-        let parsed: Value = serde_json::from_str(&raw_json).unwrap_or_else(|_| serde_json::json!({}));
+        let parsed: Value =
+            serde_json::from_str(&raw_json).unwrap_or_else(|_| serde_json::json!({}));
         let id = parsed.get("selected_agent_id")
             .and_then(|v| v.as_str())
             .unwrap_or("generalist") // fallback

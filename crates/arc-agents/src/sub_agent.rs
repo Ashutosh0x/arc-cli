@@ -3,7 +3,6 @@ use anyhow::Result;
 use arc_providers::streaming::{StreamEvent, StreamingClient};
 use std::sync::Arc;
 
-
 /// The result returned by a specialized SubAgent after completing its task.
 pub struct SubAgentResult {
     pub agent_id: String,
@@ -61,12 +60,11 @@ impl SubAgent {
             match event {
                 StreamEvent::TextDelta(text) => {
                     full_response.push_str(&text);
-                }
+                },
                 StreamEvent::Done => break,
                 StreamEvent::Error(e) => {
                     anyhow::bail!("SubAgent '{}' failed: {}", self.profile.name, e);
-                }
-
+                },
             }
         }
 

@@ -24,7 +24,15 @@ pub struct StatuslineConfig {
 
 impl Default for StatuslineConfig {
     fn default() -> Self {
-        Self { enabled: true, show_rate_limits: true, show_effort_level: true, show_model: true, show_worktree: true, show_context_usage: true, custom_scripts: Vec::new() }
+        Self {
+            enabled: true,
+            show_rate_limits: true,
+            show_effort_level: true,
+            show_model: true,
+            show_worktree: true,
+            show_context_usage: true,
+            custom_scripts: Vec::new(),
+        }
     }
 }
 
@@ -38,7 +46,11 @@ pub struct StatuslineScript {
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum StatuslinePosition { Left, Center, Right }
+pub enum StatuslinePosition {
+    Left,
+    Center,
+    Right,
+}
 
 #[derive(Debug, Clone, Default)]
 pub struct StatuslineData {
@@ -54,11 +66,25 @@ pub struct StatuslineData {
 impl StatuslineData {
     pub fn render(&self, config: &StatuslineConfig) -> String {
         let mut parts = Vec::new();
-        if config.show_model && !self.model_name.is_empty() { parts.push(format!("⚙ {}", self.model_name)); }
-        if config.show_effort_level && !self.effort_symbol.is_empty() { parts.push(self.effort_symbol.clone()); }
-        if config.show_context_usage { parts.push(format!("ctx:{:.0}%", self.context_percent)); }
-        if config.show_rate_limits { if let Some(remaining) = self.rate_limit_remaining { parts.push(format!("rl:{remaining}")); } }
-        if config.show_worktree { if let Some(ref wt) = self.worktree_name { parts.push(format!("wt:{wt}")); } }
+        if config.show_model && !self.model_name.is_empty() {
+            parts.push(format!("⚙ {}", self.model_name));
+        }
+        if config.show_effort_level && !self.effort_symbol.is_empty() {
+            parts.push(self.effort_symbol.clone());
+        }
+        if config.show_context_usage {
+            parts.push(format!("ctx:{:.0}%", self.context_percent));
+        }
+        if config.show_rate_limits {
+            if let Some(remaining) = self.rate_limit_remaining {
+                parts.push(format!("rl:{remaining}"));
+            }
+        }
+        if config.show_worktree {
+            if let Some(ref wt) = self.worktree_name {
+                parts.push(format!("wt:{wt}"));
+            }
+        }
         parts.join(" │ ")
     }
 }

@@ -23,7 +23,7 @@ impl RecurringTask {
     {
         info!("Starting recurring task: {}", self.task_name);
         let mut ticker = time::interval(self.interval);
-        
+
         loop {
             ticker.tick().await;
             info!("Executing task: {}", self.task_name);

@@ -9,7 +9,9 @@ pub struct SparseCheckout {
 
 impl SparseCheckout {
     pub fn new<P: AsRef<Path>>(repo_path: P) -> Self {
-        Self { repo_path: repo_path.as_ref().to_path_buf() }
+        Self {
+            repo_path: repo_path.as_ref().to_path_buf(),
+        }
     }
 
     pub fn init(&self) -> Result<()> {
@@ -18,9 +20,12 @@ impl SparseCheckout {
             .current_dir(&self.repo_path)
             .args(["sparse-checkout", "init", "--cone"])
             .output()?;
-            
+
         if !output.status.success() {
-            anyhow::bail!("Failed to init sparse checkout: {:?}", String::from_utf8_lossy(&output.stderr));
+            anyhow::bail!(
+                "Failed to init sparse checkout: {:?}",
+                String::from_utf8_lossy(&output.stderr)
+            );
         }
         Ok(())
     }
@@ -29,14 +34,17 @@ impl SparseCheckout {
         info!("Setting sparse-checkout paths: {:?}", paths);
         let mut cmd = Command::new("git");
         cmd.current_dir(&self.repo_path)
-           .args(["sparse-checkout", "set"]);
+            .args(["sparse-checkout", "set"]);
         for p in paths {
             cmd.arg(p);
         }
-        
+
         let output = cmd.output()?;
         if !output.status.success() {
-            anyhow::bail!("Failed to set sparse paths: {:?}", String::from_utf8_lossy(&output.stderr));
+            anyhow::bail!(
+                "Failed to set sparse paths: {:?}",
+                String::from_utf8_lossy(&output.stderr)
+            );
         }
         Ok(())
     }

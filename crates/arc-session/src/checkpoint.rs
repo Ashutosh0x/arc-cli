@@ -2,7 +2,8 @@ use anyhow::Result;
 use redb::{Database, TableDefinition};
 use std::path::Path;
 
-pub const CHECKPOINT_TABLE: TableDefinition<&str, &[u8]> = TableDefinition::new("session_checkpoints");
+pub const CHECKPOINT_TABLE: TableDefinition<&str, &[u8]> =
+    TableDefinition::new("session_checkpoints");
 
 /// The High-Performance Redb integrated Checkpoint engine natively storing LLM Chat History
 pub struct SessionDb {
@@ -12,7 +13,7 @@ pub struct SessionDb {
 impl SessionDb {
     pub fn new<P: AsRef<Path>>(path: P) -> Result<Self> {
         let db = Database::create(path.as_ref())?;
-        
+
         // Eagerly initialize the checkpoint table bounds avoiding lazy evaluation stalls logic later
         let write_txn = db.begin_write()?;
         {
@@ -39,7 +40,7 @@ impl SessionDb {
     pub fn read_checkpoint(&self, session_id: &str) -> Result<Option<Vec<u8>>> {
         let read_txn = self.db.begin_read()?;
         let table = read_txn.open_table(CHECKPOINT_TABLE)?;
-        
+
         if let Some(guard) = table.get(session_id)? {
             // Evaluates physically into Vector avoiding structural dropping natively.
             Ok(Some(guard.value().to_vec()))
@@ -89,13 +90,19 @@ impl CheckpointManager {
         if !self.config.enabled {
             return Ok(());
         }
-        let path = self.config.checkpoint_dir.join(format!("{}.ckpt", session_id));
+        let path = self
+            .config
+            .checkpoint_dir
+            .join(format!("{}.ckpt", session_id));
         std::fs::write(path, data)?;
         Ok(())
     }
 
     pub fn load(&self, session_id: &str) -> Result<Option<Vec<u8>>> {
-        let path = self.config.checkpoint_dir.join(format!("{}.ckpt", session_id));
+        let path = self
+            .config
+            .checkpoint_dir
+            .join(format!("{}.ckpt", session_id));
         if path.exists() {
             Ok(Some(std::fs::read(path)?))
         } else {

@@ -1,7 +1,7 @@
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
 use flume::Sender;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::Duration;
 use tracing::debug;
 
@@ -41,7 +41,7 @@ impl PushToTalkController {
                             let _ = self.tx.send(PttEvent::Started);
                             debug!("PTT: Recording started (spacebar held)");
                         }
-                    }
+                    },
                     Event::Key(KeyEvent {
                         code: KeyCode::Char(' '),
                         kind: crossterm::event::KeyEventKind::Release,
@@ -52,14 +52,14 @@ impl PushToTalkController {
                             let _ = self.tx.send(PttEvent::Stopped);
                             debug!("PTT: Recording stopped (spacebar released)");
                         }
-                    }
+                    },
                     Event::Key(KeyEvent {
                         code: KeyCode::Esc, ..
                     }) => {
                         self.is_active.store(false, Ordering::SeqCst);
                         let _ = self.tx.send(PttEvent::Cancelled);
                         break;
-                    }
+                    },
                     // Ctrl+C
                     Event::Key(KeyEvent {
                         code: KeyCode::Char('c'),
@@ -69,8 +69,8 @@ impl PushToTalkController {
                         self.is_active.store(false, Ordering::SeqCst);
                         let _ = self.tx.send(PttEvent::Cancelled);
                         break;
-                    }
-                    _ => {}
+                    },
+                    _ => {},
                 }
             }
         }

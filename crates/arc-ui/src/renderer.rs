@@ -18,7 +18,14 @@ pub fn render_diff_list(state: &UiState, theme: &Theme, out: &mut impl Write) ->
     let _b = &theme.border;
 
     writeln!(out)?;
-    writeln!(out, "{}{}  Proposed Changes ({} files){}", c.bold, c.accent, meaningful.len(), c.reset)?;
+    writeln!(
+        out,
+        "{}{}  Proposed Changes ({} files){}",
+        c.bold,
+        c.accent,
+        meaningful.len(),
+        c.reset
+    )?;
     writeln!(out)?;
 
     for (idx, diff) in &meaningful {
@@ -46,14 +53,15 @@ fn render_collapsed_block(
     let ic = &theme.icons;
 
     let status_badge = match diff.accepted {
-        Some(true)  => format!(" {}{} accepted{}", c.add, ic.check, c.reset),
+        Some(true) => format!(" {}{} accepted{}", c.add, ic.check, c.reset),
         Some(false) => format!(" {}{} rejected{}", c.del, ic.cross, c.reset),
-        None        => String::new(),
+        None => String::new(),
     };
 
     let sel_color = if selected { c.accent } else { c.dim };
 
-    writeln!(out,
+    writeln!(
+        out,
         "{}{} {} {}{}{} {}(+{} -{}){} {}",
         sel_color,
         cursor,
@@ -87,9 +95,9 @@ fn render_expanded_block(
 
     // File header
     let status_badge = match diff.accepted {
-        Some(true)  => format!(" {} accepted", ic.check),
+        Some(true) => format!(" {} accepted", ic.check),
         Some(false) => format!(" {} rejected", ic.cross),
-        None        => String::new(),
+        None => String::new(),
     };
 
     let title = format!(
@@ -98,17 +106,31 @@ fn render_expanded_block(
     );
 
     // Top border
-    writeln!(out, "  {}{}{}{}{}{}", sel_color, b.tl, b.h, title, b.h.repeat(w.saturating_sub(title.len() + 1).max(0)), b.tr)?;
+    writeln!(
+        out,
+        "  {}{}{}{}{}{}",
+        sel_color,
+        b.tl,
+        b.h,
+        title,
+        b.h.repeat(w.saturating_sub(title.len() + 1).max(0)),
+        b.tr
+    )?;
     write!(out, "{}", c.reset)?;
 
     // Hunks
     for (hi, hunk) in diff.hunks.iter().enumerate() {
         // Hunk header
-        writeln!(out, "  {}{} {}@@ -{},{} +{},{} @@{}",
-            sel_color, b.v,
+        writeln!(
+            out,
+            "  {}{} {}@@ -{},{} +{},{} @@{}",
+            sel_color,
+            b.v,
             c.dim,
-            hunk.old_start, count_del(hunk),
-            hunk.new_start, count_add(hunk),
+            hunk.old_start,
+            count_del(hunk),
+            hunk.new_start,
+            count_add(hunk),
             c.reset,
         )?;
 
@@ -116,44 +138,93 @@ fn render_expanded_block(
         for line in &hunk.context {
             match line {
                 DiffLine::Context(text) => {
-                    writeln!(out, "  {}{}{}   {}{}",
-                        sel_color, b.v, c.reset,
-                        c.dim, truncate(text, w - 6))?;
-                }
+                    writeln!(
+                        out,
+                        "  {}{}{}   {}{}",
+                        sel_color,
+                        b.v,
+                        c.reset,
+                        c.dim,
+                        truncate(text, w - 6)
+                    )?;
+                },
                 DiffLine::Del(text) => {
-                    writeln!(out, "  {}{}{} {}{} {}{}",
-                        sel_color, b.v, c.reset,
-                        c.del, ic.removed, truncate(text, w - 6), c.reset)?;
-                }
+                    writeln!(
+                        out,
+                        "  {}{}{} {}{} {}{}",
+                        sel_color,
+                        b.v,
+                        c.reset,
+                        c.del,
+                        ic.removed,
+                        truncate(text, w - 6),
+                        c.reset
+                    )?;
+                },
                 DiffLine::Add(text) => {
-                    writeln!(out, "  {}{}{} {}{} {}{}",
-                        sel_color, b.v, c.reset,
-                        c.add, ic.added, truncate(text, w - 6), c.reset)?;
-                }
+                    writeln!(
+                        out,
+                        "  {}{}{} {}{} {}{}",
+                        sel_color,
+                        b.v,
+                        c.reset,
+                        c.add,
+                        ic.added,
+                        truncate(text, w - 6),
+                        c.reset
+                    )?;
+                },
             }
         }
 
         // Hunk separator (if not last)
         if hi < diff.hunks.len() - 1 {
-            writeln!(out, "  {}{}{}{}{}{}", sel_color, b.jl, b.h.repeat(w), b.jr, c.reset, "")?;
+            writeln!(
+                out,
+                "  {}{}{}{}{}{}",
+                sel_color,
+                b.jl,
+                b.h.repeat(w),
+                b.jr,
+                c.reset,
+                ""
+            )?;
         }
     }
 
     // Bottom border
-    writeln!(out, "  {}{}{}{}{}", sel_color, b.bl, b.h.repeat(w + 1), b.br, c.reset)?;
+    writeln!(
+        out,
+        "  {}{}{}{}{}",
+        sel_color,
+        b.bl,
+        b.h.repeat(w + 1),
+        b.br,
+        c.reset
+    )?;
     writeln!(out)?;
 
     Ok(())
 }
 
 fn truncate(s: &str, max: usize) -> &str {
-    if s.len() <= max { s } else { &s[..max] }
+    if s.len() <= max {
+        s
+    } else {
+        &s[..max]
+    }
 }
 
 fn count_add(h: &Hunk) -> usize {
-    h.context.iter().filter(|l| matches!(l, DiffLine::Add(_))).count()
+    h.context
+        .iter()
+        .filter(|l| matches!(l, DiffLine::Add(_)))
+        .count()
 }
 
 fn count_del(h: &Hunk) -> usize {
-    h.context.iter().filter(|l| matches!(l, DiffLine::Del(_))).count()
+    h.context
+        .iter()
+        .filter(|l| matches!(l, DiffLine::Del(_)))
+        .count()
 }

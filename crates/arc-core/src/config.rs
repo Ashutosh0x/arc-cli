@@ -4,9 +4,9 @@
 
 use crate::error::ArcResult;
 use crate::memory::MemoryConfig;
+use once_cell::sync::OnceCell;
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use once_cell::sync::OnceCell;
 use tracing::{debug, info};
 
 /// Global config singleton, initialized once via `OnceLock`.
@@ -225,7 +225,9 @@ impl Default for ArcConfig {
 impl ArcConfig {
     /// Standard config directory: `~/.arc/`
     pub fn dir() -> ArcResult<PathBuf> {
-        let home = dirs::home_dir().ok_or(crate::error::ArcError::Config("Config directory not found".to_string()))?;
+        let home = dirs::home_dir().ok_or(crate::error::ArcError::Config(
+            "Config directory not found".to_string(),
+        ))?;
         Ok(home.join(".arc"))
     }
 
@@ -243,7 +245,8 @@ impl ArcConfig {
         }
 
         debug!("Loading config from {}", path.display());
-        let contents = std::fs::read_to_string(&path).map_err(|e| crate::error::ArcError::Config(e.to_string()))?;
+        let contents = std::fs::read_to_string(&path)
+            .map_err(|e| crate::error::ArcError::Config(e.to_string()))?;
         let config: ArcConfig =
             toml::from_str(&contents).map_err(|e| crate::error::ArcError::Config(e.to_string()))?;
         Ok(config)
@@ -255,8 +258,8 @@ impl ArcConfig {
         std::fs::create_dir_all(&dir)?;
 
         let path = Self::path()?;
-        let contents =
-            toml::to_string_pretty(self).map_err(|e| crate::error::ArcError::Config(e.to_string()))?;
+        let contents = toml::to_string_pretty(self)
+            .map_err(|e| crate::error::ArcError::Config(e.to_string()))?;
         std::fs::write(&path, contents)?;
 
         // Restrict permissions on Unix
@@ -291,7 +294,10 @@ mod tests {
         let config = ArcConfig::default();
         let serialized = toml::to_string_pretty(&config).unwrap();
         let deserialized: ArcConfig = toml::from_str(&serialized).unwrap();
-        assert_eq!(deserialized.routing.strategy, RoutingStrategy::FallbackChain);
+        assert_eq!(
+            deserialized.routing.strategy,
+            RoutingStrategy::FallbackChain
+        );
     }
 
     #[test]

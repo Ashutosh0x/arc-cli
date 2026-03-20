@@ -6,4 +6,4 @@
 
 pub mod workspace;
 
-pub use workspace::{ShadowWorkspace, ShadowOptions};
+pub use workspace::{ShadowOptions, ShadowWorkspace};

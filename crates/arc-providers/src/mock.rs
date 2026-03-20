@@ -1,8 +1,8 @@
+use crate::message::{Message, StreamEvent, ToolDefinition};
 use crate::traits::Provider;
-use crate::message::{Message, ToolDefinition, StreamEvent};
-use std::any::Any;
 use async_trait::async_trait;
 use futures::stream::BoxStream;
+use std::any::Any;
 
 #[derive(Debug, Clone)]
 pub struct MockProvider {
@@ -39,13 +39,11 @@ impl Provider for MockProvider {
         vec!["mock-v1".to_string()]
     }
 
-    async fn generate_text(
-        &self,
-        _model: &str,
-        _messages: &[Message],
-    ) -> anyhow::Result<String> {
-        let count = self.call_count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
-        
+    async fn generate_text(&self, _model: &str, _messages: &[Message]) -> anyhow::Result<String> {
+        let count = self
+            .call_count
+            .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+
         if self.throw_error_on_next {
             return Err(anyhow::anyhow!("MockProvider artificial error triggered"));
         }
@@ -63,7 +61,9 @@ impl Provider for MockProvider {
         _messages: &[Message],
         _tools: &[ToolDefinition],
     ) -> Result<BoxStream<'static, Result<StreamEvent, anyhow::Error>>, anyhow::Error> {
-        let count = self.call_count.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        let count = self
+            .call_count
+            .fetch_add(1, std::sync::atomic::Ordering::SeqCst);
         let text = if count < self.default_responses.len() {
             self.default_responses[count].clone()
         } else {
@@ -74,9 +74,7 @@ impl Provider for MockProvider {
             return Err(anyhow::anyhow!("MockProvider artificial error triggered"));
         }
 
-        let stream = futures::stream::iter(vec![
-            Ok(StreamEvent { text_delta: text }),
-        ]);
+        let stream = futures::stream::iter(vec![Ok(StreamEvent { text_delta: text })]);
         Ok(Box::pin(stream))
     }
 

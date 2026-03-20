@@ -94,8 +94,8 @@ impl CredentialManager {
         let meta_entry = keyring::Entry::new(SERVICE_NAME, &meta_key)
             .map_err(|e| ArcError::Credential(format!("keyring entry error: {e}")))?;
 
-        let meta_json = serde_json::to_string(&meta)
-            .map_err(|e| ArcError::System(e.to_string()))?;
+        let meta_json =
+            serde_json::to_string(&meta).map_err(|e| ArcError::System(e.to_string()))?;
 
         meta_entry
             .set_password(&meta_json)
@@ -145,12 +145,10 @@ impl CredentialManager {
                 .map_err(|e| ArcError::Credential(format!("keyring entry error: {e}")))?;
 
             match entry.delete_password() {
-                Ok(()) | Err(keyring::Error::NoEntry) => {}
+                Ok(()) | Err(keyring::Error::NoEntry) => {},
                 Err(e) => {
-                    return Err(ArcError::Credential(format!(
-                        "keyring delete failed: {e}"
-                    )));
-                }
+                    return Err(ArcError::Credential(format!("keyring delete failed: {e}")));
+                },
             }
         }
 
@@ -186,7 +184,7 @@ impl CredentialManager {
                 let meta: CredentialMeta = serde_json::from_str(&json)
                     .map_err(|e| ArcError::System(format!("corrupt credential meta: {e}")))?;
                 Ok(Some(meta))
-            }
+            },
             Err(keyring::Error::NoEntry) => Ok(None),
             Err(e) => Err(ArcError::Credential(format!(
                 "keyring meta read failed: {e}"
@@ -211,7 +209,7 @@ impl CredentialManager {
                                 ttl: meta.ttl(),
                             }
                         }
-                    }
+                    },
                     Ok(None) => CredentialStatus::NotSet,
                     Err(_) => CredentialStatus::Error,
                 };

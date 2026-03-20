@@ -10,7 +10,10 @@ pub enum McpSecurityError {
 }
 
 /// Validates that a given MCP manifest string matches the pinned SHA256 hash.
-pub fn verify_manifest_pin(manifest_json: &str, pinned_hash: &str) -> std::result::Result<(), McpSecurityError> {
+pub fn verify_manifest_pin(
+    manifest_json: &str,
+    pinned_hash: &str,
+) -> std::result::Result<(), McpSecurityError> {
     let mut hasher = Sha256::new();
     hasher.update(manifest_json.as_bytes());
     let hash = format!("{:x}", hasher.finalize());
@@ -26,7 +29,10 @@ pub fn verify_manifest_pin(manifest_json: &str, pinned_hash: &str) -> std::resul
 
 /// Minimizes payload context by forcefully truncating or limiting payloads
 /// before sending them to a third-party MCP server.
-pub fn minimize_context(payload: &str, max_bytes: usize) -> std::result::Result<String, McpSecurityError> {
+pub fn minimize_context(
+    payload: &str,
+    max_bytes: usize,
+) -> std::result::Result<String, McpSecurityError> {
     if payload.len() > max_bytes {
         // We log and return an error here to prevent uncontrolled data leakage
         return Err(McpSecurityError::ContextViolation(format!(

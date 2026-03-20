@@ -6,7 +6,13 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum Severity { Critical, High, Medium, Low, Info }
+pub enum Severity {
+    Critical,
+    High,
+    Medium,
+    Low,
+    Info,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SecurityFinding {
@@ -20,15 +26,51 @@ pub struct SecurityFinding {
 
 /// Security patterns to scan for in diffs.
 pub const SECURITY_PATTERNS: &[(&str, &str, Severity)] = &[
-    (r"child_process\.exec\s*\(", "Command injection via exec()", Severity::Critical),
-    (r"os\.system\s*\(", "Command injection via os.system()", Severity::Critical),
-    (r"eval\s*\(", "Code injection via eval()", Severity::Critical),
-    (r"innerHTML\s*=", "Potential XSS via innerHTML", Severity::High),
-    (r"document\.write\s*\(", "Potential XSS via document.write", Severity::High),
-    (r"sql.*format!|format!.*(?i)(select|insert|update|delete)", "Potential SQL injection", Severity::High),
-    (r#"(?i)(password|secret|token|api_key)\s*=\s*["'][^"']+["']"#, "Hardcoded credential", Severity::High),
-    (r"(?i)allowlist|whitelist|blacklist", "Non-inclusive terminology", Severity::Low),
-    (r"(?i)todo.*security|fixme.*security|hack.*security", "Security TODO/FIXME", Severity::Medium),
+    (
+        r"child_process\.exec\s*\(",
+        "Command injection via exec()",
+        Severity::Critical,
+    ),
+    (
+        r"os\.system\s*\(",
+        "Command injection via os.system()",
+        Severity::Critical,
+    ),
+    (
+        r"eval\s*\(",
+        "Code injection via eval()",
+        Severity::Critical,
+    ),
+    (
+        r"innerHTML\s*=",
+        "Potential XSS via innerHTML",
+        Severity::High,
+    ),
+    (
+        r"document\.write\s*\(",
+        "Potential XSS via document.write",
+        Severity::High,
+    ),
+    (
+        r"sql.*format!|format!.*(?i)(select|insert|update|delete)",
+        "Potential SQL injection",
+        Severity::High,
+    ),
+    (
+        r#"(?i)(password|secret|token|api_key)\s*=\s*["'][^"']+["']"#,
+        "Hardcoded credential",
+        Severity::High,
+    ),
+    (
+        r"(?i)allowlist|whitelist|blacklist",
+        "Non-inclusive terminology",
+        Severity::Low,
+    ),
+    (
+        r"(?i)todo.*security|fixme.*security|hack.*security",
+        "Security TODO/FIXME",
+        Severity::Medium,
+    ),
 ];
 
 /// Get the merge-base diff for security scanning.
@@ -37,14 +79,18 @@ pub fn get_merge_base_diff(base: Option<&str>) -> Result<String, String> {
     // Find merge-base.
     let mb = std::process::Command::new("git")
         .args(["merge-base", base_ref, "HEAD"])
-        .output().map_err(|e| e.to_string())?;
-    if !mb.status.success() { return Err("Failed to find merge-base".into()); }
+        .output()
+        .map_err(|e| e.to_string())?;
+    if !mb.status.success() {
+        return Err("Failed to find merge-base".into());
+    }
     let merge_base = String::from_utf8_lossy(&mb.stdout).trim().to_string();
 
     // Get diff.
     let diff = std::process::Command::new("git")
         .args(["diff", &merge_base, "HEAD"])
-        .output().map_err(|e| e.to_string())?;
+        .output()
+        .map_err(|e| e.to_string())?;
     Ok(String::from_utf8_lossy(&diff.stdout).to_string())
 }
 
@@ -75,8 +121,10 @@ pub fn scan_diff(diff: &str) -> Vec<SecurityFinding> {
                 if let Ok(re) = regex::Regex::new(pattern) {
                     if re.is_match(added) {
                         findings.push(SecurityFinding {
-                            severity: *sev, file: current_file.clone(),
-                            line: Some(line_num), rule: pattern.to_string(),
+                            severity: *sev,
+                            file: current_file.clone(),
+                            line: Some(line_num),
+                            rule: pattern.to_string(),
                             description: desc.to_string(),
                             suggestion: format!("Review this pattern in {current_file}:{line_num}"),
                         });
@@ -93,11 +141,25 @@ pub fn scan_diff(diff: &str) -> Vec<SecurityFinding> {
 
 /// Format findings for terminal output.
 pub fn format_findings(findings: &[SecurityFinding]) -> String {
-    if findings.is_empty() { return "✅ No security issues found.".into(); }
+    if findings.is_empty() {
+        return "✅ No security issues found.".into();
+    }
     let mut out = format!("⚠️  {} security finding(s):\n\n", findings.len());
     for f in findings {
-        let sev = match f.severity { Severity::Critical => "🔴 CRITICAL", Severity::High => "🟠 HIGH", Severity::Medium => "🟡 MEDIUM", Severity::Low => "🟢 LOW", Severity::Info => "ℹ️  INFO" };
-        out.push_str(&format!("  {sev}: {}\n    File: {}:{}\n    Fix: {}\n\n", f.description, f.file, f.line.unwrap_or(0), f.suggestion));
+        let sev = match f.severity {
+            Severity::Critical => "🔴 CRITICAL",
+            Severity::High => "🟠 HIGH",
+            Severity::Medium => "🟡 MEDIUM",
+            Severity::Low => "🟢 LOW",
+            Severity::Info => "ℹ️  INFO",
+        };
+        out.push_str(&format!(
+            "  {sev}: {}\n    File: {}:{}\n    Fix: {}\n\n",
+            f.description,
+            f.file,
+            f.line.unwrap_or(0),
+            f.suggestion
+        ));
     }
     out
 }

@@ -49,7 +49,7 @@ pub fn classify_failure(error_msg: &str, status_code: Option<u16>) -> FailureKin
         match code {
             429 => return FailureKind::Quota,
             503 | 502 => return FailureKind::Capacity,
-            _ => {}
+            _ => {},
         }
     }
 
@@ -84,16 +84,16 @@ pub fn apply_availability_transition(
     match kind {
         FailureKind::Quota => {
             availability.mark_terminal(model, UnavailabilityReason::Quota);
-        }
+        },
         FailureKind::Capacity => {
             availability.mark_terminal(model, UnavailabilityReason::Capacity);
-        }
+        },
         FailureKind::Transient => {
             availability.mark_retry_once_per_turn(model);
-        }
+        },
         FailureKind::Unknown => {
             availability.mark_retry_once_per_turn(model);
-        }
+        },
     }
 }
 
@@ -109,37 +109,54 @@ pub fn handle_fallback(
     let failure_kind = classify_failure(error_msg, status_code);
 
     // Find candidates (everything except the failed model)
-    let candidates: Vec<&FallbackPolicy> = chain
-        .iter()
-        .filter(|p| p.model != failed_model)
-        .collect();
+    let candidates: Vec<&FallbackPolicy> =
+        chain.iter().filter(|p| p.model != failed_model).collect();
 
     if candidates.is_empty() {
-        return FallbackResult { success: false, switched_to: None, intent: Some(intent) };
+        return FallbackResult {
+            success: false,
+            switched_to: None,
+            intent: Some(intent),
+        };
     }
 
     // Select first available
     let candidate_models: Vec<String> = candidates.iter().map(|p| p.model.clone()).collect();
     let selection = availability.select_first_available(&candidate_models);
 
-    let fallback_model = selection
-        .selected_model
-        .or_else(|| candidates.iter().find(|p| p.is_last_resort).map(|p| p.model.clone()));
+    let fallback_model = selection.selected_model.or_else(|| {
+        candidates
+            .iter()
+            .find(|p| p.is_last_resort)
+            .map(|p| p.model.clone())
+    });
 
     let Some(fallback) = fallback_model else {
-        return FallbackResult { success: false, switched_to: None, intent: Some(intent) };
+        return FallbackResult {
+            success: false,
+            switched_to: None,
+            intent: Some(intent),
+        };
     };
 
     match intent {
         FallbackIntent::RetryAlways | FallbackIntent::RetryOnce => {
             apply_availability_transition(availability, failed_model, &failure_kind);
-            FallbackResult { success: true, switched_to: Some(fallback), intent: Some(intent) }
-        }
-        FallbackIntent::Stop | FallbackIntent::RetryLater => {
-            FallbackResult { success: false, switched_to: None, intent: Some(intent) }
-        }
-        FallbackIntent::Upgrade => {
-            FallbackResult { success: false, switched_to: None, intent: Some(FallbackIntent::Upgrade) }
-        }
+            FallbackResult {
+                success: true,
+                switched_to: Some(fallback),
+                intent: Some(intent),
+            }
+        },
+        FallbackIntent::Stop | FallbackIntent::RetryLater => FallbackResult {
+            success: false,
+            switched_to: None,
+            intent: Some(intent),
+        },
+        FallbackIntent::Upgrade => FallbackResult {
+            success: false,
+            switched_to: None,
+            intent: Some(FallbackIntent::Upgrade),
+        },
     }
 }

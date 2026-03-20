@@ -35,17 +35,24 @@ impl PolicyRule {
     pub fn check_command(&self, command: &str) -> Option<PolicyViolation> {
         match self {
             PolicyRule::NoForcePush => {
-                if command.contains("git push") && (command.contains("--force") || command.contains("-f")) {
+                if command.contains("git push")
+                    && (command.contains("--force") || command.contains("-f"))
+                {
                     Some(PolicyViolation {
                         rule_name: "NoForcePush".to_string(),
                         severity: RuleSeverity::Deny,
-                        message: "Agent is not allowed to force push to remote repositories.".to_string(),
+                        message: "Agent is not allowed to force push to remote repositories."
+                            .to_string(),
                     })
                 } else {
                     None
                 }
-            }
-            PolicyRule::ForbiddenCommandPattern { name, regex_pattern, severity } => {
+            },
+            PolicyRule::ForbiddenCommandPattern {
+                name,
+                regex_pattern,
+                severity,
+            } => {
                 // In production, instantiate `regex::Regex` properly
                 if command.contains(regex_pattern) {
                     Some(PolicyViolation {
@@ -56,7 +63,7 @@ impl PolicyRule {
                 } else {
                     None
                 }
-            }
+            },
             _ => None,
         }
     }
@@ -75,12 +82,16 @@ impl PolicyRule {
                 } else {
                     None
                 }
-            }
-            PolicyRule::ForbiddenPath { name, glob_pattern, is_write_only } => {
+            },
+            PolicyRule::ForbiddenPath {
+                name,
+                glob_pattern,
+                is_write_only,
+            } => {
                 if *is_write_only && !is_write {
                     return None;
                 }
-                
+
                 // Extremely naive glob matching for demo purposes
                 let matches = if glob_pattern.ends_with("/*") {
                     let prefix = glob_pattern.trim_end_matches("/*");
@@ -93,12 +104,15 @@ impl PolicyRule {
                     Some(PolicyViolation {
                         rule_name: name.clone(),
                         severity: RuleSeverity::Deny,
-                        message: format!("Agent is forbidden from accessing path matching {}", glob_pattern),
+                        message: format!(
+                            "Agent is forbidden from accessing path matching {}",
+                            glob_pattern
+                        ),
                     })
                 } else {
                     None
                 }
-            }
+            },
             _ => None,
         }
     }

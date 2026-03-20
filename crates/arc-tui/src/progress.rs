@@ -11,12 +11,12 @@
 //! ```
 
 use std::io::{self, Write};
-use std::time::{Instant};
+use std::time::Instant;
 
 use crossterm::{
     cursor::{Hide, MoveToColumn, MoveUp, Show},
     execute,
-    style::{Color, Print, ResetColor, SetForegroundColor, Attribute, SetAttribute},
+    style::{Attribute, Color, Print, ResetColor, SetAttribute, SetForegroundColor},
     terminal::{Clear, ClearType},
 };
 
@@ -166,14 +166,10 @@ impl MultiStepProgress {
                         Print(&step.label),
                         ResetColor,
                     );
-                }
+                },
                 StepStatus::Running => {
-                    let frame =
-                        self.spinner_frames[self.frame_idx % self.spinner_frames.len()];
-                    let elapsed = step
-                        .started_at
-                        .map(|s| s.elapsed())
-                        .unwrap_or_default();
+                    let frame = self.spinner_frames[self.frame_idx % self.spinner_frames.len()];
+                    let elapsed = step.started_at.map(|s| s.elapsed()).unwrap_or_default();
 
                     let _ = execute!(
                         stderr,
@@ -206,7 +202,7 @@ impl MultiStepProgress {
                             ResetColor,
                         );
                     }
-                }
+                },
                 StepStatus::Done => {
                     let _ = execute!(
                         stderr,
@@ -215,7 +211,7 @@ impl MultiStepProgress {
                         ResetColor,
                         Print(&step.label),
                     );
-                }
+                },
                 StepStatus::Skipped => {
                     let _ = execute!(
                         stderr,
@@ -227,7 +223,7 @@ impl MultiStepProgress {
                         Print(" (skipped)"),
                         ResetColor,
                     );
-                }
+                },
                 StepStatus::Failed => {
                     let _ = execute!(
                         stderr,
@@ -244,7 +240,7 @@ impl MultiStepProgress {
                             ResetColor,
                         );
                     }
-                }
+                },
             }
 
             let _ = execute!(stderr, Print("\n"));

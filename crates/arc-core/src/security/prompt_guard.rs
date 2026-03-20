@@ -36,10 +36,7 @@ fn get_patterns() -> &'static Vec<Regex> {
             r"\[INST\]",
         ];
 
-        patterns
-            .iter()
-            .filter_map(|p| Regex::new(p).ok())
-            .collect()
+        patterns.iter().filter_map(|p| Regex::new(p).ok()).collect()
     })
 }
 
@@ -64,16 +61,32 @@ pub struct TaggedMessage {
 
 impl TaggedMessage {
     pub fn system(content: String) -> Self {
-        Self { segment: ContextSegment::System, content, priority: 0 }
+        Self {
+            segment: ContextSegment::System,
+            content,
+            priority: 0,
+        }
     }
     pub fn user(content: String) -> Self {
-        Self { segment: ContextSegment::User, content, priority: 1 }
+        Self {
+            segment: ContextSegment::User,
+            content,
+            priority: 1,
+        }
     }
     pub fn tool(content: String) -> Self {
-        Self { segment: ContextSegment::Tool, content, priority: 2 }
+        Self {
+            segment: ContextSegment::Tool,
+            content,
+            priority: 2,
+        }
     }
     pub fn retrieved(content: String) -> Self {
-        Self { segment: ContextSegment::Retrieved, content, priority: 3 }
+        Self {
+            segment: ContextSegment::Retrieved,
+            content,
+            priority: 3,
+        }
     }
 }
 
@@ -85,7 +98,9 @@ pub fn scan_input(input: &str) -> ArcResult<()> {
         if pattern.is_match(input) {
             let matched = pattern.to_string();
             error!("Prompt injection pattern detected: {matched}");
-            return Err(crate::error::ArcError::System("Prompt injection detected".to_string()).into());
+            return Err(
+                crate::error::ArcError::System("Prompt injection detected".to_string()).into(),
+            );
         }
     }
 
@@ -139,7 +154,9 @@ pub fn evaluate_lethal_trifecta(
              untrusted content + exfiltration vectors. Extra caution required."
         );
         // In A2A networks, lethal loops escalate fast. Native hallucination drop.
-        tracing::error!("A2A Hallucination escalate guard triggered via Lethal Trifecta. Dropping untrusted payloads.");
+        tracing::error!(
+            "A2A Hallucination escalate guard triggered via Lethal Trifecta. Dropping untrusted payloads."
+        );
     }
 
     is_lethal
@@ -152,13 +169,13 @@ pub fn enforce_instruction_hierarchy(messages: &[TaggedMessage]) -> Vec<&TaggedM
     sorted
 }
 
-/// Enforce Context Isolation using XML delimiters to prevent indirect prompt injection 
+/// Enforce Context Isolation using XML delimiters to prevent indirect prompt injection
 /// hijacking the operational instructions.
 pub fn isolate_context(user_input: &str) -> String {
     // Sanitize any existing tags to prevent breakout
     let sanitized = user_input
         .replace("<user_input>", "&lt;user_input&gt;")
         .replace("</user_input>", "&lt;/user_input&gt;");
-        
+
     format!("<user_input>\n{}\n</user_input>", sanitized)
 }

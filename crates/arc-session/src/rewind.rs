@@ -102,17 +102,13 @@ impl RewindManager {
                     } else {
                         tracing::info!("Rewind: Deleted file {}", change.path);
                     }
-                }
+                },
                 crate::session_model::FileAction::Modified
                 | crate::session_model::FileAction::Deleted => {
                     // Restore original content
                     if let Some(content) = &change.original_content {
                         if let Err(e) = fs::write(&change.path, content).await {
-                            tracing::warn!(
-                                "Rewind: Failed to restore file {}: {}",
-                                change.path,
-                                e
-                            );
+                            tracing::warn!("Rewind: Failed to restore file {}: {}", change.path, e);
                         } else {
                             tracing::info!("Rewind: Restored file {}", change.path);
                         }
@@ -122,7 +118,7 @@ impl RewindManager {
                             change.path
                         );
                     }
-                }
+                },
             }
         }
 
@@ -142,7 +138,7 @@ impl RewindManager {
             .context("Checkpoint not found")?;
 
         let turns_to_lose = session.conversation.len().saturating_sub(target.turn_index);
-        
+
         let files_to_revert: HashSet<_> = session
             .modified_files
             .iter()

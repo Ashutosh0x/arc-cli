@@ -39,7 +39,7 @@ impl ShutdownController {
 
         #[cfg(unix)]
         {
-            use tokio::signal::unix::{signal, SignalKind};
+            use tokio::signal::unix::{SignalKind, signal};
             let mut sigterm =
                 signal(SignalKind::terminate()).expect("failed to register SIGTERM handler");
             tokio::select! {

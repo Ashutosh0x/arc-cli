@@ -61,12 +61,30 @@ impl Language {
 
     pub fn all() -> &'static [Language] {
         &[
-            Self::English, Self::Spanish, Self::French, Self::German,
-            Self::Italian, Self::Portuguese, Self::Dutch, Self::Russian,
-            Self::Chinese, Self::Japanese, Self::Korean, Self::Arabic,
-            Self::Hindi, Self::Turkish, Self::Polish, Self::Swedish,
-            Self::Danish, Self::Norwegian, Self::Finnish, Self::Czech,
-            Self::Ukrainian, Self::Thai, Self::Vietnamese, Self::Indonesian,
+            Self::English,
+            Self::Spanish,
+            Self::French,
+            Self::German,
+            Self::Italian,
+            Self::Portuguese,
+            Self::Dutch,
+            Self::Russian,
+            Self::Chinese,
+            Self::Japanese,
+            Self::Korean,
+            Self::Arabic,
+            Self::Hindi,
+            Self::Turkish,
+            Self::Polish,
+            Self::Swedish,
+            Self::Danish,
+            Self::Norwegian,
+            Self::Finnish,
+            Self::Czech,
+            Self::Ukrainian,
+            Self::Thai,
+            Self::Vietnamese,
+            Self::Indonesian,
         ]
     }
 

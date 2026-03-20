@@ -47,20 +47,17 @@ impl RemoteServer {
             current_state: RwLock::new(SessionStateDto::default()),
         });
 
-        (
-            Self {
-                config,
-                app_state,
-            },
-            rx_in,
-        )
+        (Self { config, app_state }, rx_in)
     }
 
     /// Broadcast a state update to all connected remote clients.
     pub async fn broadcast_state(&self, state: SessionStateDto) {
         let mut current = self.app_state.current_state.write().await;
         *current = state.clone();
-        let _ = self.app_state.tx_out.send(ServerMessage::StateUpdate(state));
+        let _ = self
+            .app_state
+            .tx_out
+            .send(ServerMessage::StateUpdate(state));
     }
 
     /// Send a specific event (e.g., tool started, output chunk).
@@ -79,7 +76,10 @@ impl RemoteServer {
             }))
             .with_state(self.app_state);
 
-        info!("Remote control server listening on {}", self.config.bind_address);
+        info!(
+            "Remote control server listening on {}",
+            self.config.bind_address
+        );
 
         let listener = tokio::net::TcpListener::bind(&self.config.bind_address).await?;
         axum::serve(listener, app).await

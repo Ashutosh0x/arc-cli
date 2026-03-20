@@ -31,7 +31,9 @@ impl LongTermMemory {
         let db = Database::create(db_path).map_err(|e| ArcError::Database(e.to_string()))?;
 
         // Initialize tables
-        let write_txn = db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let write_txn = db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let _ = write_txn
                 .open_table(AGENT_FACTS)
@@ -43,7 +45,9 @@ impl LongTermMemory {
                 .open_table(OBSERVATION_EMBEDDINGS)
                 .map_err(|e| ArcError::Database(e.to_string()))?;
         }
-        write_txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        write_txn
+            .commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
 
         info!("Long-term memory subsystem initialized");
         Ok(Self { db: Arc::new(db) })
@@ -51,7 +55,10 @@ impl LongTermMemory {
 
     /// Store an agent fact.
     pub fn store_fact(&self, key: &str, fact: &str) -> ArcResult<()> {
-        let write_txn = self.db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let write_txn = self
+            .db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let mut table = write_txn
                 .open_table(AGENT_FACTS)
@@ -60,29 +67,41 @@ impl LongTermMemory {
                 .insert(key, fact)
                 .map_err(|e| ArcError::Database(e.to_string()))?;
         }
-        write_txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        write_txn
+            .commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         Ok(())
     }
 
     /// Retrieve an agent fact by exact key.
     pub fn get_fact(&self, key: &str) -> ArcResult<Option<String>> {
-        let read_txn = self.db.begin_read().map_err(|e| ArcError::Database(e.to_string()))?;
+        let read_txn = self
+            .db
+            .begin_read()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         let table = read_txn
             .open_table(AGENT_FACTS)
             .map_err(|e| ArcError::Database(e.to_string()))?;
-        let result = table.get(key).map_err(|e| ArcError::Database(e.to_string()))?;
+        let result = table
+            .get(key)
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         Ok(result.map(|v| v.value().to_string()))
     }
 
     /// Retrieve all facts for dumping into working memory.
     pub fn get_all_facts(&self) -> ArcResult<Vec<(String, String)>> {
-        let read_txn = self.db.begin_read().map_err(|e| ArcError::Database(e.to_string()))?;
+        let read_txn = self
+            .db
+            .begin_read()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         let table = read_txn
             .open_table(AGENT_FACTS)
             .map_err(|e| ArcError::Database(e.to_string()))?;
 
         let mut facts = Vec::new();
-        let iter = table.iter().map_err(|e| ArcError::Database(e.to_string()))?;
+        let iter = table
+            .iter()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
 
         for result in iter {
             let (k, v) = result.map_err(|e| ArcError::Database(e.to_string()))?;
@@ -94,7 +113,10 @@ impl LongTermMemory {
 
     /// Store a user preference.
     pub fn store_preference(&self, key: &str, pref: &str) -> ArcResult<()> {
-        let write_txn = self.db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let write_txn = self
+            .db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let mut table = write_txn
                 .open_table(USER_PREFS)
@@ -103,7 +125,9 @@ impl LongTermMemory {
                 .insert(key, pref)
                 .map_err(|e| ArcError::Database(e.to_string()))?;
         }
-        write_txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        write_txn
+            .commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         Ok(())
     }
 }

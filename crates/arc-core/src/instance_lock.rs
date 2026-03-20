@@ -1,6 +1,6 @@
-use std::path::{Path, PathBuf};
-use fs2::FileExt;
 use crate::error::ArcError;
+use fs2::FileExt;
+use std::path::{Path, PathBuf};
 
 /// A cross-process instance lock to prevent concurrent `arc` operations
 /// mutating the same local `.arc` directory simultaneously.
@@ -36,7 +36,10 @@ impl InstanceLock {
         let mut f = &file;
         let _ = writeln!(f, "{}", std::process::id());
 
-        Ok(Self { lock_path, _file: file })
+        Ok(Self {
+            lock_path,
+            _file: file,
+        })
     }
 }
 

@@ -33,7 +33,9 @@ pub struct TrackerService {
 impl TrackerService {
     pub fn new(tasks_dir: &Path) -> Result<Self, std::io::Error> {
         std::fs::create_dir_all(tasks_dir)?;
-        Ok(Self { tasks_dir: tasks_dir.to_path_buf() })
+        Ok(Self {
+            tasks_dir: tasks_dir.to_path_buf(),
+        })
     }
 
     fn generate_id() -> String {
@@ -45,7 +47,12 @@ impl TrackerService {
         format!("{:06x}", ts & 0xFFFFFF)
     }
 
-    pub fn create_task(&self, title: String, description: String, parent_id: Option<String>) -> Result<TrackerTask, String> {
+    pub fn create_task(
+        &self,
+        title: String,
+        description: String,
+        parent_id: Option<String>,
+    ) -> Result<TrackerTask, String> {
         if let Some(ref pid) = parent_id {
             if self.get_task(pid)?.is_none() {
                 return Err(format!("Parent task '{pid}' not found"));
@@ -94,8 +101,12 @@ impl TrackerService {
             return Err(format!("Task '{id}' not found"));
         };
 
-        if let Some(title) = updates.title { task.title = title; }
-        if let Some(desc) = updates.description { task.description = desc; }
+        if let Some(title) = updates.title {
+            task.title = title;
+        }
+        if let Some(desc) = updates.description {
+            task.description = desc;
+        }
         if let Some(status) = updates.status {
             if status == TaskStatus::Closed && task.status != TaskStatus::Closed {
                 self.validate_can_close(&task)?;
@@ -106,7 +117,9 @@ impl TrackerService {
             task.dependencies = deps;
             self.validate_no_circular_deps(&task)?;
         }
-        if let Some(labels) = updates.labels { task.labels = labels; }
+        if let Some(labels) = updates.labels {
+            task.labels = labels;
+        }
 
         self.save_task(&task)?;
         Ok(task)
@@ -120,7 +133,8 @@ impl TrackerService {
 
     fn validate_can_close(&self, task: &TrackerTask) -> Result<(), String> {
         for dep_id in &task.dependencies {
-            let dep = self.get_task(dep_id)?
+            let dep = self
+                .get_task(dep_id)?
                 .ok_or_else(|| format!("Dependency '{dep_id}' not found"))?;
             if dep.status != TaskStatus::Closed {
                 return Err(format!(
@@ -159,7 +173,9 @@ impl TrackerService {
         let task = if let Some(t) = cache.get(id) {
             t.clone()
         } else {
-            let t = self.get_task(id)?.ok_or(format!("Dependency '{id}' not found"))?;
+            let t = self
+                .get_task(id)?
+                .ok_or(format!("Dependency '{id}' not found"))?;
             cache.insert(id.to_string(), t.clone());
             t
         };

@@ -1,6 +1,6 @@
+use anyhow::Result;
 use arc_providers::message::{Message, Role};
 use arc_providers::traits::Provider;
-use anyhow::Result;
 use std::sync::Arc;
 use tracing::info;
 
@@ -15,7 +15,8 @@ impl Summarizer {
 
     /// Summarize older messages using the LLM provider to maintain context density
     pub async fn summarize_history(&self, messages: &[Message]) -> Result<String> {
-        let history_text = messages.iter()
+        let history_text = messages
+            .iter()
             .map(|m| format!("{:?}: {}", m.role, m.content))
             .collect::<Vec<_>>()
             .join("\n\n");
@@ -32,7 +33,11 @@ impl Summarizer {
             tool_call_id: None,
         };
         let summary: String = self.provider.generate_text("default", &[msg]).await?;
-        info!("History summarized. Compressed {} messages into {} characters.", messages.len(), summary.len());
+        info!(
+            "History summarized. Compressed {} messages into {} characters.",
+            messages.len(),
+            summary.len()
+        );
         Ok(summary)
     }
 }

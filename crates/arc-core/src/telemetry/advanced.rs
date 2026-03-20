@@ -11,7 +11,10 @@ pub struct ActivityDetector {
 
 impl ActivityDetector {
     pub fn new(idle_threshold: Duration) -> Self {
-        Self { last_activity: Instant::now(), idle_threshold }
+        Self {
+            last_activity: Instant::now(),
+            idle_threshold,
+        }
     }
 
     pub fn record_activity(&mut self) {
@@ -88,11 +91,15 @@ pub struct StartupProfiler {
 
 impl StartupProfiler {
     pub fn new() -> Self {
-        Self { start: Instant::now(), checkpoints: Vec::new() }
+        Self {
+            start: Instant::now(),
+            checkpoints: Vec::new(),
+        }
     }
 
     pub fn checkpoint(&mut self, name: &str) {
-        self.checkpoints.push((name.to_string(), self.start.elapsed()));
+        self.checkpoints
+            .push((name.to_string(), self.start.elapsed()));
     }
 
     pub fn total_elapsed(&self) -> Duration {
@@ -100,7 +107,10 @@ impl StartupProfiler {
     }
 
     pub fn report(&self) -> String {
-        let mut lines = vec![format!("Startup Profile (total: {:?})", self.total_elapsed())];
+        let mut lines = vec![format!(
+            "Startup Profile (total: {:?})",
+            self.total_elapsed()
+        )];
         let mut prev = Duration::ZERO;
         for (name, elapsed) in &self.checkpoints {
             let delta = *elapsed - prev;
@@ -125,7 +135,9 @@ pub struct HighWaterMarkTracker {
 
 impl HighWaterMarkTracker {
     pub fn new() -> Self {
-        Self { marks: std::collections::HashMap::new() }
+        Self {
+            marks: std::collections::HashMap::new(),
+        }
     }
 
     pub fn record(&mut self, metric: &str, value: f64) {

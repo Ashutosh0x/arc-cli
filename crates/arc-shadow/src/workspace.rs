@@ -56,7 +56,7 @@ impl ShadowWorkspace {
     /// Run a command inside the shadow workspace.
     pub async fn run_command(&self, program: &str, args: &[&str]) -> Result<std::process::Output> {
         debug!("Running '{}' in shadow workspace", program);
-        
+
         let output = tokio::process::Command::new(program)
             .args(args)
             .current_dir(&self.shadow_dir)
@@ -71,7 +71,7 @@ impl ShadowWorkspace {
         // Simple manual unoptimized copy logic for demo purposes.
         // In a real implementation, we'd use `ignore::WalkBuilder`
         // and hardlinks if supported.
-        
+
         for entry in ignore::Walk::new(&self.source_dir) {
             let entry = match entry {
                 Ok(e) => e,
@@ -85,9 +85,14 @@ impl ShadowWorkspace {
 
             // Strip prefix to get relative path
             let relative = path.strip_prefix(&self.source_dir).unwrap();
-            
+
             // Skip target/node_modules explicitly
-            if self.options.exclude_patterns.iter().any(|pat| relative.to_string_lossy().contains(pat)) {
+            if self
+                .options
+                .exclude_patterns
+                .iter()
+                .any(|pat| relative.to_string_lossy().contains(pat))
+            {
                 continue;
             }
 
@@ -99,7 +104,7 @@ impl ShadowWorkspace {
                 if let Some(parent) = target.parent() {
                     tokio::fs::create_dir_all(parent).await?;
                 }
-                
+
                 #[cfg(unix)]
                 {
                     if self.options.use_hardlinks {
@@ -110,21 +115,24 @@ impl ShadowWorkspace {
                         tokio::fs::copy(path, &target).await?;
                     }
                 }
-                
+
                 #[cfg(not(unix))]
                 {
                     tokio::fs::copy(path, &target).await?;
                 }
             }
         }
-        
+
         Ok(())
     }
 
     /// Clean up the shadow workspace from disk. Called automatically on Drop,
     /// but exposed explicitly if needed.
     pub async fn destroy(self) -> Result<()> {
-        info!("Destroying shadow workspace at {}", self.shadow_dir.display());
+        info!(
+            "Destroying shadow workspace at {}",
+            self.shadow_dir.display()
+        );
         tokio::fs::remove_dir_all(&self.shadow_dir).await?;
         Ok(())
     }

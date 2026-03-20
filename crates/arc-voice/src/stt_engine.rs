@@ -9,18 +9,11 @@ use tracing::info;
 #[serde(tag = "type")]
 pub enum SttBackend {
     /// OpenAI Whisper API
-    Whisper {
-        api_key: String,
-        model: String,
-    },
+    Whisper { api_key: String, model: String },
     /// Deepgram streaming API
-    Deepgram {
-        api_key: String,
-    },
+    Deepgram { api_key: String },
     /// Local Whisper.cpp via HTTP
-    LocalWhisper {
-        endpoint: String,
-    },
+    LocalWhisper { endpoint: String },
 }
 
 pub struct SttEngine {
@@ -69,13 +62,11 @@ impl SttEngine {
         match &self.backend {
             SttBackend::Whisper { api_key, model } => {
                 self.transcribe_whisper(wav_data, api_key, model).await
-            }
-            SttBackend::Deepgram { api_key } => {
-                self.transcribe_deepgram(wav_data, api_key).await
-            }
+            },
+            SttBackend::Deepgram { api_key } => self.transcribe_deepgram(wav_data, api_key).await,
             SttBackend::LocalWhisper { endpoint } => {
                 self.transcribe_local(wav_data, endpoint).await
-            }
+            },
         }
     }
 
@@ -109,11 +100,7 @@ impl SttEngine {
         Ok(whisper.text)
     }
 
-    async fn transcribe_deepgram(
-        &self,
-        wav_data: &[u8],
-        api_key: &str,
-    ) -> Result<String> {
+    async fn transcribe_deepgram(&self, wav_data: &[u8], api_key: &str) -> Result<String> {
         let url = format!(
             "https://api.deepgram.com/v1/listen?language={}&model=nova-2&smart_format=true",
             self.language.code()
@@ -141,11 +128,7 @@ impl SttEngine {
         Ok(transcript)
     }
 
-    async fn transcribe_local(
-        &self,
-        wav_data: &[u8],
-        endpoint: &str,
-    ) -> Result<String> {
+    async fn transcribe_local(&self, wav_data: &[u8], endpoint: &str) -> Result<String> {
         let part = reqwest::multipart::Part::bytes(wav_data.to_vec())
             .file_name("audio.wav")
             .mime_str("audio/wav")?;

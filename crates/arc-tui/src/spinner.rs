@@ -11,8 +11,8 @@
 
 use std::fmt;
 use std::io::{self, Write};
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
 
 use crossterm::{
@@ -272,12 +272,7 @@ impl SpinnerHandle {
             let _ = handle.await;
         }
         let mut stderr = io::stderr();
-        let _ = execute!(
-            stderr,
-            MoveToColumn(0),
-            Clear(ClearType::CurrentLine),
-            Show,
-        );
+        let _ = execute!(stderr, MoveToColumn(0), Clear(ClearType::CurrentLine), Show,);
     }
 }
 
@@ -487,12 +482,7 @@ impl Spinner {
         }
 
         // Clean up line.
-        let _ = execute!(
-            stderr,
-            MoveToColumn(0),
-            Clear(ClearType::CurrentLine),
-            Show,
-        );
+        let _ = execute!(stderr, MoveToColumn(0), Clear(ClearType::CurrentLine), Show,);
     }
 }
 
@@ -536,12 +526,10 @@ where
     match &result {
         Ok(_) => {
             handle.finish(&format!("{message} — done")).await;
-        }
+        },
         Err(e) => {
-            handle
-                .fail(&format!("{message} — failed: {e}"))
-                .await;
-        }
+            handle.fail(&format!("{message} — failed: {e}")).await;
+        },
     }
 
     result
@@ -550,10 +538,7 @@ where
 /// Run an async task with a spinner and full phase control.
 ///
 /// Returns both the task result and the spinner handle for custom finish messages.
-pub async fn with_spinner_handle<F, Fut, T>(
-    message: &str,
-    task: F,
-) -> (SpinnerHandle, T)
+pub async fn with_spinner_handle<F, Fut, T>(message: &str, task: F) -> (SpinnerHandle, T)
 where
     F: FnOnce(SpinnerHandle) -> Fut,
     Fut: std::future::Future<Output = T>,
@@ -636,9 +621,8 @@ impl StreamingSpinner {
             } else {
                 0.0
             };
-            self.inner.set_detail(format!(
-                "{count} tokens  ({tps:.1} tok/s)"
-            ));
+            self.inner
+                .set_detail(format!("{count} tokens  ({tps:.1} tok/s)"));
         }
     }
 

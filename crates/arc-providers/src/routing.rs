@@ -1,5 +1,5 @@
-use std::sync::Arc;
 use crate::traits::Provider;
+use std::sync::Arc;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RoutingStrategy {
@@ -60,18 +60,18 @@ impl ProviderChain {
                         Err(e) => {
                             tracing::warn!("Provider {} failed: {}", entry.id, e);
                             last_error = Some(e);
-                        }
+                        },
                     }
                 }
                 Err(arc_core::error::ArcError::Network(format!(
                     "All fallback chain providers failed. Last error: {:?}",
                     last_error
                 )))
-            }
+            },
             _ => {
                 // Future extension
                 unimplemented!("Advanced routing strategies pending metrics integration")
-            }
+            },
         }
     }
 }

@@ -51,7 +51,10 @@ impl SessionGuard {
                     "High consecutive tool call count: {} in a row",
                     self.consecutive_tool_calls
                 ));
-                warn!("Behavioral anomaly: {} consecutive tool calls", self.consecutive_tool_calls);
+                warn!(
+                    "Behavioral anomaly: {} consecutive tool calls",
+                    self.consecutive_tool_calls
+                );
                 self.anomaly_count += 1;
             }
         } else {
@@ -80,7 +83,8 @@ impl SessionGuard {
 
         // Hard stop if too many anomalies
         if self.anomaly_count > 10 {
-            warnings.push("SESSION INTEGRITY THRESHOLD EXCEEDED — recommend termination".to_string());
+            warnings
+                .push("SESSION INTEGRITY THRESHOLD EXCEEDED — recommend termination".to_string());
         }
 
         warnings

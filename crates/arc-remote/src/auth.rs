@@ -1,11 +1,6 @@
 //! Authentication for the remote control server.
 
-use axum::{
-    extract::Request,
-    http::StatusCode,
-    middleware::Next,
-    response::Response,
-};
+use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use tracing::warn;
@@ -36,7 +31,7 @@ pub async fn auth_middleware(
         None => {
             warn!("Missing or invalid Authorization header");
             return Err(StatusCode::UNAUTHORIZED);
-        }
+        },
     };
 
     let decoding_key = DecodingKey::from_secret(secret.as_bytes());
@@ -48,10 +43,10 @@ pub async fn auth_middleware(
             let mut req = req;
             req.extensions_mut().insert(token_data.claims);
             Ok(next.run(req).await)
-        }
+        },
         Err(e) => {
             warn!("Invalid remote JWT: {}", e);
             Err(StatusCode::UNAUTHORIZED)
-        }
+        },
     }
 }

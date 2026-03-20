@@ -1,9 +1,9 @@
 use std::time::{Duration, Instant};
 
 pub enum CircuitState {
-    Closed,    // Healthy, pass requests through
-    Open,      // Tripped, reject all calls
-    HalfOpen,  // Testing one call to see if it succeeds
+    Closed,   // Healthy, pass requests through
+    Open,     // Tripped, reject all calls
+    HalfOpen, // Testing one call to see if it succeeds
 }
 
 pub struct CircuitBreaker {
@@ -37,7 +37,7 @@ impl CircuitBreaker {
                     }
                 }
                 false
-            }
+            },
             CircuitState::HalfOpen => false, // Already probing
         }
     }

@@ -66,10 +66,12 @@ fn discover_commands(arc_dir: &Path, results: &mut FolderDiscoveryResults) {
                     }
                 }
             }
-        }
+        },
         Err(e) => {
-            results.discovery_errors.push(format!("Failed to discover commands: {e}"));
-        }
+            results
+                .discovery_errors
+                .push(format!("Failed to discover commands: {e}"));
+        },
     }
 }
 
@@ -84,14 +86,18 @@ fn discover_skills(arc_dir: &Path, results: &mut FolderDiscoveryResults) {
                 if entry.file_type().map_or(false, |t| t.is_dir()) {
                     let skill_md = entry.path().join("SKILL.md");
                     if skill_md.exists() {
-                        results.skills.push(entry.file_name().to_string_lossy().to_string());
+                        results
+                            .skills
+                            .push(entry.file_name().to_string_lossy().to_string());
                     }
                 }
             }
-        }
+        },
         Err(e) => {
-            results.discovery_errors.push(format!("Failed to discover skills: {e}"));
-        }
+            results
+                .discovery_errors
+                .push(format!("Failed to discover skills: {e}"));
+        },
     }
 }
 
@@ -105,18 +111,22 @@ fn discover_agents(arc_dir: &Path, results: &mut FolderDiscoveryResults) {
             for entry in entries.flatten() {
                 let name = entry.file_name().to_string_lossy().to_string();
                 if name.ends_with(".md") && !name.starts_with('_') {
-                    results.agents.push(name.trim_end_matches(".md").to_string());
+                    results
+                        .agents
+                        .push(name.trim_end_matches(".md").to_string());
                 }
             }
             if !results.agents.is_empty() {
-                results.security_warnings.push(
-                    "This project contains custom agents.".to_string()
-                );
+                results
+                    .security_warnings
+                    .push("This project contains custom agents.".to_string());
             }
-        }
+        },
         Err(e) => {
-            results.discovery_errors.push(format!("Failed to discover agents: {e}"));
-        }
+            results
+                .discovery_errors
+                .push(format!("Failed to discover agents: {e}"));
+        },
     }
 }
 
@@ -156,10 +166,12 @@ fn discover_settings(arc_dir: &Path, results: &mut FolderDiscoveryResults) {
                 // Security warnings
                 collect_security_warnings(&table, results);
             }
-        }
+        },
         Err(e) => {
-            results.discovery_errors.push(format!("Failed to read settings: {e}"));
-        }
+            results
+                .discovery_errors
+                .push(format!("Failed to read settings: {e}"));
+        },
     }
 }
 
@@ -168,15 +180,15 @@ fn collect_security_warnings(settings: &toml::Table, results: &mut FolderDiscove
     if let Some(toml::Value::Table(tools)) = settings.get("tools") {
         if let Some(toml::Value::Array(allowed)) = tools.get("allowed") {
             if !allowed.is_empty() {
-                results.security_warnings.push(
-                    "This project auto-approves certain tools (tools.allowed).".to_string()
-                );
+                results
+                    .security_warnings
+                    .push("This project auto-approves certain tools (tools.allowed).".to_string());
             }
         }
         if tools.get("sandbox") == Some(&toml::Value::Boolean(false)) {
-            results.security_warnings.push(
-                "This project disables the security sandbox (tools.sandbox).".to_string()
-            );
+            results
+                .security_warnings
+                .push("This project disables the security sandbox (tools.sandbox).".to_string());
         }
     }
 
@@ -184,9 +196,9 @@ fn collect_security_warnings(settings: &toml::Table, results: &mut FolderDiscove
     if let Some(toml::Value::Table(security)) = settings.get("security") {
         if let Some(toml::Value::Table(ft)) = security.get("folder_trust") {
             if ft.get("enabled") == Some(&toml::Value::Boolean(false)) {
-                results.security_warnings.push(
-                    "This project attempts to disable folder trust.".to_string()
-                );
+                results
+                    .security_warnings
+                    .push("This project attempts to disable folder trust.".to_string());
             }
         }
     }

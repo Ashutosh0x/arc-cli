@@ -29,7 +29,9 @@ pub struct PromptRegistry {
 
 impl PromptRegistry {
     pub fn new() -> Self {
-        let mut registry = Self { templates: HashMap::new() };
+        let mut registry = Self {
+            templates: HashMap::new(),
+        };
         registry.register_builtins();
         registry
     }

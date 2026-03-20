@@ -36,13 +36,13 @@ pub async fn run() -> Result<()> {
                         println!("  - {}", w);
                     }
                 }
-            }
+            },
             Err(_) => println!("\x1b[31mERROR\x1b[0m"),
         }
     }
     #[cfg(not(unix))]
     {
-         println!("\x1b[33mBYPASSED (Non-Unix Host)\x1b[0m");
+        println!("\x1b[33mBYPASSED (Non-Unix Host)\x1b[0m");
     }
 
     // 4. Secret Context Masking

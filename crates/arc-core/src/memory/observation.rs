@@ -19,8 +19,19 @@ pub fn is_observation_candidate(text: &str) -> bool {
     let text = text.to_lowercase();
     // Common intent/fact verbs
     let markers = [
-        "i am", "i'm", "my name", "i live", "i work", "i like", "i prefer", "always", "never", "remember",
-        "my favorite", "i use", "i have",
+        "i am",
+        "i'm",
+        "my name",
+        "i live",
+        "i work",
+        "i like",
+        "i prefer",
+        "always",
+        "never",
+        "remember",
+        "my favorite",
+        "i use",
+        "i have",
     ];
 
     markers.iter().any(|&m| text.contains(m))
@@ -62,7 +73,9 @@ pub async fn extract_observations(user_text: &str) -> Vec<ExtractedObservation> 
 
         if lower.contains("i like") || lower.contains("i prefer") {
             // Extract the sentence
-            let sentences: Vec<&str> = user_text.split(|c| c == '.' || c == '!' || c == '?').collect();
+            let sentences: Vec<&str> = user_text
+                .split(|c| c == '.' || c == '!' || c == '?')
+                .collect();
             for sentence in sentences {
                 let s_lower = sentence.to_lowercase();
                 if s_lower.contains("i like") || s_lower.contains("i prefer") {

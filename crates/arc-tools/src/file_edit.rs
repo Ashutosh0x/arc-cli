@@ -1,8 +1,8 @@
 use async_trait::async_trait;
 use serde_json::json;
 use std::path::Path;
-use tokio::fs;
 use std::sync::atomic::{AtomicBool, Ordering};
+use tokio::fs;
 
 static ACCEPT_ALL: AtomicBool = AtomicBool::new(false);
 static DENY_ALL: AtomicBool = AtomicBool::new(false);
@@ -43,9 +43,18 @@ impl Tool for FileEditTool {
     }
 
     async fn execute(&self, args: serde_json::Value) -> Result<String, anyhow::Error> {
-        let path_str = args.get("path").and_then(|v| v.as_str()).ok_or_else(|| anyhow::anyhow!("Missing 'path'"))?;
-        let search = args.get("search").and_then(|v| v.as_str()).ok_or_else(|| anyhow::anyhow!("Missing 'search'"))?;
-        let replace = args.get("replace").and_then(|v| v.as_str()).ok_or_else(|| anyhow::anyhow!("Missing 'replace'"))?;
+        let path_str = args
+            .get("path")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing 'path'"))?;
+        let search = args
+            .get("search")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing 'search'"))?;
+        let replace = args
+            .get("replace")
+            .and_then(|v| v.as_str())
+            .ok_or_else(|| anyhow::anyhow!("Missing 'replace'"))?;
 
         let path = Path::new(path_str);
         if !path.exists() {
@@ -53,7 +62,7 @@ impl Tool for FileEditTool {
         }
 
         let content = fs::read_to_string(path).await?;
-        
+
         // AST-aware diffing and formatting would go here via tree-sitter.
         // For MVP Phase 1 (and robust edit reliability), we just run string replacement.
         if !content.contains(search) {
@@ -65,16 +74,22 @@ impl Tool for FileEditTool {
         // ── Diff Preview rendering via `similar` and `console` ──
         // ── Diff Preview rendering via `similar` and `syntect` ──
         let diff = similar::TextDiff::from_lines(&content, &new_content);
-        println!("\n  {}", console::style(format!("Diff Preview: {}", path_str)).bold().underlined());
-        
+        println!(
+            "\n  {}",
+            console::style(format!("Diff Preview: {}", path_str))
+                .bold()
+                .underlined()
+        );
+
         // Pre-highlight both buffers to guarantee chronological parser state
         fn highlight_buffer(text: &str, ext: Option<&str>) -> Vec<String> {
             let ps = syntect::parsing::SyntaxSet::load_defaults_newlines();
             let ts = syntect::highlighting::ThemeSet::load_defaults();
-            let syntax = ext.and_then(|e| ps.find_syntax_by_extension(e))
+            let syntax = ext
+                .and_then(|e| ps.find_syntax_by_extension(e))
                 .unwrap_or_else(|| ps.find_syntax_plain_text());
             let mut h = syntect::easy::HighlightLines::new(syntax, &ts.themes["base16-ocean.dark"]);
-            
+
             syntect::util::LinesWithEndings::from(text)
                 .map(|line| {
                     let regions = h.highlight_line(line, &ps).unwrap_or_default();
@@ -93,21 +108,34 @@ impl Tool for FileEditTool {
             }
             for op in group {
                 for change in diff.iter_changes(op) {
-                    let (_sign, styled_sign, hl_line): (&'static str, console::StyledObject<&'static str>, String) = match change.tag() {
+                    let (_sign, styled_sign, hl_line): (
+                        &'static str,
+                        console::StyledObject<&'static str>,
+                        String,
+                    ) = match change.tag() {
                         similar::ChangeTag::Delete => {
-                            let line = hl_old.get(change.old_index().unwrap()).cloned().unwrap_or_default();
+                            let line = hl_old
+                                .get(change.old_index().unwrap())
+                                .cloned()
+                                .unwrap_or_default();
                             ("-", console::style("-").red(), line)
-                        }
+                        },
                         similar::ChangeTag::Insert => {
-                            let line = hl_new.get(change.new_index().unwrap()).cloned().unwrap_or_default();
+                            let line = hl_new
+                                .get(change.new_index().unwrap())
+                                .cloned()
+                                .unwrap_or_default();
                             ("+", console::style("+").green(), line)
-                        }
+                        },
                         similar::ChangeTag::Equal => {
-                            let line = hl_new.get(change.new_index().unwrap()).cloned().unwrap_or_default();
+                            let line = hl_new
+                                .get(change.new_index().unwrap())
+                                .cloned()
+                                .unwrap_or_default();
                             (" ", console::style(" ").dim(), line)
-                        }
+                        },
                     };
-                    
+
                     print!("{} {}", styled_sign, hl_line);
                     if !hl_line.ends_with('\n') && !hl_line.contains("\n\x1b[0m") {
                         println!();
@@ -123,11 +151,17 @@ impl Tool for FileEditTool {
             return Ok(format!("Successfully edited file '{path_str}'"));
         }
         if DENY_ALL.load(Ordering::Relaxed) {
-            return Ok(format!("Auto-rejected edit for '{path_str}' due to Deny All active."));
+            return Ok(format!(
+                "Auto-rejected edit for '{path_str}' due to Deny All active."
+            ));
         }
 
         let term = console::Term::stdout();
-        term.write_line(&format!("Accept autonomous edits to {}? [Y/n/a/d/e/s/?]", path_str)).unwrap_or(());
+        term.write_line(&format!(
+            "Accept autonomous edits to {}? [Y/n/a/d/e/s/?]",
+            path_str
+        ))
+        .unwrap_or(());
 
         let confirm = loop {
             if let Ok(key) = term.read_key() {
@@ -135,42 +169,46 @@ impl Tool for FileEditTool {
                     console::Key::Enter | console::Key::Char('y') | console::Key::Char('Y') => {
                         term.write_line("  ✅ Accepted.").unwrap_or(());
                         break true;
-                    }
+                    },
                     console::Key::Escape | console::Key::Char('n') | console::Key::Char('N') => {
                         term.write_line("  ❌ Rejected.").unwrap_or(());
                         break false;
-                    }
+                    },
                     console::Key::Char('a') | console::Key::Char('A') => {
                         term.write_line("  🚀 Accept All enabled.").unwrap_or(());
                         ACCEPT_ALL.store(true, Ordering::Relaxed);
                         break true;
-                    }
+                    },
                     console::Key::Char('d') | console::Key::Char('D') => {
                         term.write_line("  🛑 Deny All enabled.").unwrap_or(());
                         DENY_ALL.store(true, Ordering::Relaxed);
                         break false;
-                    }
+                    },
                     console::Key::Char('s') | console::Key::Char('S') => {
                         term.write_line("  ⏭️ Skipped.").unwrap_or(());
                         return Ok(format!("User skipped editing '{path_str}'."));
-                    }
+                    },
                     console::Key::Char('e') | console::Key::Char('E') => {
                         term.write_line("  📝 Opening in $EDITOR (Not fully implemented, accepting by default for now)...").unwrap_or(());
                         break true;
-                    }
+                    },
                     console::Key::Char('j') | console::Key::Char('k') => {
-                        term.write_line("  (Use terminal scrollback for diff viewport)").unwrap_or(());
-                    }
+                        term.write_line("  (Use terminal scrollback for diff viewport)")
+                            .unwrap_or(());
+                    },
                     console::Key::Char('?') => {
                         term.write_line("Help:\n  Enter/y: Accept\n  Esc/n: Reject\n  a: Accept All (this session)\n  d: Deny All (this session)\n  s: Skip file\n  e: Edit manually\n  j/k: Scroll diff").unwrap_or(());
-                    }
-                    _ => {}
+                    },
+                    _ => {},
                 }
             }
         };
 
         if !confirm {
-            return Ok(format!("User definitively REJECTED the edit for '{}'. You MUST revise your approach.", path_str));
+            return Ok(format!(
+                "User definitively REJECTED the edit for '{}'. You MUST revise your approach.",
+                path_str
+            ));
         }
 
         fs::write(path, new_content).await?;

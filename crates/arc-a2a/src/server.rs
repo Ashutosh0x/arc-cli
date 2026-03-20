@@ -2,20 +2,18 @@
 //! Serves the agent card, accepts task requests, and streams progress via SSE.
 
 use axum::{
+    Json, Router,
     extract::{Path, State},
     http::StatusCode,
     response::IntoResponse,
     routing::{get, post},
-    Json, Router,
 };
 use std::sync::Arc;
 use tokio::net::TcpListener;
 use tracing::info;
 use uuid::Uuid;
 
-use crate::protocol::{
-    A2AMessage, AgentCard, MessagePayload, MessageType, ProtocolVersion,
-};
+use crate::protocol::{A2AMessage, AgentCard, MessagePayload, MessageType, ProtocolVersion};
 use crate::streaming;
 use crate::task::{TaskRegistry, TaskState};
 
@@ -93,7 +91,7 @@ async fn receive_message(
         _ => {
             info!(msg_type = ?msg.msg_type, "Accepted non-task message");
             Ok((StatusCode::OK, "Accepted".to_string()))
-        }
+        },
     }
 }
 
@@ -107,8 +105,8 @@ async fn handle_task_request(
             return Err((
                 StatusCode::BAD_REQUEST,
                 "TaskRequest must have Task payload".into(),
-            ))
-        }
+            ));
+        },
     };
 
     // Verify we support the requested skill
@@ -166,9 +164,7 @@ async fn handle_task_request(
     Ok((StatusCode::ACCEPTED, response.to_string()))
 }
 
-async fn handle_ping(
-    state: &ServerState,
-) -> Result<(StatusCode, String), (StatusCode, String)> {
+async fn handle_ping(state: &ServerState) -> Result<(StatusCode, String), (StatusCode, String)> {
     let active = state.task_registry.active_count();
     let response = serde_json::json!({
         "status": "healthy",
@@ -204,15 +200,15 @@ async fn stream_task(
     State(state): State<Arc<ServerState>>,
     Path(task_id): Path<Uuid>,
 ) -> Result<impl IntoResponse, (StatusCode, String)> {
-    let rx = state.task_registry.subscribe(&task_id)
+    let rx = state
+        .task_registry
+        .subscribe(&task_id)
         .ok_or((StatusCode::NOT_FOUND, "Task not found or no watcher".into()))?;
 
     Ok(streaming::task_state_stream(task_id, rx))
 }
 
-async fn health_check(
-    State(state): State<Arc<ServerState>>,
-) -> Json<serde_json::Value> {
+async fn health_check(State(state): State<Arc<ServerState>>) -> Json<serde_json::Value> {
     let active = state.task_registry.active_count();
     Json(serde_json::json!({
         "status": "healthy",

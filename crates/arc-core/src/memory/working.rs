@@ -73,16 +73,28 @@ impl CoreMemoryBlocks {
     pub fn to_context_string(&self) -> String {
         let mut parts = Vec::new();
         if !self.user_profile.is_empty() {
-            parts.push(format!("<core_memory:user>\n{}\n</core_memory:user>", self.user_profile));
+            parts.push(format!(
+                "<core_memory:user>\n{}\n</core_memory:user>",
+                self.user_profile
+            ));
         }
         if !self.agent_persona.is_empty() {
-            parts.push(format!("<core_memory:persona>\n{}\n</core_memory:persona>", self.agent_persona));
+            parts.push(format!(
+                "<core_memory:persona>\n{}\n</core_memory:persona>",
+                self.agent_persona
+            ));
         }
         if !self.task_context.is_empty() {
-            parts.push(format!("<core_memory:task>\n{}\n</core_memory:task>", self.task_context));
+            parts.push(format!(
+                "<core_memory:task>\n{}\n</core_memory:task>",
+                self.task_context
+            ));
         }
         if !self.scratchpad.is_empty() {
-            parts.push(format!("<core_memory:scratchpad>\n{}\n</core_memory:scratchpad>", self.scratchpad));
+            parts.push(format!(
+                "<core_memory:scratchpad>\n{}\n</core_memory:scratchpad>",
+                self.scratchpad
+            ));
         }
         parts.join("\n")
     }

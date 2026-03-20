@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use std::path::PathBuf;
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter, Layer};
+use tracing_subscriber::{EnvFilter, Layer, layer::SubscriberExt, util::SubscriberInitExt};
 
 // Keep the appender guard alive for the duration of the program
 pub struct TelemetryGuard {

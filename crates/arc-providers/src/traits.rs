@@ -1,6 +1,6 @@
+use crate::message::{Message, StreamEvent, ToolDefinition};
 use async_trait::async_trait;
 use futures::stream::BoxStream;
-use crate::message::{Message, ToolDefinition, StreamEvent};
 use std::any::Any;
 
 #[async_trait]
@@ -26,7 +26,11 @@ pub trait Provider: Send + Sync {
     fn as_any(&self) -> &dyn Any;
 
     /// Helper for simple text completion
-    async fn generate_text(&self, _model: &str, _messages: &[Message]) -> Result<String, anyhow::Error> {
+    async fn generate_text(
+        &self,
+        _model: &str,
+        _messages: &[Message],
+    ) -> Result<String, anyhow::Error> {
         Ok(String::new())
     }
 }

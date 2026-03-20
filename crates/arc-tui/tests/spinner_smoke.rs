@@ -1,7 +1,7 @@
 //! Smoke tests — verify the spinner compiles, starts, and stops
 //! without panicking.  No visual assertion (terminal output).
 
-use arc_tui::spinner::{Spinner, SpinnerStyle, StreamingSpinner, Phase, with_spinner};
+use arc_tui::spinner::{Phase, Spinner, SpinnerStyle, StreamingSpinner, with_spinner};
 
 #[tokio::test]
 async fn spinner_start_stop() {
@@ -100,10 +100,7 @@ async fn all_spinner_styles_work() {
         SpinnerStyle::Minimal,
         SpinnerStyle::Arc,
     ] {
-        let handle = Spinner::new()
-            .style(style)
-            .hide_elapsed()
-            .start();
+        let handle = Spinner::new().style(style).hide_elapsed().start();
         tokio::time::sleep(std::time::Duration::from_millis(100)).await;
         handle.stop().await;
     }

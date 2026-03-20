@@ -5,8 +5,8 @@
 //! 2. **Global Aggregation**: Scans backwards past the protection window
 //! 3. **Batch Trigger**: Only masks if prunable tokens exceed 30k threshold
 
-use std::path::{Path, PathBuf};
 use std::collections::HashSet;
+use std::path::{Path, PathBuf};
 
 // ── Defaults ────────────────────────────────────────────────────────────────
 pub const DEFAULT_TOOL_PROTECTION_THRESHOLD: usize = 50_000;
@@ -82,7 +82,10 @@ pub struct ToolOutputMaskingService {
 
 impl ToolOutputMaskingService {
     pub fn new(config: MaskingConfig) -> Self {
-        Self { config, exempt: exempt_tools() }
+        Self {
+            config,
+            exempt: exempt_tools(),
+        }
     }
 
     pub fn with_defaults() -> Self {
@@ -139,7 +142,10 @@ impl ToolOutputMaskingService {
             }
 
             // Skip already-masked
-            if output.content.contains(&format!("<{MASKING_INDICATOR_TAG}")) {
+            if output
+                .content
+                .contains(&format!("<{MASKING_INDICATOR_TAG}"))
+            {
                 continue;
             }
 
@@ -248,6 +254,9 @@ impl ToolOutputMaskingService {
         }
         let head = lines[..n].join("\n");
         let tail = lines[lines.len() - n..].join("\n");
-        format!("{head}\n\n... [{} lines omitted] ...\n\n{tail}", lines.len() - 2 * n)
+        format!(
+            "{head}\n\n... [{} lines omitted] ...\n\n{tail}",
+            lines.len() - 2 * n
+        )
     }
 }

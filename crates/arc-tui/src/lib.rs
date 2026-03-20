@@ -2,5 +2,5 @@
 
 //! Terminal UI components for ARC CLI.
 
-pub mod spinner;
 pub mod progress;
+pub mod spinner;

@@ -45,7 +45,10 @@ impl Compressor {
         let mut summary = String::from("### Archived Event Summary\n");
 
         // Keep bounds
-        let start_time = raw_messages.first().map(|m| m.timestamp).unwrap_or_default();
+        let start_time = raw_messages
+            .first()
+            .map(|m| m.timestamp)
+            .unwrap_or_default();
         let end_time = raw_messages.last().map(|m| m.timestamp).unwrap_or_default();
 
         summary.push_str(&format!(
@@ -59,7 +62,10 @@ impl Compressor {
         // Example: `let prompt = format!("Summarize this: {raw_messages:?}"); client.chat(prompt).await;`
 
         // Algorithmic placeholder summary
-        for msg in raw_messages.iter().filter(|m| m.role == "user" || m.role == "assistant") {
+        for msg in raw_messages
+            .iter()
+            .filter(|m| m.role == "user" || m.role == "assistant")
+        {
             let role_label = if msg.role == "user" { "User" } else { "Agent" };
 
             // Take just the first 50 chars of each message to show high-level flow
@@ -69,14 +75,22 @@ impl Compressor {
             summary.push_str(&format!("  - {}: {}{}\n", role_label, truncated, suffix));
         }
 
-        info!("Compressed {} messages down to {} chars", msg_count, summary.len());
+        info!(
+            "Compressed {} messages down to {} chars",
+            msg_count,
+            summary.len()
+        );
 
         Ok(summary)
     }
 
     /// Iterative hierarchical compression for massive overflow.
     /// If the old observation block + new summary is STILL too large, compress them together.
-    pub async fn hierarchical_compress(&self, _existing_log: &str, new_summary: &str) -> ArcResult<String> {
+    pub async fn hierarchical_compress(
+        &self,
+        _existing_log: &str,
+        new_summary: &str,
+    ) -> ArcResult<String> {
         debug!("Performing hierarchical compression (merging old logs with new summary)");
 
         // Placeholder LLM logic

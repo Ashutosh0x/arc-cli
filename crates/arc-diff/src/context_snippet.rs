@@ -2,11 +2,7 @@
 //!
 //! Shows head+tail around changed lines with merged ranges.
 
-pub fn get_diff_context_snippet(
-    original: &str,
-    new_content: &str,
-    context_lines: usize,
-) -> String {
+pub fn get_diff_context_snippet(original: &str, new_content: &str, context_lines: usize) -> String {
     if original.is_empty() {
         return new_content.to_string();
     }

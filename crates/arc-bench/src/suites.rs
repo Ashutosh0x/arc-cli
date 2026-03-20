@@ -20,14 +20,12 @@ impl BenchmarkSuite {
         Self {
             name: "Basic Sanity Checks".to_string(),
             description: "A few simple Rust generation tasks".to_string(),
-            tests: vec![
-                TestCase {
-                    id: "test1".to_string(),
-                    prompt: "Write a Rust function that adds two numbers.".to_string(),
-                    expected_output_regex: "fn add\\(a: i32, b: i32\\) -> i32".to_string(),
-                    timeout_seconds: 30,
-                },
-            ],
+            tests: vec![TestCase {
+                id: "test1".to_string(),
+                prompt: "Write a Rust function that adds two numbers.".to_string(),
+                expected_output_regex: "fn add\\(a: i32, b: i32\\) -> i32".to_string(),
+                timeout_seconds: 30,
+            }],
         }
     }
 }

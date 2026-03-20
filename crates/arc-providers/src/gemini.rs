@@ -2,7 +2,7 @@
 
 use crate::provider::*;
 use arc_core::credentials::{self, CredentialKind, Provider as CredProvider};
-use arc_core::error::{ArcResult, ArcError};
+use arc_core::error::{ArcError, ArcResult};
 use arc_core::security::env_keys;
 use async_trait::async_trait;
 use serde_json::json;
@@ -19,7 +19,9 @@ impl GeminiProvider {
 
 #[async_trait]
 impl Provider for GeminiProvider {
-    fn name(&self) -> &str { "gemini" }
+    fn name(&self) -> &str {
+        "gemini"
+    }
 
     fn capabilities(&self) -> ProviderCapabilities {
         ProviderCapabilities {
@@ -92,14 +94,29 @@ impl Provider for GeminiProvider {
         Ok(ChatResponse {
             content,
             model: model.to_string(),
-            input_tokens: data["usageMetadata"]["promptTokenCount"].as_u64().map(|v| v as u32),
-            output_tokens: data["usageMetadata"]["candidatesTokenCount"].as_u64().map(|v| v as u32),
-            finish_reason: data["candidates"][0]["finishReason"].as_str().map(String::from),
+            input_tokens: data["usageMetadata"]["promptTokenCount"]
+                .as_u64()
+                .map(|v| v as u32),
+            output_tokens: data["usageMetadata"]["candidatesTokenCount"]
+                .as_u64()
+                .map(|v| v as u32),
+            finish_reason: data["candidates"][0]["finishReason"]
+                .as_str()
+                .map(String::from),
         })
     }
 
     async fn health_check(&self) -> ArcResult<bool> {
-        Ok(env_keys::get_credential_with_env_override(CredProvider::Gemini, CredentialKind::ApiKey).is_ok()
-            || credentials::has_credential(CredProvider::Gemini, CredentialKind::OAuthAccessToken))
+        Ok(
+            env_keys::get_credential_with_env_override(
+                CredProvider::Gemini,
+                CredentialKind::ApiKey,
+            )
+            .is_ok()
+                || credentials::has_credential(
+                    CredProvider::Gemini,
+                    CredentialKind::OAuthAccessToken,
+                ),
+        )
     }
 }

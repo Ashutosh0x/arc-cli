@@ -4,14 +4,14 @@
 //! delegates specialized tasks, context, and MCP tools to distinct sub-agents.
 //! Includes the Agent Registry for discovering and launching specialized personas.
 
-pub mod registry;
-pub mod orchestrator;
-pub mod sub_agent;
-pub mod routing;
 pub mod contracts;
+pub mod orchestrator;
+pub mod registry;
+pub mod routing;
+pub mod sub_agent;
 
-pub use registry::{AgentRegistry, AgentProfile, AgentCapability};
 pub use orchestrator::{Orchestrator, OrchestratorConfig, TaskDelegation};
+pub use registry::{AgentCapability, AgentProfile, AgentRegistry};
 pub use sub_agent::{SubAgent, SubAgentResult};
 
 pub mod extensions;

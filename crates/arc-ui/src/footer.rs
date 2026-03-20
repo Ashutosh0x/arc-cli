@@ -10,7 +10,11 @@ pub fn render_footer(state: &UiState, theme: &Theme, out: &mut impl Write) -> io
 
     match state.phase {
         Phase::DiffReview => {
-            let pending = state.diff_blocks.iter().filter(|d| d.accepted.is_none()).count();
+            let pending = state
+                .diff_blocks
+                .iter()
+                .filter(|d| d.accepted.is_none())
+                .count();
             writeln!(out,
                 " {}[Enter]{} Expand  {}[y]{} Accept  {}[n]{} Reject  {}[a]{} All  {}[d]{} Deny All  {}[e]{} Editor  {}│ {} pending{}",
                 c.accent, c.reset,
@@ -21,13 +25,14 @@ pub fn render_footer(state: &UiState, theme: &Theme, out: &mut impl Write) -> io
                 c.warn, c.reset,
                 c.dim, pending, c.reset,
             )?;
-        }
+        },
         Phase::Streaming => {
-            writeln!(out,
+            writeln!(
+                out,
                 " {}[Ctrl+C]{} Halt stream  {}│  Streaming...{}",
                 c.warn, c.reset, c.dim, c.reset,
             )?;
-        }
+        },
         _ => {
             writeln!(out,
                 " {}[/plan]{} Plan  {}[/doctor]{} Check  {}[/checkpoint]{} Save  {}[Ctrl+D]{} Exit{}",
@@ -37,7 +42,7 @@ pub fn render_footer(state: &UiState, theme: &Theme, out: &mut impl Write) -> io
                 c.warn, c.reset,
                 c.reset,
             )?;
-        }
+        },
     }
 
     Ok(())

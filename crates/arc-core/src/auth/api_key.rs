@@ -19,24 +19,26 @@ pub fn authenticate_with_api_key(provider: Provider) -> ArcResult<()> {
 
     // Basic validation
     if key.trim().is_empty() {
-        return Err(crate::error::ArcError::Auth(format!("Invalid API key for {}", provider.to_string())).into());
+        return Err(crate::error::ArcError::Auth(format!(
+            "Invalid API key for {}",
+            provider.to_string()
+        ))
+        .into());
     }
 
     // Provider-specific prefix validation
     match provider {
         Provider::Anthropic => {
             if !key.starts_with("sk-ant-") {
-                tracing::warn!(
-                    "Anthropic key doesn't start with 'sk-ant-' — it may be invalid"
-                );
+                tracing::warn!("Anthropic key doesn't start with 'sk-ant-' — it may be invalid");
             }
-        }
+        },
         Provider::OpenAI => {
             if !key.starts_with("sk-") {
                 tracing::warn!("OpenAI key doesn't start with 'sk-' — it may be invalid");
             }
-        }
-        _ => {}
+        },
+        _ => {},
     }
 
     credentials::store_credential(provider, CredentialKind::ApiKey, &key)?;

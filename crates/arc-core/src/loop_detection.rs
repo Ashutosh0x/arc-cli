@@ -38,7 +38,12 @@ pub struct LoopDetectionResult {
 
 impl LoopDetectionResult {
     pub fn none() -> Self {
-        Self { count: 0, loop_type: None, detail: None, confirmed_by_model: None }
+        Self {
+            count: 0,
+            loop_type: None,
+            detail: None,
+            confirmed_by_model: None,
+        }
     }
 
     pub fn is_loop(&self) -> bool {
@@ -126,8 +131,12 @@ impl LoopDetectionService {
                 } else {
                     None
                 };
-                (is_loop, detail, Some(LoopType::ConsecutiveIdenticalToolCalls))
-            }
+                (
+                    is_loop,
+                    detail,
+                    Some(LoopType::ConsecutiveIdenticalToolCalls),
+                )
+            },
             StreamEvent::Content(text) => {
                 let is_loop = self.check_content_loop(text);
                 let detail = if is_loop {
@@ -142,7 +151,7 @@ impl LoopDetectionService {
                     None
                 };
                 (is_loop, detail, Some(LoopType::ContentChantingLoop))
-            }
+            },
         };
 
         if is_loop {
@@ -175,7 +184,12 @@ impl LoopDetectionService {
     }
 
     /// Record the result of an LLM-based loop check.
-    pub fn record_llm_check(&mut self, confidence: f64, analysis: Option<String>, model: Option<String>) -> LoopDetectionResult {
+    pub fn record_llm_check(
+        &mut self,
+        confidence: f64,
+        analysis: Option<String>,
+        model: Option<String>,
+    ) -> LoopDetectionResult {
         self.last_check_turn = self.turns_in_current_prompt;
 
         if confidence >= LLM_CONFIDENCE_THRESHOLD {
@@ -328,7 +342,12 @@ impl LoopDetectionService {
         }
 
         // Check clustering of recent occurrences
-        let recent: Vec<usize> = indices.iter().rev().take(CONTENT_LOOP_THRESHOLD).copied().collect();
+        let recent: Vec<usize> = indices
+            .iter()
+            .rev()
+            .take(CONTENT_LOOP_THRESHOLD)
+            .copied()
+            .collect();
         let total_distance = recent[0] - recent[recent.len() - 1];
         let avg_distance = total_distance / (CONTENT_LOOP_THRESHOLD - 1);
         let max_allowed = CONTENT_CHUNK_SIZE * 5;
@@ -361,8 +380,7 @@ impl LoopDetectionService {
 
     fn update_check_interval(&mut self, confidence: f64) {
         let range = (MAX_LLM_CHECK_INTERVAL - MIN_LLM_CHECK_INTERVAL) as f64;
-        self.llm_check_interval =
-            MIN_LLM_CHECK_INTERVAL + (range * (1.0 - confidence)) as u32;
+        self.llm_check_interval = MIN_LLM_CHECK_INTERVAL + (range * (1.0 - confidence)) as u32;
     }
 }
 

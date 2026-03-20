@@ -21,7 +21,9 @@ pub mod fallback {
     use anyhow::Result;
     pub struct OsSandbox;
     impl OsSandbox {
-        pub fn new() -> Self { Self }
+        pub fn new() -> Self {
+            Self
+        }
         pub fn apply(&mut self, _paths: &[std::path::PathBuf]) -> Result<()> {
             tracing::warn!("Sandboxing is strictly not supported on this OS framework");
             Ok(())

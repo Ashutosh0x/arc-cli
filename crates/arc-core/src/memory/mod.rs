@@ -16,7 +16,7 @@ pub mod working;
 use crate::error::{ArcError, ArcResult};
 use crate::memory::compressor::Compressor;
 use crate::memory::long_term::LongTermMemory;
-pub use crate::memory::session_store::{SessionRecord, SessionMetadata, SessionStore};
+pub use crate::memory::session_store::{SessionMetadata, SessionRecord, SessionStore};
 use crate::memory::short_term::ShortTermMemory;
 use crate::memory::working::{MemoryMessage, WorkingMemory};
 use serde::{Deserialize, Serialize};
@@ -113,7 +113,11 @@ impl MemoryManager {
     pub async fn load_session(&mut self, session_id: &str) -> ArcResult<()> {
         if let Some(ref store) = self.session_store {
             if let Some(record) = store.load_session(session_id)? {
-                info!("Resuming session {} ({} messages)", record.id, record.messages.len());
+                info!(
+                    "Resuming session {} ({} messages)",
+                    record.id,
+                    record.messages.len()
+                );
                 self.session_id = record.id.clone();
                 self.total_input_tokens = record.total_input_tokens;
                 self.total_output_tokens = record.total_output_tokens;
@@ -149,7 +153,10 @@ impl MemoryManager {
 
                 return Ok(());
             }
-            return Err(ArcError::System(format!("Session {} not found", session_id)));
+            return Err(ArcError::System(format!(
+                "Session {} not found",
+                session_id
+            )));
         }
         Err(ArcError::System("Persistence is disabled".into()))
     }

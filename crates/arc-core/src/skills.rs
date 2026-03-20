@@ -3,9 +3,9 @@
 //! SKILL.md frontmatter: name, description. ${ARC_SKILL_DIR} variable.
 //! Auto-discovery in subdirectories. Skill deduplication.
 
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Skill {
@@ -22,11 +22,17 @@ pub struct SkillRegistry {
 }
 
 impl SkillRegistry {
-    pub fn new() -> Self { Self { skills: HashMap::new() } }
+    pub fn new() -> Self {
+        Self {
+            skills: HashMap::new(),
+        }
+    }
 
     /// Discover skills recursively from a directory.
     pub fn discover(&mut self, dir: &Path) -> Result<usize, String> {
-        if !dir.exists() { return Ok(0); }
+        if !dir.exists() {
+            return Ok(0);
+        }
         let mut count = 0;
         self.discover_recursive(dir, &mut count)?;
         Ok(count)
@@ -64,25 +70,59 @@ impl SkillRegistry {
     fn parse_skill(path: &Path, directory: &Path) -> Result<Skill, String> {
         let content = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
         let parts: Vec<&str> = content.splitn(3, "---").collect();
-        if parts.len() < 3 { return Err("Missing YAML frontmatter".into()); }
+        if parts.len() < 3 {
+            return Err("Missing YAML frontmatter".into());
+        }
 
         #[derive(Deserialize)]
-        struct FM { #[serde(default)] name: String, #[serde(default)] description: String }
+        struct FM {
+            #[serde(default)]
+            name: String,
+            #[serde(default)]
+            description: String,
+        }
         let fm: FM = serde_yaml::from_str(parts[1].trim()).map_err(|e| e.to_string())?;
-        let name = if fm.name.is_empty() { directory.file_name().and_then(|n| n.to_str()).unwrap_or("skill").to_string() } else { fm.name };
+        let name = if fm.name.is_empty() {
+            directory
+                .file_name()
+                .and_then(|n| n.to_str())
+                .unwrap_or("skill")
+                .to_string()
+        } else {
+            fm.name
+        };
 
-        Ok(Skill { name, description: fm.description, instructions: parts[2].trim().to_string(), directory: directory.to_path_buf(), file_path: path.to_path_buf() })
+        Ok(Skill {
+            name,
+            description: fm.description,
+            instructions: parts[2].trim().to_string(),
+            directory: directory.to_path_buf(),
+            file_path: path.to_path_buf(),
+        })
     }
 
     /// Resolve ${ARC_SKILL_DIR} in instructions text.
     pub fn resolve_variables(&self, skill_name: &str, text: &str) -> String {
         if let Some(skill) = self.skills.get(skill_name) {
-            text.replace("${ARC_SKILL_DIR}", skill.directory.to_str().unwrap_or_default())
-        } else { text.to_string() }
+            text.replace(
+                "${ARC_SKILL_DIR}",
+                skill.directory.to_str().unwrap_or_default(),
+            )
+        } else {
+            text.to_string()
+        }
     }
 
-    pub fn get(&self, name: &str) -> Option<&Skill> { self.skills.get(name) }
-    pub fn list(&self) -> Vec<&Skill> { self.skills.values().collect() }
+    pub fn get(&self, name: &str) -> Option<&Skill> {
+        self.skills.get(name)
+    }
+    pub fn list(&self) -> Vec<&Skill> {
+        self.skills.values().collect()
+    }
 }
 
-impl Default for SkillRegistry { fn default() -> Self { Self::new() } }
+impl Default for SkillRegistry {
+    fn default() -> Self {
+        Self::new()
+    }
+}

@@ -10,10 +10,10 @@
 
 #![allow(clippy::unwrap_used)]
 
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::Path;
 use std::time::Duration;
-use serde::{Deserialize, Serialize};
 
 // ── Event Types ──────────────────────────────────────────────────────────────
 
@@ -276,8 +276,8 @@ impl HookRegistry {
 
     /// Load hooks from a hooks.json file.
     pub fn load_from_file(&mut self, path: &Path) -> Result<usize, String> {
-        let content = std::fs::read_to_string(path)
-            .map_err(|e| format!("Failed to read hooks file: {e}"))?;
+        let content =
+            std::fs::read_to_string(path).map_err(|e| format!("Failed to read hooks file: {e}"))?;
         let hooks: Vec<HookDefinition> = serde_json::from_str(&content)
             .map_err(|e| format!("Failed to parse hooks file: {e}"))?;
         let count = hooks.len();
@@ -294,12 +294,12 @@ impl HookRegistry {
         }
 
         let mut count = 0;
-        let entries = std::fs::read_dir(dir)
-            .map_err(|e| format!("Failed to read dir: {e}"))?;
+        let entries = std::fs::read_dir(dir).map_err(|e| format!("Failed to read dir: {e}"))?;
 
         for entry in entries.flatten() {
             let path = entry.path();
-            let name = path.file_name()
+            let name = path
+                .file_name()
                 .and_then(|n| n.to_str())
                 .unwrap_or_default();
 
@@ -354,8 +354,12 @@ impl HookRegistry {
         // Advanced conditions: ALL must match.
         for cond in &rule.conditions {
             let field_value = match cond.field.as_str() {
-                "command" => input.tool_input.get("command")
-                    .and_then(|v| v.as_str()).unwrap_or_default().to_string(),
+                "command" => input
+                    .tool_input
+                    .get("command")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or_default()
+                    .to_string(),
                 "file_path" => input.file_path.clone(),
                 "new_text" | "content" => input.content.clone(),
                 "user_prompt" => input.content.clone(),
@@ -363,11 +367,9 @@ impl HookRegistry {
             };
 
             let matches = match cond.operator {
-                ConditionOperator::RegexMatch => {
-                    regex::Regex::new(&cond.pattern)
-                        .map(|re| re.is_match(&field_value))
-                        .unwrap_or(false)
-                }
+                ConditionOperator::RegexMatch => regex::Regex::new(&cond.pattern)
+                    .map(|re| re.is_match(&field_value))
+                    .unwrap_or(false),
                 ConditionOperator::Contains => field_value.contains(&cond.pattern),
                 ConditionOperator::Equals => field_value == cond.pattern,
                 ConditionOperator::NotContains => !field_value.contains(&cond.pattern),
@@ -396,10 +398,10 @@ impl HookRegistry {
                         result.blocked = true;
                         result.messages.push(rule.message.clone());
                         return result; // Block immediately.
-                    }
+                    },
                     HookAction::Warn => {
                         result.messages.push(rule.message.clone());
-                    }
+                    },
                 }
             }
         }
@@ -407,44 +409,51 @@ impl HookRegistry {
         // Check registered hook definitions.
         for hook in self.hooks_for_event(input.event) {
             match &hook.executor {
-                HookExecutor::Command { command, timeout_ms } => {
-                    match Self::execute_command(command, input, *timeout_ms).await {
-                        Ok(output) => {
-                            if !output.r#continue {
-                                result.blocked = true;
-                                if !output.message.is_empty() {
-                                    result.messages.push(output.message);
-                                }
-                                return result;
-                            }
+                HookExecutor::Command {
+                    command,
+                    timeout_ms,
+                } => match Self::execute_command(command, input, *timeout_ms).await {
+                    Ok(output) => {
+                        if !output.r#continue {
+                            result.blocked = true;
                             if !output.message.is_empty() {
                                 result.messages.push(output.message);
                             }
+                            return result;
                         }
-                        Err(e) => {
-                            result.messages.push(format!("Hook '{}' error: {e}", hook.name));
+                        if !output.message.is_empty() {
+                            result.messages.push(output.message);
                         }
-                    }
-                }
-                HookExecutor::Http { url, headers, timeout_ms } => {
-                    match Self::execute_http(url, headers, input, *timeout_ms).await {
-                        Ok(output) => {
-                            if !output.r#continue {
-                                result.blocked = true;
-                                if !output.message.is_empty() {
-                                    result.messages.push(output.message);
-                                }
-                                return result;
-                            }
+                    },
+                    Err(e) => {
+                        result
+                            .messages
+                            .push(format!("Hook '{}' error: {e}", hook.name));
+                    },
+                },
+                HookExecutor::Http {
+                    url,
+                    headers,
+                    timeout_ms,
+                } => match Self::execute_http(url, headers, input, *timeout_ms).await {
+                    Ok(output) => {
+                        if !output.r#continue {
+                            result.blocked = true;
                             if !output.message.is_empty() {
                                 result.messages.push(output.message);
                             }
+                            return result;
                         }
-                        Err(e) => {
-                            result.messages.push(format!("Hook '{}' HTTP error: {e}", hook.name));
+                        if !output.message.is_empty() {
+                            result.messages.push(output.message);
                         }
-                    }
-                }
+                    },
+                    Err(e) => {
+                        result
+                            .messages
+                            .push(format!("Hook '{}' HTTP error: {e}", hook.name));
+                    },
+                },
             }
         }
 
@@ -462,13 +471,21 @@ impl HookRegistry {
 
         let result = tokio::time::timeout(
             Duration::from_millis(timeout_ms),
-            tokio::process::Command::new(if cfg!(target_os = "windows") { "cmd" } else { "sh" })
-                .arg(if cfg!(target_os = "windows") { "/C" } else { "-c" })
-                .arg(command)
-                .stdin(std::process::Stdio::piped())
-                .stdout(std::process::Stdio::piped())
-                .stderr(std::process::Stdio::piped())
-                .output(),
+            tokio::process::Command::new(if cfg!(target_os = "windows") {
+                "cmd"
+            } else {
+                "sh"
+            })
+            .arg(if cfg!(target_os = "windows") {
+                "/C"
+            } else {
+                "-c"
+            })
+            .arg(command)
+            .stdin(std::process::Stdio::piped())
+            .stdout(std::process::Stdio::piped())
+            .stderr(std::process::Stdio::piped())
+            .output(),
         )
         .await
         .map_err(|_| format!("Hook timed out after {timeout_ms}ms"))?
@@ -485,19 +502,18 @@ impl HookRegistry {
                         stop_reason: String::new(),
                     })
                 } else {
-                    serde_json::from_str(stdout.trim())
-                        .unwrap_or(HookOutput {
-                            r#continue: true,
-                            message: stdout.trim().to_string(),
-                            stop_reason: String::new(),
-                        });
+                    serde_json::from_str(stdout.trim()).unwrap_or(HookOutput {
+                        r#continue: true,
+                        message: stdout.trim().to_string(),
+                        stop_reason: String::new(),
+                    });
                     Ok(HookOutput {
                         r#continue: true,
                         message: stdout.trim().to_string(),
                         stop_reason: String::new(),
                     })
                 }
-            }
+            },
             Some(2) => {
                 // Block.
                 let stderr = String::from_utf8_lossy(&result.stderr);
@@ -506,13 +522,9 @@ impl HookRegistry {
                     message: stderr.trim().to_string(),
                     stop_reason: "blocked_by_hook".to_string(),
                 })
-            }
-            Some(code) => {
-                Err(format!("Hook exited with unexpected code {code}"))
-            }
-            None => {
-                Err("Hook was terminated by signal".to_string())
-            }
+            },
+            Some(code) => Err(format!("Hook exited with unexpected code {code}")),
+            None => Err("Hook was terminated by signal".to_string()),
         }
     }
 

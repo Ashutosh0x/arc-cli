@@ -42,7 +42,9 @@ impl Tool for FileReadTool {
         }
 
         if path.is_dir() {
-            return Ok(format!("Error: Path '{path_str}' is a directory, not a file"));
+            return Ok(format!(
+                "Error: Path '{path_str}' is a directory, not a file"
+            ));
         }
 
         match fs::read_to_string(path).await {
@@ -54,7 +56,7 @@ impl Tool for FileReadTool {
                     .map(|(i, line)| format!("{:4} | {}\n", i + 1, line))
                     .collect();
                 Ok(formatted)
-            }
+            },
             Err(e) => Ok(format!("Error reading file: {e}")),
         }
     }

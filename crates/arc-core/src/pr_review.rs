@@ -33,24 +33,43 @@ impl ReviewAgentKind {
 
     pub fn description(&self) -> &'static str {
         match self {
-            Self::CommentAnalyzer => "Analyzes PR comments for actionability, context, and sentiment",
-            Self::PrTestAnalyzer => "Evaluates test coverage, identifies untested paths, suggests missing tests",
-            Self::SilentFailureHunter => "Finds inadequate error handling: swallowed errors, empty catches, missing validations",
-            Self::TypeDesignAnalyzer => "Reviews type definitions for correctness, consistency, and design patterns",
+            Self::CommentAnalyzer => {
+                "Analyzes PR comments for actionability, context, and sentiment"
+            },
+            Self::PrTestAnalyzer => {
+                "Evaluates test coverage, identifies untested paths, suggests missing tests"
+            },
+            Self::SilentFailureHunter => {
+                "Finds inadequate error handling: swallowed errors, empty catches, missing validations"
+            },
+            Self::TypeDesignAnalyzer => {
+                "Reviews type definitions for correctness, consistency, and design patterns"
+            },
             Self::CodeReviewer => "General code review: style, performance, idioms, potential bugs",
             Self::CodeSimplifier => "Identifies overly complex code and suggests simplifications",
         }
     }
 
     pub fn all() -> &'static [ReviewAgentKind] {
-        &[Self::CommentAnalyzer, Self::PrTestAnalyzer, Self::SilentFailureHunter,
-          Self::TypeDesignAnalyzer, Self::CodeReviewer, Self::CodeSimplifier]
+        &[
+            Self::CommentAnalyzer,
+            Self::PrTestAnalyzer,
+            Self::SilentFailureHunter,
+            Self::TypeDesignAnalyzer,
+            Self::CodeReviewer,
+            Self::CodeSimplifier,
+        ]
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum FindingSeverity { Critical, High, Medium, Low }
+pub enum FindingSeverity {
+    Critical,
+    High,
+    Medium,
+    Low,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ReviewFinding {
@@ -71,17 +90,40 @@ pub struct ReviewReport {
 }
 
 impl ReviewReport {
-    pub fn add_finding(&mut self, finding: ReviewFinding) { self.findings.push(finding); }
+    pub fn add_finding(&mut self, finding: ReviewFinding) {
+        self.findings.push(finding);
+    }
 
-    pub fn critical_count(&self) -> usize { self.findings.iter().filter(|f| f.severity == FindingSeverity::Critical).count() }
-    pub fn high_count(&self) -> usize { self.findings.iter().filter(|f| f.severity == FindingSeverity::High).count() }
+    pub fn critical_count(&self) -> usize {
+        self.findings
+            .iter()
+            .filter(|f| f.severity == FindingSeverity::Critical)
+            .count()
+    }
+    pub fn high_count(&self) -> usize {
+        self.findings
+            .iter()
+            .filter(|f| f.severity == FindingSeverity::High)
+            .count()
+    }
 
     pub fn format_summary(&self) -> String {
         let c = self.critical_count();
         let h = self.high_count();
-        let m = self.findings.iter().filter(|f| f.severity == FindingSeverity::Medium).count();
-        let l = self.findings.iter().filter(|f| f.severity == FindingSeverity::Low).count();
-        format!("PR Review: {} findings (🔴 {c} critical, 🟠 {h} high, 🟡 {m} medium, 🟢 {l} low)", self.findings.len())
+        let m = self
+            .findings
+            .iter()
+            .filter(|f| f.severity == FindingSeverity::Medium)
+            .count();
+        let l = self
+            .findings
+            .iter()
+            .filter(|f| f.severity == FindingSeverity::Low)
+            .count();
+        format!(
+            "PR Review: {} findings (🔴 {c} critical, 🟠 {h} high, 🟡 {m} medium, 🟢 {l} low)",
+            self.findings.len()
+        )
     }
 }
 
@@ -125,8 +167,15 @@ impl DevPhase {
     }
 
     pub fn all() -> &'static [DevPhase] {
-        &[Self::Discovery, Self::CodebaseExploration, Self::ClarifyingQuestions,
-          Self::ArchitectureDesign, Self::Implementation, Self::QualityReview, Self::Summary]
+        &[
+            Self::Discovery,
+            Self::CodebaseExploration,
+            Self::ClarifyingQuestions,
+            Self::ArchitectureDesign,
+            Self::Implementation,
+            Self::QualityReview,
+            Self::Summary,
+        ]
     }
 }
 
@@ -140,22 +189,48 @@ pub struct FeatureDevWorkflow {
 
 impl FeatureDevWorkflow {
     pub fn new(feature_name: &str) -> Self {
-        let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().as_secs();
-        Self { feature_name: feature_name.to_string(), current_phase: DevPhase::Discovery, phase_outputs: Vec::new(), started_at: now }
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_secs();
+        Self {
+            feature_name: feature_name.to_string(),
+            current_phase: DevPhase::Discovery,
+            phase_outputs: Vec::new(),
+            started_at: now,
+        }
     }
 
     pub fn complete_phase(&mut self, output: &str) -> Option<DevPhase> {
-        self.phase_outputs.push((self.current_phase, output.to_string()));
+        self.phase_outputs
+            .push((self.current_phase, output.to_string()));
         if let Some(next) = self.current_phase.next() {
             self.current_phase = next;
             Some(next)
-        } else { None }
+        } else {
+            None
+        }
     }
 
     pub fn progress(&self) -> String {
         let completed = self.phase_outputs.len();
         let total = DevPhase::all().len();
-        let bar: String = DevPhase::all().iter().map(|p| if self.phase_outputs.iter().any(|(pp, _)| pp == p) { "●" } else if *p == self.current_phase { "◐" } else { "○" }).collect::<Vec<_>>().join("");
-        format!("[{bar}] {completed}/{total} — {}", self.current_phase.label())
+        let bar: String = DevPhase::all()
+            .iter()
+            .map(|p| {
+                if self.phase_outputs.iter().any(|(pp, _)| pp == p) {
+                    "●"
+                } else if *p == self.current_phase {
+                    "◐"
+                } else {
+                    "○"
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("");
+        format!(
+            "[{bar}] {completed}/{total} — {}",
+            self.current_phase.label()
+        )
     }
 }

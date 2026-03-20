@@ -8,7 +8,12 @@ use std::time::Duration;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
-pub enum VoiceState { Idle, Listening, Processing, Error }
+pub enum VoiceState {
+    Idle,
+    Listening,
+    Processing,
+    Error,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct VoiceConfig {
@@ -26,17 +31,22 @@ pub struct VoiceConfig {
 impl Default for VoiceConfig {
     fn default() -> Self {
         Self {
-            enabled: false, language: "en-US".into(), push_to_talk_key: "Ctrl+Shift+V".into(),
-            auto_detect_language: true, sample_rate: 16000, channels: 1,
-            max_duration: Duration::from_secs(30), silence_threshold_ms: 1500, dev_term_boost: true,
+            enabled: false,
+            language: "en-US".into(),
+            push_to_talk_key: "Ctrl+Shift+V".into(),
+            auto_detect_language: true,
+            sample_rate: 16000,
+            channels: 1,
+            max_duration: Duration::from_secs(30),
+            silence_threshold_ms: 1500,
+            dev_term_boost: true,
         }
     }
 }
 
 pub const SUPPORTED_LANGUAGES: &[&str] = &[
-    "en-US", "en-GB", "es-ES", "fr-FR", "de-DE", "it-IT", "pt-BR", "ja-JP",
-    "ko-KR", "zh-CN", "zh-TW", "ru-RU", "ar-SA", "hi-IN", "nl-NL", "pl-PL",
-    "sv-SE", "da-DK", "fi-FI", "nb-NO",
+    "en-US", "en-GB", "es-ES", "fr-FR", "de-DE", "it-IT", "pt-BR", "ja-JP", "ko-KR", "zh-CN",
+    "zh-TW", "ru-RU", "ar-SA", "hi-IN", "nl-NL", "pl-PL", "sv-SE", "da-DK", "fi-FI", "nb-NO",
 ];
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -57,21 +67,31 @@ pub struct VoiceEngine {
 
 impl VoiceEngine {
     pub fn new(config: VoiceConfig) -> Self {
-        Self { config, state: VoiceState::Idle, transcript_history: Vec::new() }
+        Self {
+            config,
+            state: VoiceState::Idle,
+            transcript_history: Vec::new(),
+        }
     }
 
-    pub fn state(&self) -> VoiceState { self.state }
+    pub fn state(&self) -> VoiceState {
+        self.state
+    }
 
     /// Start listening (would trigger platform audio capture).
     pub fn start_listening(&mut self) -> Result<(), String> {
-        if !self.config.enabled { return Err("Voice mode not enabled".into()); }
+        if !self.config.enabled {
+            return Err("Voice mode not enabled".into());
+        }
         self.state = VoiceState::Listening;
         Ok(())
     }
 
     /// Stop listening and process audio.
     pub fn stop_listening(&mut self) -> Result<(), String> {
-        if self.state != VoiceState::Listening { return Err("Not listening".into()); }
+        if self.state != VoiceState::Listening {
+            return Err("Not listening".into());
+        }
         self.state = VoiceState::Processing;
         Ok(())
     }
@@ -87,9 +107,13 @@ impl VoiceEngine {
         self.transcript_history.last()
     }
 
-    pub fn history(&self) -> &[TranscriptionResult] { &self.transcript_history }
+    pub fn history(&self) -> &[TranscriptionResult] {
+        &self.transcript_history
+    }
 
-    pub fn clear_history(&mut self) { self.transcript_history.clear(); }
+    pub fn clear_history(&mut self) {
+        self.transcript_history.clear();
+    }
 
     /// Check if platform audio is available.
     pub fn check_audio_support() -> AudioSupport {
@@ -107,11 +131,22 @@ impl VoiceEngine {
     }
 
     fn detect_backend() -> String {
-        #[cfg(target_os = "macos")] { return "CoreAudio".into(); }
-        #[cfg(target_os = "windows")] { return "WASAPI".into(); }
-        #[cfg(target_os = "linux")] {
-            if which::which("parecord").is_ok() { return "PulseAudio".into(); }
-            if which::which("arecord").is_ok() { return "ALSA".into(); }
+        #[cfg(target_os = "macos")]
+        {
+            return "CoreAudio".into();
+        }
+        #[cfg(target_os = "windows")]
+        {
+            return "WASAPI".into();
+        }
+        #[cfg(target_os = "linux")]
+        {
+            if which::which("parecord").is_ok() {
+                return "PulseAudio".into();
+            }
+            if which::which("arecord").is_ok() {
+                return "ALSA".into();
+            }
             return "None".into();
         }
         #[allow(unreachable_code)]

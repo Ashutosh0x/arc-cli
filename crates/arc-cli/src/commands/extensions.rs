@@ -72,20 +72,23 @@ pub enum ExtensionCommands {
 pub fn handle_extension_command(cmd: &ExtensionCommands) -> anyhow::Result<()> {
     match cmd {
         ExtensionCommands::Install { source, force } => {
-            println!("📦 Installing extension from: {source}{}", if *force { " (force)" } else { "" });
+            println!(
+                "📦 Installing extension from: {source}{}",
+                if *force { " (force)" } else { "" }
+            );
             println!("  ✓ Extension installed successfully");
             Ok(())
-        }
+        },
         ExtensionCommands::Uninstall { name } => {
             println!("🗑️  Uninstalling extension: {name}");
             println!("  ✓ Extension removed");
             Ok(())
-        }
+        },
         ExtensionCommands::Link { path } => {
             println!("🔗 Linking local extension: {}", path.display());
             println!("  ✓ Extension linked for development");
             Ok(())
-        }
+        },
         ExtensionCommands::Update { name } => {
             match name {
                 Some(n) => println!("🔄 Updating extension: {n}"),
@@ -93,7 +96,7 @@ pub fn handle_extension_command(cmd: &ExtensionCommands) -> anyhow::Result<()> {
             }
             println!("  ✓ Extensions up to date");
             Ok(())
-        }
+        },
         ExtensionCommands::Configure { name, settings } => {
             println!("⚙️  Configuring extension: {name}");
             for s in settings {
@@ -101,15 +104,15 @@ pub fn handle_extension_command(cmd: &ExtensionCommands) -> anyhow::Result<()> {
             }
             println!("  ✓ Configuration saved");
             Ok(())
-        }
+        },
         ExtensionCommands::Enable { name } => {
             println!("✅ Enabling extension: {name}");
             Ok(())
-        }
+        },
         ExtensionCommands::Disable { name } => {
             println!("⏸️  Disabling extension: {name}");
             Ok(())
-        }
+        },
         ExtensionCommands::Validate { path } => {
             let target = path.as_deref().unwrap_or_else(|| std::path::Path::new("."));
             println!("🔍 Validating extension at: {}", target.display());
@@ -117,12 +120,12 @@ pub fn handle_extension_command(cmd: &ExtensionCommands) -> anyhow::Result<()> {
             println!("  ✓ Structure valid");
             println!("  ✓ Dependencies resolved");
             Ok(())
-        }
+        },
         ExtensionCommands::New { name, template } => {
             println!("🆕 Creating new extension: {name} (template: {template})");
             println!("  ✓ Extension scaffold created");
             Ok(())
-        }
+        },
         ExtensionCommands::List { verbose } => {
             println!("📋 Installed extensions:");
             if *verbose {
@@ -131,6 +134,6 @@ pub fn handle_extension_command(cmd: &ExtensionCommands) -> anyhow::Result<()> {
                 println!("  (none)");
             }
             Ok(())
-        }
+        },
     }
 }

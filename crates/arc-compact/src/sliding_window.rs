@@ -41,7 +41,9 @@ impl SlidingWindow {
 
         for msg in messages {
             let tokens = self.tokenizer.count_tokens(&msg.content);
-            if self.config.preserve_system && matches!(msg.role, arc_providers::message::Role::System) {
+            if self.config.preserve_system
+                && matches!(msg.role, arc_providers::message::Role::System)
+            {
                 total_tokens += tokens;
                 system_messages.push(msg.clone());
             } else {

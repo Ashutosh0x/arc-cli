@@ -2,7 +2,7 @@
 
 use crate::provider::{ChatMessage, ChatResponse, Provider};
 use arc_core::config::RoutingStrategy;
-use arc_core::error::{ArcResult, ArcError};
+use arc_core::error::{ArcError, ArcResult};
 use std::sync::Arc;
 use tracing::{debug, info, warn};
 
@@ -18,15 +18,15 @@ impl ProviderRouter {
         strategy: RoutingStrategy,
         fallback_chain: Vec<String>,
     ) -> Self {
-        Self { providers, strategy, fallback_chain }
+        Self {
+            providers,
+            strategy,
+            fallback_chain,
+        }
     }
 
     /// Route a chat request according to the configured strategy.
-    pub async fn route(
-        &self,
-        messages: &[ChatMessage],
-        model: &str,
-    ) -> ArcResult<ChatResponse> {
+    pub async fn route(&self, messages: &[ChatMessage], model: &str) -> ArcResult<ChatResponse> {
         match &self.strategy {
             RoutingStrategy::FallbackChain => self.fallback_chain_route(messages, model).await,
             RoutingStrategy::Latency => self.race_providers(messages, model).await,
@@ -49,11 +49,11 @@ impl ProviderRouter {
                 Ok(response) => {
                     info!("Response from provider: {}", provider.name());
                     return Ok(response);
-                }
+                },
                 Err(e) => {
                     warn!("Provider {} failed: {e}, trying next...", provider.name());
                     continue;
-                }
+                },
             }
         }
 
@@ -85,7 +85,7 @@ impl ProviderRouter {
                 Ok(Err(e)) => last_error = Some(e),
                 Err(e) => {
                     warn!("Provider task panicked: {e}");
-                }
+                },
             }
         }
 

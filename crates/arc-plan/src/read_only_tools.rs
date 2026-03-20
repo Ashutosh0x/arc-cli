@@ -62,13 +62,15 @@ impl ReadOnlyToolSet {
             );
         }
 
-        let relative = resolved
-            .strip_prefix(&self.root)
-            .unwrap_or(&resolved);
+        let relative = resolved.strip_prefix(&self.root).unwrap_or(&resolved);
 
         for pattern in &self.exclude_patterns {
             if pattern.matches_path(relative) {
-                anyhow::bail!("Path {} matches exclude pattern {}", path.display(), pattern);
+                anyhow::bail!(
+                    "Path {} matches exclude pattern {}",
+                    path.display(),
+                    pattern
+                );
             }
         }
 
@@ -105,11 +107,7 @@ impl ReadOnlyToolSet {
         lines: usize,
     ) -> Result<String> {
         let content = self.read_file(path).await?;
-        let head: String = content
-            .lines()
-            .take(lines)
-            .collect::<Vec<_>>()
-            .join("\n");
+        let head: String = content.lines().take(lines).collect::<Vec<_>>().join("\n");
         Ok(head)
     }
 
@@ -215,13 +213,12 @@ impl ReadOnlyToolSet {
             .filter_map(|entry: Result<PathBuf, glob::GlobError>| entry.ok())
             .filter(|path: &PathBuf| {
                 let relative = path.strip_prefix(&self.root).unwrap_or(path);
-                !self.exclude_patterns.iter().any(|p: &glob::Pattern| p.matches_path(relative))
+                !self
+                    .exclude_patterns
+                    .iter()
+                    .any(|p: &glob::Pattern| p.matches_path(relative))
             })
-            .map(|path: PathBuf| {
-                path.strip_prefix(&self.root)
-                    .unwrap_or(&path)
-                    .to_path_buf()
-            })
+            .map(|path: PathBuf| path.strip_prefix(&self.root).unwrap_or(&path).to_path_buf())
             .collect();
 
         Ok(paths)
@@ -229,10 +226,15 @@ impl ReadOnlyToolSet {
 
     /// List the directory tree up to a given depth.
     #[instrument(skip(self))]
-    pub async fn list_tree(&self, path: impl AsRef<Path> + std::fmt::Debug, max_depth: usize) -> Result<Vec<TreeEntry>> {
+    pub async fn list_tree(
+        &self,
+        path: impl AsRef<Path> + std::fmt::Debug,
+        max_depth: usize,
+    ) -> Result<Vec<TreeEntry>> {
         let validated = self.validate_path(path.as_ref())?;
         let mut entries = Vec::new();
-        self.walk_tree(&validated, 0, max_depth, &mut entries).await?;
+        self.walk_tree(&validated, 0, max_depth, &mut entries)
+            .await?;
         Ok(entries)
     }
 
@@ -281,7 +283,10 @@ impl ReadOnlyToolSet {
 
     /// Analyze imports/exports in a Rust file to build dependency information.
     #[instrument(skip(self))]
-    pub async fn analyze_rust_deps(&self, path: impl AsRef<Path> + std::fmt::Debug) -> Result<FileDependencies> {
+    pub async fn analyze_rust_deps(
+        &self,
+        path: impl AsRef<Path> + std::fmt::Debug,
+    ) -> Result<FileDependencies> {
         let content = self.read_file(path.as_ref()).await?;
 
         let use_regex = regex::Regex::new(r"use\s+([\w:]+(?:::\{[^}]+\})?)")?;

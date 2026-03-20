@@ -1,11 +1,7 @@
 use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Parser, Debug)]
-#[command(
-    name = "arc",
-    about = "⚡ ARC — Agent for Rapid Coding",
-    version
-)]
+#[command(name = "arc", about = "⚡ ARC — Agent for Rapid Coding", version)]
 pub struct Cli {
     /// Prompt for one-shot mode. If omitted, starts interactive REPL.
     pub prompt: Option<String>,
@@ -126,9 +122,7 @@ pub enum AuthAction {
     Status,
     Login,
     Logout,
-    SetKey {
-        provider: String,
-    },
+    SetKey { provider: String },
 }
 
 #[derive(Subcommand, Debug, Clone)]

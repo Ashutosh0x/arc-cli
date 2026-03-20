@@ -1,11 +1,11 @@
+use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;
-use serde_json::Value;
 
-use crate::traits::Tool;
-use crate::file_read::FileReadTool;
 use crate::file_edit::FileEditTool;
+use crate::file_read::FileReadTool;
 use crate::shell::ShellTool;
+use crate::traits::Tool;
 use arc_providers::message::ToolDefinition;
 
 pub struct ToolRegistry {
@@ -17,12 +17,12 @@ impl ToolRegistry {
         let mut registry = Self {
             tools: HashMap::new(),
         };
-        
+
         // Register core tools
         registry.register(Arc::new(FileReadTool));
         registry.register(Arc::new(FileEditTool));
         registry.register(Arc::new(ShellTool));
-        
+
         registry
     }
 

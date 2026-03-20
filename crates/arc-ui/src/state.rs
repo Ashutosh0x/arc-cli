@@ -25,20 +25,20 @@ pub enum StepState {
 /// A single planned action
 #[derive(Debug, Clone)]
 pub struct PlanStep {
-    pub label:       String,
+    pub label: String,
     pub description: String,
-    pub state:       StepState,
-    pub agent:       String,
-    pub started_at:  Option<Instant>,
+    pub state: StepState,
+    pub agent: String,
+    pub started_at: Option<Instant>,
     pub finished_at: Option<Instant>,
 }
 
 /// Live cost + token counters
 #[derive(Debug, Clone, Default)]
 pub struct UsageMetrics {
-    pub input_tokens:  u64,
+    pub input_tokens: u64,
     pub output_tokens: u64,
-    pub total_cost:    f64,
+    pub total_cost: f64,
     pub active_agents: Vec<String>,
     pub checkpoint_id: Option<String>,
 }
@@ -46,15 +46,15 @@ pub struct UsageMetrics {
 /// Entire UI state
 #[derive(Debug, Clone)]
 pub struct UiState {
-    pub phase:           Phase,
-    pub header_mode:     HeaderMode,
-    pub plan_steps:      Vec<PlanStep>,
-    pub diff_blocks:     Vec<DiffBlock>,
-    pub selected_diff:   usize,
-    pub scroll_offset:   usize,
-    pub metrics:         UsageMetrics,
-    pub spinner_frame:   usize,
-    pub terminal_width:  u16,
+    pub phase: Phase,
+    pub header_mode: HeaderMode,
+    pub plan_steps: Vec<PlanStep>,
+    pub diff_blocks: Vec<DiffBlock>,
+    pub selected_diff: usize,
+    pub scroll_offset: usize,
+    pub metrics: UsageMetrics,
+    pub spinner_frame: usize,
+    pub terminal_width: u16,
     pub terminal_height: u16,
 }
 
@@ -67,12 +67,12 @@ pub enum HeaderMode {
 /// One file's diff
 #[derive(Debug, Clone)]
 pub struct DiffBlock {
-    pub file_path:  String,
-    pub additions:  usize,
-    pub deletions:  usize,
-    pub hunks:      Vec<Hunk>,
-    pub expanded:   bool,
-    pub accepted:   Option<bool>,  // None = pending
+    pub file_path: String,
+    pub additions: usize,
+    pub deletions: usize,
+    pub hunks: Vec<Hunk>,
+    pub expanded: bool,
+    pub accepted: Option<bool>, // None = pending
 }
 
 /// One contiguous change region
@@ -80,7 +80,7 @@ pub struct DiffBlock {
 pub struct Hunk {
     pub old_start: usize,
     pub new_start: usize,
-    pub context:   Vec<DiffLine>,
+    pub context: Vec<DiffLine>,
 }
 
 #[derive(Debug, Clone)]
@@ -93,14 +93,14 @@ pub enum DiffLine {
 impl UiState {
     pub fn new(width: u16, height: u16) -> Self {
         Self {
-            phase:          Phase::Startup,
-            header_mode:    HeaderMode::Expanded,
-            plan_steps:     Vec::new(),
-            diff_blocks:    Vec::new(),
-            selected_diff:  0,
-            scroll_offset:  0,
-            metrics:        UsageMetrics::default(),
-            spinner_frame:  0,
+            phase: Phase::Startup,
+            header_mode: HeaderMode::Expanded,
+            plan_steps: Vec::new(),
+            diff_blocks: Vec::new(),
+            selected_diff: 0,
+            scroll_offset: 0,
+            metrics: UsageMetrics::default(),
+            spinner_frame: 0,
             terminal_width: width,
             terminal_height: height,
         }

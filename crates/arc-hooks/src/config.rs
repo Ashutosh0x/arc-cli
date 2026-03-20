@@ -34,7 +34,7 @@ impl HookConfig {
 
         if let Some(cmds) = commands {
             for cmd_str in cmds {
-                // In a production environment, this would be wrapped inside the Arc Sandbox 
+                // In a production environment, this would be wrapped inside the Arc Sandbox
                 // to prevent malicious arbitrary execution. For now, we execute standard bash/cmd.
                 let status = if cfg!(target_os = "windows") {
                     Command::new("cmd")
@@ -49,7 +49,7 @@ impl HookConfig {
                         .current_dir(workspace_root.as_ref())
                         .status()?
                 };
-                
+
                 if !status.success() {
                     tracing::warn!("Hook command '{}' failed with status: {}", cmd_str, status);
                 } else {

@@ -36,20 +36,18 @@ pub fn should_auto_use_credits(strategy: &OverageStrategy, balance: Option<i64>)
 
 /// Check if the overage prompt menu should be shown.
 pub fn should_show_overage_menu(strategy: &OverageStrategy, balance: Option<i64>) -> bool {
-    matches!(strategy, OverageStrategy::Ask)
-        && balance.map_or(false, |b| b >= MIN_CREDIT_BALANCE)
+    matches!(strategy, OverageStrategy::Ask) && balance.map_or(false, |b| b >= MIN_CREDIT_BALANCE)
 }
 
 /// Check if the empty wallet message should be shown.
 pub fn should_show_empty_wallet(strategy: &OverageStrategy, balance: Option<i64>) -> bool {
-    !matches!(strategy, OverageStrategy::Never)
-        && balance.map_or(false, |b| b < MIN_CREDIT_BALANCE)
+    !matches!(strategy, OverageStrategy::Never) && balance.map_or(false, |b| b < MIN_CREDIT_BALANCE)
 }
 
 /// Estimate token cost for a request.
 pub fn estimate_cost(input_tokens: u64, output_tokens: u64, model: &str) -> f64 {
     let (input_rate, output_rate) = match model {
-        m if m.contains("gpt-4") => (0.03, 0.06),       // per 1K tokens
+        m if m.contains("gpt-4") => (0.03, 0.06), // per 1K tokens
         m if m.contains("gpt-3.5") => (0.0015, 0.002),
         m if m.contains("claude-3-opus") => (0.015, 0.075),
         m if m.contains("claude-3-sonnet") => (0.003, 0.015),

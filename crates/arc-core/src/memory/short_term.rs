@@ -29,7 +29,10 @@ impl ShortTermMemory {
     pub fn record(&mut self, msg: MemoryMessage) {
         if self.history.len() >= self.capacity {
             self.history.pop_front();
-            debug!("Short-term memory evicted oldest message (cap: {})", self.capacity);
+            debug!(
+                "Short-term memory evicted oldest message (cap: {})",
+                self.capacity
+            );
         }
         self.history.push_back(msg);
         self.total_added += 1;

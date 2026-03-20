@@ -36,22 +36,30 @@ impl SessionStore {
 
         let db = Database::create(db_path).map_err(|e| ArcError::Database(e.to_string()))?;
 
-        let write_txn = db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let write_txn = db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let _ = write_txn
                 .open_table(SESSIONS_TABLE)
                 .map_err(|e| ArcError::Database(e.to_string()))?;
         }
-        write_txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        write_txn
+            .commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
 
         Ok(Self { db: Arc::new(db) })
     }
 
     /// Save a session to disk.
     pub fn save_session(&self, record: &SessionRecord) -> ArcResult<()> {
-        let bytes = serde_json::to_vec(record).map_err(|e| ArcError::System(format!("Serialization error: {}", e.to_string())))?;
+        let bytes = serde_json::to_vec(record)
+            .map_err(|e| ArcError::System(format!("Serialization error: {}", e.to_string())))?;
 
-        let write_txn = self.db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let write_txn = self
+            .db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let mut table = write_txn
                 .open_table(SESSIONS_TABLE)
@@ -60,22 +68,34 @@ impl SessionStore {
                 .insert(record.id.as_str(), bytes.as_slice())
                 .map_err(|e| ArcError::Database(e.to_string()))?;
         }
-        write_txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        write_txn
+            .commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
 
-        info!("Saved session {} with {} messages", record.id, record.messages.len());
+        info!(
+            "Saved session {} with {} messages",
+            record.id,
+            record.messages.len()
+        );
         Ok(())
     }
 
     /// Load a session by ID.
     pub fn load_session(&self, id: &str) -> ArcResult<Option<SessionRecord>> {
-        let read_txn = self.db.begin_read().map_err(|e| ArcError::Database(e.to_string()))?;
+        let read_txn = self
+            .db
+            .begin_read()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         let table = read_txn
             .open_table(SESSIONS_TABLE)
             .map_err(|e| ArcError::Database(e.to_string()))?;
 
-        if let Some(guard) = table.get(id).map_err(|e| ArcError::Database(e.to_string()))? {
-            let record: SessionRecord =
-                serde_json::from_slice(guard.value()).map_err(|e| ArcError::System(format!("Serialization error: {}", e.to_string())))?;
+        if let Some(guard) = table
+            .get(id)
+            .map_err(|e| ArcError::Database(e.to_string()))?
+        {
+            let record: SessionRecord = serde_json::from_slice(guard.value())
+                .map_err(|e| ArcError::System(format!("Serialization error: {}", e.to_string())))?;
             Ok(Some(record))
         } else {
             Ok(None)
@@ -84,13 +104,18 @@ impl SessionStore {
 
     /// List all saved sessions metadata (omits full message history for speed).
     pub fn list_sessions(&self) -> ArcResult<Vec<SessionMetadata>> {
-        let read_txn = self.db.begin_read().map_err(|e| ArcError::Database(e.to_string()))?;
+        let read_txn = self
+            .db
+            .begin_read()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         let table = read_txn
             .open_table(SESSIONS_TABLE)
             .map_err(|e| ArcError::Database(e.to_string()))?;
 
         let mut sessions = Vec::new();
-        let iter = table.iter().map_err(|e| ArcError::Database(e.to_string()))?;
+        let iter = table
+            .iter()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
 
         for result in iter {
             let (_, v) = result.map_err(|e| ArcError::Database(e.to_string()))?;
@@ -114,14 +139,21 @@ impl SessionStore {
 
     /// Delete a session.
     pub fn delete_session(&self, id: &str) -> ArcResult<()> {
-        let write_txn = self.db.begin_write().map_err(|e| ArcError::Database(e.to_string()))?;
+        let write_txn = self
+            .db
+            .begin_write()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         {
             let mut table = write_txn
                 .open_table(SESSIONS_TABLE)
                 .map_err(|e| ArcError::Database(e.to_string()))?;
-            table.remove(id).map_err(|e| ArcError::Database(e.to_string()))?;
+            table
+                .remove(id)
+                .map_err(|e| ArcError::Database(e.to_string()))?;
         }
-        write_txn.commit().map_err(|e| ArcError::Database(e.to_string()))?;
+        write_txn
+            .commit()
+            .map_err(|e| ArcError::Database(e.to_string()))?;
         Ok(())
     }
 }

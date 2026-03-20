@@ -57,7 +57,11 @@ impl PlanRenderer {
 
         // Phases
         for (i, phase) in plan.phases.iter().enumerate() {
-            let parallel_badge = if phase.can_parallelize { " (parallel)" } else { "" };
+            let parallel_badge = if phase.can_parallelize {
+                " (parallel)"
+            } else {
+                ""
+            };
             out.push_str(&format!(
                 "--- Phase {}: {}{} ---\n",
                 i + 1,

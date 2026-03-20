@@ -39,16 +39,28 @@ pub fn selective_rewind(
 
     match scope {
         RewindScope::Full => {
-            revert_files(&snapshot.file_state, working_dir, None, &mut files_reverted, &mut files_skipped)?;
+            revert_files(
+                &snapshot.file_state,
+                working_dir,
+                None,
+                &mut files_reverted,
+                &mut files_skipped,
+            )?;
             conversation_reverted = true;
-        }
+        },
         RewindScope::CodeOnly => {
-            revert_files(&snapshot.file_state, working_dir, None, &mut files_reverted, &mut files_skipped)?;
+            revert_files(
+                &snapshot.file_state,
+                working_dir,
+                None,
+                &mut files_reverted,
+                &mut files_skipped,
+            )?;
             conversation_reverted = false;
-        }
+        },
         RewindScope::ConversationOnly => {
             conversation_reverted = true;
-        }
+        },
         RewindScope::SpecificFiles(ref paths) => {
             revert_files(
                 &snapshot.file_state,
@@ -58,7 +70,7 @@ pub fn selective_rewind(
                 &mut files_skipped,
             )?;
             conversation_reverted = false;
-        }
+        },
     }
 
     info!(
@@ -114,7 +126,7 @@ fn revert_files(
                 }
 
                 reverted.push(path.clone());
-            }
+            },
             FileContent::BlobRef { blob_id } => {
                 // In production, retrieve from content-addressable store
                 warn!(
@@ -123,7 +135,7 @@ fn revert_files(
                     "Blob-referenced file revert not yet implemented"
                 );
                 skipped.push(path.clone());
-            }
+            },
         }
     }
 

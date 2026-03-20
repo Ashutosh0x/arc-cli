@@ -11,16 +11,33 @@ use dialoguer::{MultiSelect, Select, theme::ColorfulTheme};
 
 /// Run the full interactive setup wizard.
 pub async fn run_setup_wizard() -> ArcResult<()> {
-    println!("\n{}", style("╔══════════════════════════════════════╗").cyan());
-    println!("{}", style("║     ARC — Setup Wizard               ║").cyan());
-    println!("{}", style("║     Configure your AI providers      ║").cyan());
-    println!("{}", style("╚══════════════════════════════════════╝").cyan());
+    println!(
+        "\n{}",
+        style("╔══════════════════════════════════════╗").cyan()
+    );
+    println!(
+        "{}",
+        style("║     ARC — Setup Wizard               ║").cyan()
+    );
+    println!(
+        "{}",
+        style("║     Configure your AI providers      ║").cyan()
+    );
+    println!(
+        "{}",
+        style("╚══════════════════════════════════════╝").cyan()
+    );
     println!();
 
     let mut config = ArcConfig::load().unwrap_or_default();
 
     // Step 1: Select providers
-    let provider_names = &["Anthropic (Claude)", "OpenAI (GPT/o-series)", "Google Gemini", "Ollama (Local)"];
+    let provider_names = &[
+        "Anthropic (Claude)",
+        "OpenAI (GPT/o-series)",
+        "Google Gemini",
+        "Ollama (Local)",
+    ];
     let selections = MultiSelect::with_theme(&ColorfulTheme::default())
         .with_prompt("Select your AI providers (Space to toggle, Enter to confirm)")
         .items(provider_names)
@@ -40,13 +57,19 @@ pub async fn run_setup_wizard() -> ArcResult<()> {
         .collect();
 
     if selected_providers.is_empty() {
-        println!("{}", style("⚠ No providers selected. Exiting setup.").yellow());
+        println!(
+            "{}",
+            style("⚠ No providers selected. Exiting setup.").yellow()
+        );
         return Ok(());
     }
 
     // Step 2: Authenticate each provider
     for &provider in &selected_providers {
-        println!("\n{}", style(format!("── Configuring {provider} ──")).bold());
+        println!(
+            "\n{}",
+            style(format!("── Configuring {provider} ──")).bold()
+        );
 
         let auth_method = if provider == Provider::Gemini {
             let methods = &["API Key (AI Studio)", "Google OAuth (Browser Sign-in)"];
@@ -60,7 +83,10 @@ pub async fn run_setup_wizard() -> ArcResult<()> {
             if choice == 1 { "oauth" } else { "api_key" }
         } else if provider == Provider::Ollama {
             // Ollama needs no auth
-            println!("  {} Ollama uses local inference — no API key needed.", style("ℹ").blue());
+            println!(
+                "  {} Ollama uses local inference — no API key needed.",
+                style("ℹ").blue()
+            );
             config.providers.ollama.enabled = true;
             continue;
         } else {
@@ -76,22 +102,22 @@ pub async fn run_setup_wizard() -> ArcResult<()> {
                     enabled: true,
                     auth_method: auth_method.to_string(),
                 };
-            }
+            },
             Provider::OpenAI => {
                 config.providers.openai = ProviderEntry {
                     enabled: true,
                     auth_method: auth_method.to_string(),
                 };
-            }
+            },
             Provider::Gemini => {
                 config.providers.gemini = ProviderEntry {
                     enabled: true,
                     auth_method: auth_method.to_string(),
                 };
-            }
+            },
             Provider::Ollama => {
                 config.providers.ollama.enabled = true;
-            }
+            },
         }
 
         println!("  {} {provider} configured!", style("✓").green());
@@ -126,10 +152,22 @@ pub async fn run_setup_wizard() -> ArcResult<()> {
     // Save
     config.save()?;
 
-    println!("\n{}", style("╔══════════════════════════════════════╗").green());
-    println!("{}", style("║     ✅ Setup complete!               ║").green());
-    println!("{}", style("║     Run `arc` to start chatting      ║").green());
-    println!("{}", style("╚══════════════════════════════════════╝").green());
+    println!(
+        "\n{}",
+        style("╔══════════════════════════════════════╗").green()
+    );
+    println!(
+        "{}",
+        style("║     ✅ Setup complete!               ║").green()
+    );
+    println!(
+        "{}",
+        style("║     Run `arc` to start chatting      ║").green()
+    );
+    println!(
+        "{}",
+        style("╚══════════════════════════════════════╝").green()
+    );
 
     Ok(())
 }

@@ -199,24 +199,22 @@ impl SessionSnapshot {
                         path: path.clone(),
                         hash: record.hash.clone(),
                     });
-                }
+                },
                 Some(other_record) if other_record.hash != record.hash => {
                     diffs.push(FileDiff::Modified {
                         path: path.clone(),
                         old_hash: other_record.hash.clone(),
                         new_hash: record.hash.clone(),
                     });
-                }
-                _ => {}
+                },
+                _ => {},
             }
         }
 
         // Files in other but not in self
         for path in other.file_state.files.keys() {
             if !self.file_state.files.contains_key(path) {
-                diffs.push(FileDiff::Deleted {
-                    path: path.clone(),
-                });
+                diffs.push(FileDiff::Deleted { path: path.clone() });
             }
         }
 
@@ -226,9 +224,18 @@ impl SessionSnapshot {
 
 #[derive(Debug, Clone)]
 pub enum FileDiff {
-    Added { path: String, hash: String },
-    Modified { path: String, old_hash: String, new_hash: String },
-    Deleted { path: String },
+    Added {
+        path: String,
+        hash: String,
+    },
+    Modified {
+        path: String,
+        old_hash: String,
+        new_hash: String,
+    },
+    Deleted {
+        path: String,
+    },
 }
 
 #[derive(Debug, thiserror::Error)]

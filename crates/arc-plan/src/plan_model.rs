@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 use std::collections::HashMap;
+use uuid::Uuid;
 
 /// A complete execution plan produced by the planning subagent.
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -44,13 +44,32 @@ pub struct PlanStep {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum StepAction {
-    ReadAnalyze { paths: Vec<String> },
-    Modify { path: String, description: String },
-    Create { path: String, template: Option<String> },
-    Delete { path: String, reason: String },
-    RunCommand { command: String, safe: bool },
-    RunTests { test_pattern: Option<String> },
-    Refactor { scope: String, pattern: String },
+    ReadAnalyze {
+        paths: Vec<String>,
+    },
+    Modify {
+        path: String,
+        description: String,
+    },
+    Create {
+        path: String,
+        template: Option<String>,
+    },
+    Delete {
+        path: String,
+        reason: String,
+    },
+    RunCommand {
+        command: String,
+        safe: bool,
+    },
+    RunTests {
+        test_pattern: Option<String>,
+    },
+    Refactor {
+        scope: String,
+        pattern: String,
+    },
 }
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
@@ -167,8 +186,7 @@ impl Plan {
 
     /// Topological sort of all steps respecting dependency edges.
     pub fn execution_order(&self) -> Vec<&PlanStep> {
-        let all_steps: Vec<&PlanStep> =
-            self.phases.iter().flat_map(|p| &p.steps).collect();
+        let all_steps: Vec<&PlanStep> = self.phases.iter().flat_map(|p| &p.steps).collect();
 
         let mut in_degree: HashMap<Uuid, usize> = HashMap::new();
         let mut adj: HashMap<Uuid, Vec<Uuid>> = HashMap::new();
@@ -203,8 +221,7 @@ impl Plan {
             }
         }
 
-        let step_map: HashMap<Uuid, &PlanStep> =
-            all_steps.into_iter().map(|s| (s.id, s)).collect();
+        let step_map: HashMap<Uuid, &PlanStep> = all_steps.into_iter().map(|s| (s.id, s)).collect();
 
         sorted_ids
             .into_iter()

@@ -6,7 +6,7 @@ pub struct PlanOutput {
     pub task_summary: String,
     pub steps: Vec<PlanStep>,
     pub estimated_files: Vec<String>,
-    pub confidence: f32,            // 0.0 - 1.0
+    pub confidence: f32, // 0.0 - 1.0
     pub requires_clarification: bool,
     pub clarification_questions: Vec<String>,
 }
@@ -17,7 +17,7 @@ pub struct PlanStep {
     pub label: String,
     pub description: String,
     pub agent: AgentRole,
-    pub depends_on: Vec<usize>,    // step IDs this depends on
+    pub depends_on: Vec<usize>, // step IDs this depends on
     pub estimated_tokens: u64,
 }
 
@@ -76,7 +76,7 @@ pub struct CoderOutput {
 pub struct FileEdit {
     pub path: String,
     pub edit_type: EditType,
-    pub content: String,          // full new file content or diff
+    pub content: String, // full new file content or diff
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -114,7 +114,11 @@ pub fn validate_plan(output: &PlanOutput) -> Result<(), Vec<String>> {
         errors.push("requires_clarification is true but no questions provided".into());
     }
 
-    if errors.is_empty() { Ok(()) } else { Err(errors) }
+    if errors.is_empty() {
+        Ok(())
+    } else {
+        Err(errors)
+    }
 }
 
 // Escalation
@@ -144,11 +148,17 @@ pub trait HasConfidence {
 }
 
 impl HasConfidence for PlanOutput {
-    fn confidence(&self) -> f32 { self.confidence }
+    fn confidence(&self) -> f32 {
+        self.confidence
+    }
 }
 impl HasConfidence for ArchitectOutput {
-    fn confidence(&self) -> f32 { self.confidence }
+    fn confidence(&self) -> f32 {
+        self.confidence
+    }
 }
 impl HasConfidence for CoderOutput {
-    fn confidence(&self) -> f32 { self.confidence }
+    fn confidence(&self) -> f32 {
+        self.confidence
+    }
 }

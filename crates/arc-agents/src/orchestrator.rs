@@ -4,8 +4,10 @@ use anyhow::Result;
 use arc_providers::streaming::StreamingClient;
 use std::sync::Arc;
 
+use crate::contracts::{
+    ArchitectOutput, CoderOutput, EscalationDecision, PlanOutput, should_escalate, validate_plan,
+};
 use tracing::{info, instrument};
-use crate::contracts::{PlanOutput, ArchitectOutput, CoderOutput, should_escalate, validate_plan, EscalationDecision};
 
 pub struct OrchestratorConfig {
     pub max_concurrent_agents: usize,
@@ -48,7 +50,7 @@ impl Orchestrator {
         info!("Delegating task to sub-agent: {}", profile.name);
 
         let mut sub_agent = SubAgent::new(profile.clone(), Arc::clone(&self.client));
-        
+
         // Pass context files over
         for file in task.contextual_files {
             sub_agent.add_context_file(file);
@@ -79,16 +81,19 @@ impl Orchestrator {
                 .get(&task.target_agent_id)
                 .ok_or_else(|| anyhow::anyhow!("Profile not found"))?
                 .clone();
-            
+
             let client = Arc::clone(&self.client);
-            
+
             let handle = tokio::spawn(async move {
                 let mut agent = SubAgent::new(profile, client);
                 for f in task.contextual_files {
                     agent.add_context_file(f);
                 }
-                
-                let polished = format!("{}\n\n<arc_heuristics>\nStrict Token Budget: Use arc-repomap if evaluating structure. Do not hallucinate outputs.\n</arc_heuristics>", task.task_description);
+
+                let polished = format!(
+                    "{}\n\n<arc_heuristics>\nStrict Token Budget: Use arc-repomap if evaluating structure. Do not hallucinate outputs.\n</arc_heuristics>",
+                    task.task_description
+                );
                 agent.execute_task(&polished).await
             });
 
@@ -105,16 +110,30 @@ impl Orchestrator {
 
     /// High-level deterministic execution loop validating strict JSON contracts
     /// (Plan -> Architect -> Code)
-    pub async fn execute_pipeline(&self, task_description: &str, context_files: Vec<String>) -> Result<()> {
+    pub async fn execute_pipeline(
+        &self,
+        task_description: &str,
+        context_files: Vec<String>,
+    ) -> Result<()> {
         info!("Step 1: Planning Phase");
-        let plan_result = self.delegate(TaskDelegation {
-            target_agent_id: "planner".into(),
-            task_description: format!("Respond ONLY with a valid JSON matching the PlanOutput schema.\nTask: {}", task_description),
-            contextual_files: context_files.clone(),
-        }).await?;
+        let plan_result = self
+            .delegate(TaskDelegation {
+                target_agent_id: "planner".into(),
+                task_description: format!(
+                    "Respond ONLY with a valid JSON matching the PlanOutput schema.\nTask: {}",
+                    task_description
+                ),
+                contextual_files: context_files.clone(),
+            })
+            .await?;
 
         // Extract JSON block if surrounded by markdown fences
-        let content = plan_result.output.trim().trim_start_matches("```json").trim_end_matches("```").trim();
+        let content = plan_result
+            .output
+            .trim()
+            .trim_start_matches("```json")
+            .trim_end_matches("```")
+            .trim();
         let plan: PlanOutput = match serde_json::from_str(content) {
             Ok(p) => p,
             Err(e) => anyhow::bail!("Planner returned malformed JSON: {} | Raw: {}", e, content),
@@ -124,7 +143,9 @@ impl Orchestrator {
 
         match should_escalate(&plan) {
             EscalationDecision::Halt { reason } => anyhow::bail!("Agent halted: {}", reason),
-            EscalationDecision::AskUser { reason } => tracing::warn!("Escalation required: {}", reason),
+            EscalationDecision::AskUser { reason } => {
+                tracing::warn!("Escalation required: {}", reason)
+            },
             EscalationDecision::AutoProceed => info!("Plan confidence high, auto-proceeding."),
         }
 
@@ -132,13 +153,23 @@ impl Orchestrator {
         for step in &plan.steps {
             if step.agent == crate::contracts::AgentRole::Architect {
                 info!("Step 2: Architect Phase for step {}", step.id);
-                let arch_result = self.delegate(TaskDelegation {
-                    target_agent_id: "architect".into(),
-                    task_description: format!("Respond ONLY with JSON matching ArchitectOutput.\nDesign: {}", step.description),
-                    contextual_files: context_files.clone(),
-                }).await?;
+                let arch_result = self
+                    .delegate(TaskDelegation {
+                        target_agent_id: "architect".into(),
+                        task_description: format!(
+                            "Respond ONLY with JSON matching ArchitectOutput.\nDesign: {}",
+                            step.description
+                        ),
+                        contextual_files: context_files.clone(),
+                    })
+                    .await?;
 
-                let content = arch_result.output.trim().trim_start_matches("```json").trim_end_matches("```").trim();
+                let content = arch_result
+                    .output
+                    .trim()
+                    .trim_start_matches("```json")
+                    .trim_end_matches("```")
+                    .trim();
                 let arch: ArchitectOutput = serde_json::from_str(content)?;
                 arch_outputs.push(arch);
             }
@@ -152,20 +183,30 @@ impl Orchestrator {
                     "Respond ONLY with JSON matching CoderOutput schemas.\nImplement changes for {}:\n{}",
                     file_spec.path, file_spec.changes_description
                 );
-                
-                let coded_result = self.delegate(TaskDelegation {
-                    target_agent_id: "coder".into(),
-                    task_description: coder_prompt,
-                    contextual_files: context_files.clone(),
-                }).await?;
 
-                let content = coded_result.output.trim().trim_start_matches("```json").trim_end_matches("```").trim();
+                let coded_result = self
+                    .delegate(TaskDelegation {
+                        target_agent_id: "coder".into(),
+                        task_description: coder_prompt,
+                        contextual_files: context_files.clone(),
+                    })
+                    .await?;
+
+                let content = coded_result
+                    .output
+                    .trim()
+                    .trim_start_matches("```json")
+                    .trim_end_matches("```")
+                    .trim();
                 let coded: CoderOutput = serde_json::from_str(content)?;
                 all_edits.extend(coded.file_edits);
             }
         }
 
-        info!("Pipeline completed successfully with {} total edits ready for diff review.", all_edits.len());
+        info!(
+            "Pipeline completed successfully with {} total edits ready for diff review.",
+            all_edits.len()
+        );
         // Return edits or pass to arc-diff in the CLI layer...
         Ok(())
     }

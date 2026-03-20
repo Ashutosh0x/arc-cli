@@ -1,7 +1,7 @@
+use crossterm::tty::IsTty;
 use std::io::{self, Write};
 use std::thread;
 use std::time::Duration;
-use crossterm::tty::IsTty;
 
 const FRAMES: &[&str] = &[
     "\x1b[1;34m    A\x1b[0m",

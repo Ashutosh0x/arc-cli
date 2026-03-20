@@ -45,19 +45,22 @@ pub fn gather_git_context(repo_root: &Path) -> Result<GitContext, anyhow::Error>
 }
 
 fn parse_log(raw_log: &str) -> Vec<CommitSummary> {
-    raw_log.lines().filter_map(|line| {
-        let parts: Vec<&str> = line.split('|').collect();
-        if parts.len() == 4 {
-            Some(CommitSummary {
-                hash: parts[0].to_string(),
-                message: parts[1].to_string(),
-                author: parts[2].to_string(),
-                timestamp: parts[3].to_string(),
-            })
-        } else {
-            None
-        }
-    }).collect()
+    raw_log
+        .lines()
+        .filter_map(|line| {
+            let parts: Vec<&str> = line.split('|').collect();
+            if parts.len() == 4 {
+                Some(CommitSummary {
+                    hash: parts[0].to_string(),
+                    message: parts[1].to_string(),
+                    author: parts[2].to_string(),
+                    timestamp: parts[3].to_string(),
+                })
+            } else {
+                None
+            }
+        })
+        .collect()
 }
 
 fn get_remotes(repo_root: &Path) -> Result<Vec<String>, anyhow::Error> {
@@ -71,15 +74,16 @@ fn get_remotes(repo_root: &Path) -> Result<Vec<String>, anyhow::Error> {
         .collect())
 }
 
-pub fn generate_commit_message(
-    modified_files: &[String],
-    session_context: &str,
-) -> String {
+pub fn generate_commit_message(modified_files: &[String], session_context: &str) -> String {
     // In actual usage, this goes to an LLM. For local fallbacks:
     format!(
         "feat: AI assisted modifications\n\nContext block: {}\n\nFiles modified:\n{}",
         session_context,
-        modified_files.iter().map(|f| format!("  - {}", f)).collect::<Vec<_>>().join("\n")
+        modified_files
+            .iter()
+            .map(|f| format!("  - {}", f))
+            .collect::<Vec<_>>()
+            .join("\n")
     )
 }
 
@@ -104,30 +108,42 @@ pub fn ensure_arc_gitignored(repo_root: &Path) -> Result<(), anyhow::Error> {
 
 pub fn get_changed_files(repo_root: &Path) -> Result<Vec<String>, anyhow::Error> {
     let mut files = Vec::new();
-    
+
     // Unstaged changes
     let diff = Command::new("git")
         .args(["diff", "--name-only"])
         .current_dir(repo_root)
         .output()?;
-    files.extend(String::from_utf8_lossy(&diff.stdout).lines().map(String::from));
-    
+    files.extend(
+        String::from_utf8_lossy(&diff.stdout)
+            .lines()
+            .map(String::from),
+    );
+
     // Staged changes
     let diff_cached = Command::new("git")
         .args(["diff", "--cached", "--name-only"])
         .current_dir(repo_root)
         .output()?;
-    files.extend(String::from_utf8_lossy(&diff_cached.stdout).lines().map(String::from));
+    files.extend(
+        String::from_utf8_lossy(&diff_cached.stdout)
+            .lines()
+            .map(String::from),
+    );
 
     // Untracked files
     let untracked = Command::new("git")
         .args(["ls-files", "--others", "--exclude-standard"])
         .current_dir(repo_root)
         .output()?;
-    files.extend(String::from_utf8_lossy(&untracked.stdout).lines().map(String::from));
+    files.extend(
+        String::from_utf8_lossy(&untracked.stdout)
+            .lines()
+            .map(String::from),
+    );
 
     files.sort();
     files.dedup();
-    
+
     Ok(files)
 }

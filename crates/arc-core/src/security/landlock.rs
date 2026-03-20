@@ -19,7 +19,9 @@ impl LandlockSandbox {
     #[cfg(not(target_os = "linux"))]
     pub fn enforce_strict_mode(&self) -> io::Result<()> {
         // Fallback for non-Linux boundaries
-        tracing::warn!("Landlock is only supported on Linux. Sandbox is bypassed on Windows/macOS.");
+        tracing::warn!(
+            "Landlock is only supported on Linux. Sandbox is bypassed on Windows/macOS."
+        );
         Ok(())
     }
 }

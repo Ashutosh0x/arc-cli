@@ -11,11 +11,25 @@ pub enum ConnectivityState {
 /// early connectivity status without waiting for an LLM query to timeout.
 pub async fn probe_connectivity(providers: &ProvidersConfig) -> ConnectivityState {
     let mut targets = Vec::new();
-    
-    if providers.anthropic.enabled { targets.push(("anthropic".to_string(), "https://api.anthropic.com".to_string())); }
-    if providers.openai.enabled { targets.push(("openai".to_string(), "https://api.openai.com".to_string())); }
-    if providers.gemini.enabled { targets.push(("gemini".to_string(), "https://generativelanguage.googleapis.com".to_string())); }
-    if providers.ollama.enabled { targets.push(("ollama".to_string(), providers.ollama.host.clone())); }
+
+    if providers.anthropic.enabled {
+        targets.push((
+            "anthropic".to_string(),
+            "https://api.anthropic.com".to_string(),
+        ));
+    }
+    if providers.openai.enabled {
+        targets.push(("openai".to_string(), "https://api.openai.com".to_string()));
+    }
+    if providers.gemini.enabled {
+        targets.push((
+            "gemini".to_string(),
+            "https://generativelanguage.googleapis.com".to_string(),
+        ));
+    }
+    if providers.ollama.enabled {
+        targets.push(("ollama".to_string(), providers.ollama.host.clone()));
+    }
 
     if targets.is_empty() {
         return ConnectivityState::Offline;
@@ -31,7 +45,7 @@ pub async fn probe_connectivity(providers: &ProvidersConfig) -> ConnectivityStat
         let id_clone = id.clone();
         let client_clone = client.clone();
         let url_clone = url.clone();
-        
+
         futures.push(async move {
             let res = client_clone.head(&url_clone).send().await;
             (id_clone, res.is_ok())

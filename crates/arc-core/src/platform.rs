@@ -31,8 +31,11 @@ pub fn normalize_line_endings(content: &str) -> String {
 
 /// Detect line ending style of a file.
 pub fn detect_line_endings(content: &str) -> LineEndings {
-    if content.contains("\r\n") { LineEndings::Crlf }
-    else { LineEndings::Lf }
+    if content.contains("\r\n") {
+        LineEndings::Crlf
+    } else {
+        LineEndings::Lf
+    }
 }
 
 /// Apply line ending style to content.
@@ -45,7 +48,10 @@ pub fn apply_line_endings(content: &str, style: LineEndings) -> String {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum LineEndings { Lf, Crlf }
+pub enum LineEndings {
+    Lf,
+    Crlf,
+}
 
 /// Copy text to clipboard cross-platform.
 pub fn copy_to_clipboard(text: &str) -> Result<(), String> {
@@ -54,7 +60,11 @@ pub fn copy_to_clipboard(text: &str) -> Result<(), String> {
         // Use PowerShell Set-Clipboard for Unicode safety.
         let escaped = text.replace('\'', "''");
         std::process::Command::new("powershell")
-            .args(["-NoProfile", "-Command", &format!("Set-Clipboard -Value '{escaped}'")])
+            .args([
+                "-NoProfile",
+                "-Command",
+                &format!("Set-Clipboard -Value '{escaped}'"),
+            ])
             .output()
             .map_err(|e| format!("Clipboard error: {e}"))?;
         return Ok(());
@@ -66,7 +76,12 @@ pub fn copy_to_clipboard(text: &str) -> Result<(), String> {
             .stdin(std::process::Stdio::piped())
             .spawn()
             .map_err(|e| format!("pbcopy failed: {e}"))?;
-        child.stdin.as_mut().unwrap().write_all(text.as_bytes()).map_err(|e| e.to_string())?;
+        child
+            .stdin
+            .as_mut()
+            .unwrap()
+            .write_all(text.as_bytes())
+            .map_err(|e| e.to_string())?;
         child.wait().map_err(|e| e.to_string())?;
         return Ok(());
     }
@@ -74,7 +89,11 @@ pub fn copy_to_clipboard(text: &str) -> Result<(), String> {
     {
         use std::io::Write;
         // Try xclip, then xsel, then wl-copy (Wayland).
-        let cmds = ["xclip -selection clipboard", "xsel --clipboard --input", "wl-copy"];
+        let cmds = [
+            "xclip -selection clipboard",
+            "xsel --clipboard --input",
+            "wl-copy",
+        ];
         for cmd in &cmds {
             let parts: Vec<&str> = cmd.split_whitespace().collect();
             if let Ok(mut child) = std::process::Command::new(parts[0])
@@ -98,9 +117,13 @@ pub fn copy_to_clipboard(text: &str) -> Result<(), String> {
 /// Get the appropriate shell for the current platform.
 pub fn platform_shell() -> (&'static str, &'static str) {
     #[cfg(target_os = "windows")]
-    { return ("cmd", "/C"); }
+    {
+        return ("cmd", "/C");
+    }
     #[cfg(not(target_os = "windows"))]
-    { return ("sh", "-c"); }
+    {
+        return ("sh", "-c");
+    }
 }
 
 /// Check if running in WSL.
@@ -108,7 +131,8 @@ pub fn is_wsl() -> bool {
     #[cfg(target_os = "linux")]
     {
         if let Ok(release) = std::fs::read_to_string("/proc/version") {
-            return release.to_lowercase().contains("microsoft") || release.to_lowercase().contains("wsl");
+            return release.to_lowercase().contains("microsoft")
+                || release.to_lowercase().contains("wsl");
         }
     }
     false
@@ -117,27 +141,69 @@ pub fn is_wsl() -> bool {
 /// Get the user's home directory cross-platform.
 pub fn home_dir() -> Option<PathBuf> {
     #[cfg(target_os = "windows")]
-    { std::env::var("USERPROFILE").ok().map(PathBuf::from) }
+    {
+        std::env::var("USERPROFILE").ok().map(PathBuf::from)
+    }
     #[cfg(not(target_os = "windows"))]
-    { std::env::var("HOME").ok().map(PathBuf::from) }
+    {
+        std::env::var("HOME").ok().map(PathBuf::from)
+    }
 }
 
 /// Get the config directory cross-platform.
 pub fn config_dir() -> PathBuf {
     #[cfg(target_os = "windows")]
-    { std::env::var("APPDATA").map(PathBuf::from).unwrap_or_else(|_| home_dir().unwrap_or_default().join("AppData").join("Roaming")).join("arc-cli") }
+    {
+        std::env::var("APPDATA")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                home_dir()
+                    .unwrap_or_default()
+                    .join("AppData")
+                    .join("Roaming")
+            })
+            .join("arc-cli")
+    }
     #[cfg(target_os = "macos")]
-    { home_dir().unwrap_or_default().join("Library").join("Application Support").join("arc-cli") }
+    {
+        home_dir()
+            .unwrap_or_default()
+            .join("Library")
+            .join("Application Support")
+            .join("arc-cli")
+    }
     #[cfg(target_os = "linux")]
-    { std::env::var("XDG_CONFIG_HOME").map(PathBuf::from).unwrap_or_else(|_| home_dir().unwrap_or_default().join(".config")).join("arc-cli") }
+    {
+        std::env::var("XDG_CONFIG_HOME")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| home_dir().unwrap_or_default().join(".config"))
+            .join("arc-cli")
+    }
 }
 
 /// Get the data directory cross-platform.
 pub fn data_dir() -> PathBuf {
     #[cfg(target_os = "windows")]
-    { std::env::var("LOCALAPPDATA").map(PathBuf::from).unwrap_or_else(|_| home_dir().unwrap_or_default().join("AppData").join("Local")).join("arc-cli") }
+    {
+        std::env::var("LOCALAPPDATA")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| home_dir().unwrap_or_default().join("AppData").join("Local"))
+            .join("arc-cli")
+    }
     #[cfg(target_os = "macos")]
-    { home_dir().unwrap_or_default().join("Library").join("Application Support").join("arc-cli").join("data") }
+    {
+        home_dir()
+            .unwrap_or_default()
+            .join("Library")
+            .join("Application Support")
+            .join("arc-cli")
+            .join("data")
+    }
     #[cfg(target_os = "linux")]
-    { std::env::var("XDG_DATA_HOME").map(PathBuf::from).unwrap_or_else(|_| home_dir().unwrap_or_default().join(".local").join("share")).join("arc-cli") }
+    {
+        std::env::var("XDG_DATA_HOME")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| home_dir().unwrap_or_default().join(".local").join("share"))
+            .join("arc-cli")
+    }
 }

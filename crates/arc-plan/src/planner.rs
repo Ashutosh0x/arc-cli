@@ -26,7 +26,10 @@ pub enum PlanEvent {
     /// Currently analyzing a file
     Analyzing { file: String },
     /// Dependency graph built
-    DependencyGraphBuilt { node_count: usize, edge_count: usize },
+    DependencyGraphBuilt {
+        node_count: usize,
+        edge_count: usize,
+    },
     /// A plan step was generated
     StepGenerated { step: PlanStep },
     /// Risk assessment completed
@@ -86,11 +89,8 @@ impl Planner {
             .join("\n");
 
         // Phase 4: Send the analysis prompt to the LLM
-        let system_prompt = self.build_planning_system_prompt(
-            &project_context,
-            &tree_string,
-            &dep_graph,
-        );
+        let system_prompt =
+            self.build_planning_system_prompt(&project_context, &tree_string, &dep_graph);
 
         let user_prompt = format!(
             "Create a detailed, phased execution plan for the following task:\n\n\
@@ -113,17 +113,15 @@ impl Planner {
             match event {
                 StreamEvent::TextDelta(text) => {
                     full_response.push_str(&text);
-                    event_tx.send(PlanEvent::Reasoning {
-                        text: text.clone(),
-                    })?;
-                }
+                    event_tx.send(PlanEvent::Reasoning { text: text.clone() })?;
+                },
                 StreamEvent::Done => break,
                 StreamEvent::Error(e) => {
                     event_tx.send(PlanEvent::Error {
                         message: e.to_string(),
                     })?;
                     anyhow::bail!("Streaming error during planning: {e}");
-                }
+                },
             }
         }
 
@@ -136,9 +134,7 @@ impl Planner {
 
         for phase in &plan.phases {
             for step in &phase.steps {
-                event_tx.send(PlanEvent::StepGenerated {
-                    step: step.clone(),
-                })?;
+                event_tx.send(PlanEvent::StepGenerated { step: step.clone() })?;
             }
         }
 
@@ -259,11 +255,7 @@ impl Planner {
         )
     }
 
-    fn parse_plan_response(
-        &self,
-        response: &str,
-        dep_graph: DependencyGraph,
-    ) -> Result<Plan> {
+    fn parse_plan_response(&self, response: &str, dep_graph: DependencyGraph) -> Result<Plan> {
         // Extract JSON from the response (may be wrapped in markdown code blocks)
         let json_str = extract_json_block(response)?;
         let raw: Value = serde_json::from_str(&json_str)?;
@@ -361,8 +353,7 @@ impl Planner {
                         estimated_lines_changed: v
                             .get("lines_changed")
                             .and_then(|l| l.as_u64())
-                            .unwrap_or(10)
-                            as u32,
+                            .unwrap_or(10) as u32,
                     })
                     .collect()
             })
@@ -418,14 +409,14 @@ impl Planner {
                     StepAction::ReadAnalyze { .. } => vec!["read_file", "grep", "glob"],
                     StepAction::Modify { .. } => {
                         vec!["read_file", "write_file", "grep"]
-                    }
+                    },
                     StepAction::Create { .. } => vec!["write_file", "create_directory"],
                     StepAction::Delete { .. } => vec!["delete_file"],
                     StepAction::RunCommand { .. } => vec!["bash"],
                     StepAction::RunTests { .. } => vec!["bash"],
                     StepAction::Refactor { .. } => {
                         vec!["read_file", "write_file", "grep", "glob"]
-                    }
+                    },
                 }
                 .into_iter()
                 .map(String::from)
@@ -478,8 +469,8 @@ fn extract_json_block(response: &str) -> Result<String> {
                     if depth == 0 {
                         return Ok(response[start..start + i + 1].to_string());
                     }
-                }
-                _ => {}
+                },
+                _ => {},
             }
         }
     }
@@ -488,7 +479,11 @@ fn extract_json_block(response: &str) -> Result<String> {
 }
 
 fn parse_step_action(raw: &Value) -> StepAction {
-    match raw.get("action").and_then(|v| v.as_str()).unwrap_or("modify") {
+    match raw
+        .get("action")
+        .and_then(|v| v.as_str())
+        .unwrap_or("modify")
+    {
         "read" | "analyze" => StepAction::ReadAnalyze {
             paths: parse_string_array(raw, "paths"),
         },
@@ -498,7 +493,10 @@ fn parse_step_action(raw: &Value) -> StepAction {
                 .and_then(|v| v.as_str())
                 .unwrap_or("")
                 .to_string(),
-            template: raw.get("template").and_then(|v| v.as_str()).map(String::from),
+            template: raw
+                .get("template")
+                .and_then(|v| v.as_str())
+                .map(String::from),
         },
         "delete" => StepAction::Delete {
             path: raw
@@ -518,13 +516,13 @@ fn parse_step_action(raw: &Value) -> StepAction {
                 .and_then(|v| v.as_str())
                 .unwrap_or("")
                 .to_string(),
-            safe: raw
-                .get("safe")
-                .and_then(|v| v.as_bool())
-                .unwrap_or(false),
+            safe: raw.get("safe").and_then(|v| v.as_bool()).unwrap_or(false),
         },
         "test" => StepAction::RunTests {
-            test_pattern: raw.get("test_pattern").and_then(|v| v.as_str()).map(String::from),
+            test_pattern: raw
+                .get("test_pattern")
+                .and_then(|v| v.as_str())
+                .map(String::from),
         },
         "refactor" => StepAction::Refactor {
             scope: raw

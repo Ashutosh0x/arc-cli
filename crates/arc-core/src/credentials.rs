@@ -95,10 +95,7 @@ pub fn store_credential(
 }
 
 /// Retrieve a credential from the OS keyring, wrapped in Zeroizing.
-pub fn get_credential(
-    provider: Provider,
-    kind: CredentialKind,
-) -> ArcResult<Zeroizing<String>> {
+pub fn get_credential(provider: Provider, kind: CredentialKind) -> ArcResult<Zeroizing<String>> {
     let service = keyring_service(provider, kind);
     let username = whoami_username();
 

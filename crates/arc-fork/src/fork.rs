@@ -64,11 +64,7 @@ impl ForkManager {
     /// Create a fork at the current conversation state.
     ///
     /// This is the `/fork` command implementation.
-    pub fn create_fork(
-        &mut self,
-        label: &str,
-        snapshot: SessionSnapshot,
-    ) -> ForkResult {
+    pub fn create_fork(&mut self, label: &str, snapshot: SessionSnapshot) -> ForkResult {
         let snapshot_id = snapshot.id;
         let fork_id = Uuid::new_v4();
 

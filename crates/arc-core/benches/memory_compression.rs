@@ -1,6 +1,6 @@
 use arc_core::memory::compressor::Compressor;
 use arc_core::memory::working::MemoryMessage;
-use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};
 use std::time::Duration;
 use tokio::runtime::Runtime;
 
@@ -27,11 +27,14 @@ fn bench_compression(c: &mut Criterion) {
     for &size in &[10, 50, 100, 500] {
         let raw_messages = generate_messages(size);
 
-        group.bench_with_input(BenchmarkId::new("compress_n_messages", size), &size, |b, &_size| {
-            b.to_async(&runtime).iter(|| async {
-                compressor.compress(&raw_messages).await.unwrap()
-            });
-        });
+        group.bench_with_input(
+            BenchmarkId::new("compress_n_messages", size),
+            &size,
+            |b, &_size| {
+                b.to_async(&runtime)
+                    .iter(|| async { compressor.compress(&raw_messages).await.unwrap() });
+            },
+        );
     }
 
     group.finish();

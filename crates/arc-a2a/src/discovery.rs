@@ -1,8 +1,8 @@
 //! Agent card discovery with caching and validation.
 //! Fetches agent cards from `<endpoint>/.well-known/agent.json`.
 
+use chrono::{Duration, Utc};
 use dashmap::DashMap;
-use chrono::{Utc, Duration};
 use reqwest::Client;
 use tracing::{debug, info, warn};
 use url::Url;
@@ -70,12 +70,13 @@ impl DiscoveryService {
             });
         }
 
-        let card: AgentCard = response.json().await.map_err(|e| {
-            A2AError::DiscoveryFailed {
+        let card: AgentCard = response
+            .json()
+            .await
+            .map_err(|e| A2AError::DiscoveryFailed {
                 url: endpoint.to_string(),
                 reason: format!("Invalid agent card JSON: {e}"),
-            }
-        })?;
+            })?;
 
         // Validate
         self.validate_card(&card)?;
@@ -106,11 +107,7 @@ impl DiscoveryService {
     }
 
     /// Find all skills matching given tags on a remote agent.
-    pub async fn find_skills_by_tag(
-        &self,
-        endpoint: &str,
-        tag: &str,
-    ) -> A2AResult<Vec<String>> {
+    pub async fn find_skills_by_tag(&self, endpoint: &str, tag: &str) -> A2AResult<Vec<String>> {
         let card = self.discover(endpoint).await?;
         Ok(card
             .skills
@@ -152,7 +149,10 @@ impl DiscoveryService {
             return Err(A2AError::InvalidAgentCard("endpoint is empty".into()));
         }
 
-        if !card.protocol_version.is_compatible(&ProtocolVersion::CURRENT) {
+        if !card
+            .protocol_version
+            .is_compatible(&ProtocolVersion::CURRENT)
+        {
             return Err(A2AError::InvalidAgentCard(format!(
                 "Incompatible protocol version: {} (we speak {})",
                 card.protocol_version,
@@ -165,9 +165,8 @@ impl DiscoveryService {
         }
 
         // Validate endpoint URL is parseable
-        Url::parse(&card.endpoint).map_err(|e| {
-            A2AError::InvalidAgentCard(format!("Invalid endpoint URL: {e}"))
-        })?;
+        Url::parse(&card.endpoint)
+            .map_err(|e| A2AError::InvalidAgentCard(format!("Invalid endpoint URL: {e}")))?;
 
         Ok(())
     }

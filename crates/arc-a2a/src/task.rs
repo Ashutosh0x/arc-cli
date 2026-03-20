@@ -111,7 +111,7 @@ impl TaskRegistry {
             completed_at: None,
             progress: 0.0,
             status_message: "Submitted".into(),
-        error: None,
+            error: None,
         };
 
         let (tx, rx) = watch::channel(TaskState::Submitted);
@@ -124,17 +124,10 @@ impl TaskRegistry {
     }
 
     /// Transition a task to a new state. Validates the transition is legal.
-    pub fn transition(
-        &self,
-        task_id: Uuid,
-        new_state: TaskState,
-    ) -> A2AResult<()> {
-        let mut task = self
-            .tasks
-            .get_mut(&task_id)
-            .ok_or(A2AError::TaskNotFound {
-                task_id: task_id.to_string(),
-            })?;
+    pub fn transition(&self, task_id: Uuid, new_state: TaskState) -> A2AResult<()> {
+        let mut task = self.tasks.get_mut(&task_id).ok_or(A2AError::TaskNotFound {
+            task_id: task_id.to_string(),
+        })?;
 
         if !task.state.can_transition_to(new_state) {
             return Err(A2AError::InvalidTransition {
@@ -150,8 +143,8 @@ impl TaskRegistry {
             TaskState::Working => task.started_at = Some(Utc::now()),
             TaskState::Completed | TaskState::Failed | TaskState::Canceled => {
                 task.completed_at = Some(Utc::now());
-            }
-            _ => {}
+            },
+            _ => {},
         }
 
         debug!(task_id = %task_id, from = ?old, to = ?new_state, "Task state transition");
@@ -172,12 +165,9 @@ impl TaskRegistry {
         message: String,
         partial_output: Option<serde_json::Value>,
     ) -> A2AResult<()> {
-        let mut task = self
-            .tasks
-            .get_mut(&task_id)
-            .ok_or(A2AError::TaskNotFound {
-                task_id: task_id.to_string(),
-            })?;
+        let mut task = self.tasks.get_mut(&task_id).ok_or(A2AError::TaskNotFound {
+            task_id: task_id.to_string(),
+        })?;
 
         if task.state != TaskState::Working {
             warn!(
@@ -200,12 +190,9 @@ impl TaskRegistry {
     /// Complete a task with output.
     pub fn complete(&self, task_id: Uuid, output: serde_json::Value) -> A2AResult<()> {
         {
-            let mut task = self
-                .tasks
-                .get_mut(&task_id)
-                .ok_or(A2AError::TaskNotFound {
-                    task_id: task_id.to_string(),
-                })?;
+            let mut task = self.tasks.get_mut(&task_id).ok_or(A2AError::TaskNotFound {
+                task_id: task_id.to_string(),
+            })?;
             task.output = Some(output);
             task.progress = 1.0;
             task.status_message = "Completed".into();
@@ -216,12 +203,9 @@ impl TaskRegistry {
     /// Fail a task with an error message.
     pub fn fail(&self, task_id: Uuid, error: String) -> A2AResult<()> {
         {
-            let mut task = self
-                .tasks
-                .get_mut(&task_id)
-                .ok_or(A2AError::TaskNotFound {
-                    task_id: task_id.to_string(),
-                })?;
+            let mut task = self.tasks.get_mut(&task_id).ok_or(A2AError::TaskNotFound {
+                task_id: task_id.to_string(),
+            })?;
             task.error = Some(error);
             task.status_message = "Failed".into();
         }
@@ -249,19 +233,12 @@ impl TaskRegistry {
 
     /// Count active tasks.
     pub fn active_count(&self) -> u32 {
-        self.tasks
-            .iter()
-            .filter(|t| !t.state.is_terminal())
-            .count() as u32
+        self.tasks.iter().filter(|t| !t.state.is_terminal()).count() as u32
     }
 
     /// Garbage-collect completed tasks if over history limit.
     fn gc_if_needed(&self) {
-        let terminal_count = self
-            .tasks
-            .iter()
-            .filter(|t| t.state.is_terminal())
-            .count();
+        let terminal_count = self.tasks.iter().filter(|t| t.state.is_terminal()).count();
 
         if terminal_count > self.max_history {
             let mut terminal: Vec<_> = self
