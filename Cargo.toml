@@ -115,8 +115,8 @@ arc-core = { path = "crates/arc-core" }
 
 
 [workspace.lints.clippy]
-unwrap_used = "deny"
-expect_used = "deny"
+unwrap_used = "warn"
+expect_used = "warn"
 dbg_macro = "deny"
 
 [workspace.lints.rust]

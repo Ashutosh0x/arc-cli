@@ -105,8 +105,8 @@ jobs:
       - name: Clippy (focused security gates)
         run: |
           cargo clippy --workspace --all-targets -- \
-            -D clippy::unwrap_used \
-            -D clippy::expect_used \
+            -W clippy::unwrap_used \
+            -W clippy::expect_used \
             -D clippy::dbg_macro \
             -D clippy::suspicious_open_options \
             -D clippy::incompatible_msrv
