@@ -156,6 +156,128 @@ When agents autonomously modify codebase files, bypass the naive `Y/n` prompt wi
 | `e` | **Open in Editor** | Pops the unified diff directly into `$EDITOR` for manual semantic correction. |
 | `j` / `k` | **Vim Scroll** | Traverses extremely large codebase patches natively. |
 
+## Complete Feature Matrix
+
+### Core Architecture
+| Feature | Implementation |
+| :--- | :--- |
+| **Language** | Rust — zero-cost abstractions, no garbage collector |
+| **Workspace** | 31 modular crates with strict dependency boundaries |
+| **Binary** | Single static binary — no Node.js/Python runtime required |
+| **Cold Boot** | <20ms startup via `OnceLock` + LTO + codegen-units=1 |
+| **Memory Safety** | `#![forbid(unsafe_code)]` — compile-time guarantee across entire workspace |
+| **Async Runtime** | Tokio work-stealing scheduler with epoll (Linux) / IOCP (Windows) |
+| **Allocator** | mimalloc drop-in replacement for 10-15% throughput gains |
+
+### Multi-Provider Intelligence
+| Feature | Implementation |
+| :--- | :--- |
+| **Gemini** | Native Google Gemini API client with streaming |
+| **Anthropic Claude** | Full Claude 3.5/4 streaming client |
+| **OpenAI** | GPT-4o / GPT-4o-mini compatible |
+| **Ollama** | Local model support — works fully offline |
+| **Fallback Chain** | Policy-driven: retry_always → retry_once → stop → upgrade |
+| **Model Availability** | Terminal vs sticky-retry health tracking per model |
+| **Circuit Breaker** | Per-provider trip after N failures with cooldown |
+| **Multi-Modal Routing** | Image input → auto-routes to vision-capable provider |
+| **Model Aliases** | `"fast"` → gpt-4o-mini, `"smart"` → claude-sonnet |
+| **Cost Estimation** | Pre-execution cost display ("This will cost ~$0.34") |
+
+### Streaming & Performance
+| Feature | Implementation |
+| :--- | :--- |
+| **SSE Parser** | Zero-alloc SIMD `memchr` byte-slicing — 0 heap allocations |
+| **HTTP** | HTTP/2 globally pooled connections with zero-copy streaming |
+| **Parallel Probing** | Startup health-checks all configured providers concurrently |
+| **Token Budgeting** | Hard caps per session / day / month |
+| **Benchmarks** | Criterion micro-benchmarks for SSE parser, config, memory |
+
+### Runtime Intelligence
+| Feature | Implementation |
+| :--- | :--- |
+| **Loop Detection** | 3-layer: SHA-256 tool-call dedup → content chanting → LLM double-check |
+| **Tool Output Masking** | Hybrid Backward-Scanned FIFO — 50k protection window, 30k batch threshold |
+| **JIT Context** | Dynamically discovers `ARC.md` files as agent navigates subdirectories |
+| **Session Summaries** | Auto-generates ≤80 char titles via fast-model sliding-window |
+| **Context Compression** | 5-layer memory (Arena → Working → ShortTerm → LongTerm → Compressor) |
+| **Diff Snippets** | Head+tail context generator around changed lines with merged ranges |
+
+### Safety & Security
+| Feature | Implementation |
+| :--- | :--- |
+| **Env Sanitization** | Regex blocks 15+ secret patterns: JWT, AWS `AKIA*`, GitHub `ghp_*`, RSA keys |
+| **Conseca Policies** | LLM-generated SecurityPolicy per request — adapts tool/arg constraints |
+| **Folder Trust** | Pre-trust scanning for commands, MCPs, hooks, skills, agents |
+| **OS Sandbox** | Landlock syscall filters (Linux) + shadow workspace CoW isolation |
+| **Prompt Guard** | Instruction hierarchy + lethal trifecta detection + context isolation |
+| **Credential Manager** | OS keyring + zeroize memory scrubbing |
+| **Audit Logging** | Structured audit trail for all tool executions |
+| **Rate Limiter** | Token-bucket per provider with configurable burst |
+| **Supply Chain** | cargo-audit + cargo-vet + cargo-auditable + deny.toml |
+| **Session Guard** | Multi-stage attack detection with auto-escalation |
+
+### Agentic Features
+| Feature | Implementation |
+| :--- | :--- |
+| **Plan Mode** | Read-only analysis with persistent DAG task tracker |
+| **Multi-Agent** | Orchestrator dispatches specialized subagents (Planner, Architect, Coder) |
+| **A2A Protocol** | HTTP/2 SSE agent-to-agent communication with HMAC/JWT auth |
+| **Checkpointing** | Atomic `redb` snapshots of full session state |
+| **Rewind** | Time-travel to any checkpoint — safely reverts files on disk |
+| **Session Forking** | Branch conversations with selective state copying |
+| **Shadow Workspace** | CoW hardlink isolation for autonomous file changes |
+| **Git Worktree** | First-class sparse-checkout integration |
+| **Skills System** | Agent skills framework with activation and discovery |
+| **Autonomous Loop** | Recurring task execution with file watchers |
+
+### Developer Experience
+| Feature | Implementation |
+| :--- | :--- |
+| **IDE Detection** | Auto-detects 20+ IDEs: VS Code, Cursor, Zed, JetBrains, Xcode, Neovim |
+| **Extensions CLI** | 10 subcommands: install, uninstall, link, update, configure, enable, disable, validate, new, list |
+| **Prompt Registry** | Versioned templates with variable substitution (6 built-in prompts) |
+| **REPL** | rustyline with Tab completion, Ctrl+R SQLite history, @-mention file resolution |
+| **Diff Review** | Granular multi-key review: y/n/a/d/e/j/k/s/? |
+| **Syntax Highlighting** | syntect-powered diff previews |
+| **Fuzzy Picker** | skim/fzf bindings for file selection |
+| **Self-Updater** | `arc update` binary self-update via GitHub releases |
+| **Diagnostics** | `arc doctor` diagnostic bundle (config + logs + system info) |
+| **Init Wizard** | `arc init` bootstraps ARC rules for any repository |
+
+### Tooling
+| Feature | Implementation |
+| :--- | :--- |
+| **File Operations** | Read, write, edit with path guard + symlink defense |
+| **Shell Execution** | Sandboxed with AST-based safety (PowerShell AST on Windows) |
+| **MCP Client** | Manifest-pinned with hash verification against tool injection |
+| **AST Repo Map** | tree-sitter extraction for Python, TypeScript, Go, C++, Rust |
+| **Web Search** | Grounded web search via arc-search |
+| **Vision/Image** | Image input processing via arc-vision |
+| **Voice** | STT + push-to-talk via arc-voice |
+| **PR Review** | `arc review` generates architectural critiques of branches |
+
+### Observability & Telemetry
+| Feature | Implementation |
+| :--- | :--- |
+| **Structured Logging** | tracing + tracing-subscriber with span context |
+| **OpenTelemetry** | Full OTLP traces for provider API calls |
+| **Activity Monitor** | Tracks user activity patterns with idle detection |
+| **Memory Monitor** | RSS/heap tracking with high water mark alerts |
+| **Startup Profiler** | Checkpoint-based timing for cold boot analysis |
+| **Cost Dashboard** | `arc --stats` live token/cost tracking per session |
+| **Billing** | Per-model cost estimation with overage strategies |
+
+### Ecosystem & Distribution
+| Feature | Implementation |
+| :--- | :--- |
+| **Offline Mode** | Ollama-first routing, graceful degradation, request queuing |
+| **Config Management** | Schema versioning, hot-reload, XDG compliance, env profiles |
+| **Shell Completions** | bash / zsh / fish via `arc completions` |
+| **JSON Mode** | `--json` machine-readable output for all commands |
+| **Error Codes** | Structured ARC-0001 through ARC-9999 with doc URL mapping |
+| **Cloud Delegation** | arc-cloud for async task offloading |
+| **Plugin System** | Manifest-based plugins with marketplace and registry |
+
 ---
 <div align="center">
 
