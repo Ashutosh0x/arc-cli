@@ -19,7 +19,7 @@ uuid.workspace = true
 chrono.workspace = true
 reqwest.workspace = true
 flume.workspace = true
-cpal = "0.15"
+cpal = "0.17"
 rubato = "0.15"
 hound = "3.5"
 
