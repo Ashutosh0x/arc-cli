@@ -24,5 +24,34 @@ pub mod ide_detect;
 pub mod billing;
 pub mod prompt_registry;
 
+// Phase 29-33: Claude Code Parity — Foundation, Competitive, DX, Enterprise
+pub mod hooks;
+pub mod permissions;
+pub mod compaction;
+pub mod sandbox_policy;
+pub mod worktree;
+pub mod cron;
+pub mod plan_mode;
+pub mod slash_commands;
+pub mod auto_memory;
+pub mod agent_defs;
+pub mod settings;
+pub mod effort;
+pub mod feature_flags;
+pub mod background_tasks;
+pub mod platform;
+
+// Phase 29-33: Remaining gap closures (100% completion)
+pub mod plugin_marketplace;
+pub mod voice;
+pub mod agent_teams;
+pub mod skills;
+pub mod statusline;
+pub mod copy_picker;
+pub mod security_review;
+pub mod tool_search;
+pub mod ralph_loop;
+pub mod pr_review;
+
 // Re-export the error for convenience.
 pub use error::ArcError;

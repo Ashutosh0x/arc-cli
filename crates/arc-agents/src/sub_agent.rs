@@ -1,8 +1,8 @@
 use crate::registry::AgentProfile;
-use anyhow::{Context, Result};
+use anyhow::Result;
 use arc_providers::streaming::{StreamEvent, StreamingClient};
 use std::sync::Arc;
-use tokio::sync::mpsc;
+
 
 /// The result returned by a specialized SubAgent after completing its task.
 pub struct SubAgentResult {
@@ -66,7 +66,7 @@ impl SubAgent {
                 StreamEvent::Error(e) => {
                     anyhow::bail!("SubAgent '{}' failed: {}", self.profile.name, e);
                 }
-                _ => {}
+
             }
         }
 

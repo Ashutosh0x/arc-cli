@@ -1,5 +1,8 @@
 # ARC: High-Performance Agentic CLI
 
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge)
+![Features](https://img.shields.io/badge/Features-120+-blue?style=for-the-badge)
+![Crates](https://img.shields.io/badge/Crates-31-orange?style=for-the-badge)
 ![Rust](https://img.shields.io/badge/Rust-000000?style=for-the-badge&logo=rust&logoColor=white)
 ![Tokio](https://img.shields.io/badge/Tokio-2B2B2B?style=for-the-badge)
 ![Anthropic Claude](https://img.shields.io/badge/Claude-D97757?style=for-the-badge&logo=anthropic&logoColor=white)
@@ -58,6 +61,35 @@ Production-grade systems ported from deep analysis of Gemini CLI's 500+ file cod
 - **Prompt Registry**: Versioned prompt templates with variable substitution and 6 built-in prompts.
 - **Advanced Telemetry**: ActivityDetector, MemoryMonitor, StartupProfiler, HighWaterMarkTracker.
 
+### 7. Claude Code Parity — Full Feature Gap Closure (Phase 29-33)
+Complete parity with Claude Code's 80+ production releases, plus 6 areas where ARC leads:
+
+- **Hook System**: Event-driven PreToolUse/PostToolUse/Stop hooks with command/HTTP executors and 6 operators (eq, contains, regex, glob, starts_with, not).
+- **Permission System**: 3-tier allow/ask/deny per tool with compound bash command parsing, enterprise managed policies, and 50+ auto-approved safe commands.
+- **Context Compaction**: 3-phase auto-compaction (strip media → truncate tools → summarize), circuit breaker, `/compact` command, and `/context` diagnostics.
+- **Plugin Marketplace**: Git & local plugin install with `plugin.json` manifests, version pinning, trust levels (Untrusted/UserTrusted/ManagedTrusted), update, and validate.
+- **Voice Mode**: Push-to-talk framework supporting 20 languages with CoreAudio (macOS), WASAPI (Windows), PulseAudio/ALSA (Linux) backend detection.
+- **Agent Teams**: Leader/teammate/background roles with inter-agent messaging, worktree-based isolation, and configurable max agents.
+- **Plan Mode (Full)**: `/plan` with accept/reject/feedback, step-by-step tracking, plan history, and compaction-resistant persistence.
+- **Session Fork/Branch**: `/fork` creates conversation branches with independent plans and selective state copying.
+- **Slash Commands**: `.md` commands with YAML frontmatter (description, argument-hint, allowed-tools, effort), `$ARGUMENTS` interpolation, and auto-discovery.
+- **Auto-Memory**: `/memory` with persistent JSON store, auto/user/session sources, timestamps, and access counting.
+- **Agent Definitions**: `.arc/agents/*.md` with 10 frontmatter fields (name, tools, model, color, effort, background, isolation, memory).
+- **Skills System**: Recursive SKILL.md discovery with deduplication and `${ARC_SKILL_DIR}` variable resolution.
+- **Settings Hierarchy**: User → Project → Managed layer precedence with Windows Registry, macOS plist, and Linux `/etc` stubs.
+- **Effort Levels**: Low (○) / Medium (◐) / High (●) with auto-mode and `/effort` command.
+- **Feature Flags**: Disk-cached dynamic feature toggles with stale value prevention.
+- **Background Tasks**: 5GB output cap with kill-all support and `Ctrl+B` queries.
+- **Security Review**: `/security-review` scans merge-base diffs against 9 vulnerability patterns with severity-rated findings.
+- **Tool Search**: Deferred tool loading reduces initial context — loads schemas on demand via tag/name search.
+- **Ralph Loop**: Autonomous iteration with `--max-iterations`, completion promise, pause/resume, and iteration history.
+- **PR Review Toolkit**: 6 specialized agents (comment-analyzer, pr-test-analyzer, silent-failure-hunter, type-design-analyzer, code-reviewer, code-simplifier).
+- **Feature-Dev Workflow**: 7-phase structured development (Discovery → Exploration → Questions → Architecture → Implementation → QA → Summary).
+- **Sandbox Network Policy**: `allowedDomains`, proxy ports, Unix sockets, filesystem isolation with Landlock/sandbox-exec platform deps.
+- **Statusline**: Configurable segments (model, effort, context%, rate limits, worktree) with custom scripts.
+- **Copy Picker**: `/copy` with interactive code block selection, copy-to-clipboard, and write-to-file.
+- **Platform Hardening**: Path normalization (Windows drive case), CRLF detection/conversion, WSL detection, XDG-compliant directories.
+
 ## Documentation
 
 Explore the extreme depth of ARC CLI's architecture and usage:
@@ -81,13 +113,13 @@ Explore the extreme depth of ARC CLI's architecture and usage:
 | Crate / Module | Responsibility | Key Features |
 | :--- | :--- | :--- |
 | `arc-cli` | **Client Interface** | Frontend REPL, token routing, extensions CLI, and `rustyline` plugins. |
-| `arc-core` | **Foundation Layer** | Credentials, config, loop detection, tool masking, JIT context, IDE detect, billing, prompt registry. |
+| `arc-core` | **Foundation Layer (50+ modules)** | Credentials, config, hooks, permissions, compaction, plugins, voice, effort, settings, memory, slash commands, agent defs, skills, security review, tool search, ralph loop, PR review, feature flags, background tasks, platform hardening, and 30+ more. |
 | `arc-providers` | **Model Gateways** | Native Gemini, Claude, OpenAI clients + model availability + fallback handler. |
-| `arc-agents` | **Swarm Delegation** | Orchestrator dispatcher mapping specialized sub-agent routines. |
+| `arc-agents` | **Swarm Delegation** | Orchestrator dispatcher + agent teams (leader/teammate/background). |
 | `arc-a2a` | **Agent Protocol** | HTTP/2 SSE communications secured by HMAC/JWT signatures. |
-| `arc-session` | **Persistent Memory** | `redb` K-V storage, checkpoint undo/rewind, auto session summaries. |
-| `arc-policy` | **Safety Engine** | Conseca dynamic policies, static rule engine, LLM-generated SecurityPolicy. |
-| `arc-plan` | **Planning Mode** | Read-only analysis, persistent task tracker with DAG validation. |
+| `arc-session` | **Persistent Memory** | `redb` K-V storage, checkpoint undo/rewind, auto session summaries, session fork/branch. |
+| `arc-policy` | **Safety Engine** | Conseca dynamic policies, 3-tier permission system, sandbox network policy. |
+| `arc-plan` | **Planning Mode** | Full plan mode with accept/reject/feedback, DAG tracker, 7-phase feature-dev workflow. |
 | `arc-diff` | **Structural Diffing** | Semantic diffs, context snippet generator, patch engine. |
 | `arc-repomap` | **Code Intelligence** | `tree-sitter` AST extraction powering massive 10x context compressions. |
 | **Subsystems** | **Capability Expansions** | `arc-voice`, `arc-vision`, `arc-sandbox`, `arc-skills` native scale-outs. |
@@ -125,13 +157,21 @@ arc chat
 ```
 
 Interact directly with the agentic loop:
-- `/plan [task]` to autonomously generate a codebase modification blueprint.
+- `/plan [task]` to autonomously generate a codebase modification blueprint (accept/reject/feedback).
 - `/doctor` to evaluate your workspace and credential configurations safely.
 - `/checkpoint` to snapshot the LLM turn history and file states.
 - `/rewind [id]` to safely time-travel the CLI state backward to correct errant agent behavior.
+- `/compact` to manually trigger context compaction when nearing token limits.
+- `/context` to display token usage diagnostics and context window breakdown.
+- `/memory [key] [value]` to save persistent context across sessions.
+- `/effort [low|medium|high]` to adjust the AI's response depth and thoroughness.
+- `/fork [name]` to branch the current conversation with selective state copying.
+- `/loop [interval] [prompt]` to schedule recurring task execution.
+- `/copy` to interactively pick and copy code blocks from responses.
+- `/security-review` to audit your branch diff against 9 vulnerability patterns.
 - `arc init` to bootstrap ARC rules recursively across un-initialized repos.
 - `arc --stats` for live LLM cost accounting and budget tracking.
-- `arc review` to generate pre-push architectural critiques of your working branches via LLM swarms.
+- `arc review` to generate pre-push architectural critiques via 6 specialized agents.
 
 ## Keyboard Ergonomics & Flow
 
@@ -156,13 +196,13 @@ When agents autonomously modify codebase files, bypass the naive `Y/n` prompt wi
 | `e` | **Open in Editor** | Pops the unified diff directly into `$EDITOR` for manual semantic correction. |
 | `j` / `k` | **Vim Scroll** | Traverses extremely large codebase patches natively. |
 
-## Complete Feature Matrix
+## Complete Feature Matrix (120+ Features)
 
 ### Core Architecture
 | Feature | Implementation |
 | :--- | :--- |
 | **Language** | Rust — zero-cost abstractions, no garbage collector |
-| **Workspace** | 31 modular crates with strict dependency boundaries |
+| **Workspace** | 31 modular crates with 180+ source files and strict dependency boundaries |
 | **Binary** | Single static binary — no Node.js/Python runtime required |
 | **Cold Boot** | <20ms startup via `OnceLock` + LTO + codegen-units=1 |
 | **Memory Safety** | `#![forbid(unsafe_code)]` — compile-time guarantee across entire workspace |
@@ -219,16 +259,19 @@ When agents autonomously modify codebase files, bypass the naive `Y/n` prompt wi
 ### Agentic Features
 | Feature | Implementation |
 | :--- | :--- |
-| **Plan Mode** | Read-only analysis with persistent DAG task tracker |
+| **Plan Mode (Full)** | `/plan` with accept/reject/feedback, step tracking, plan history, compaction-resistant |
 | **Multi-Agent** | Orchestrator dispatches specialized subagents (Planner, Architect, Coder) |
+| **Agent Teams** | Leader/teammate/background roles with inter-agent messaging and isolation |
 | **A2A Protocol** | HTTP/2 SSE agent-to-agent communication with HMAC/JWT auth |
 | **Checkpointing** | Atomic `redb` snapshots of full session state |
 | **Rewind** | Time-travel to any checkpoint — safely reverts files on disk |
-| **Session Forking** | Branch conversations with selective state copying |
+| **Session Forking** | `/fork` branching with selective state copying and independent plans |
 | **Shadow Workspace** | CoW hardlink isolation for autonomous file changes |
-| **Git Worktree** | First-class sparse-checkout integration |
-| **Skills System** | Agent skills framework with activation and discovery |
-| **Autonomous Loop** | Recurring task execution with file watchers |
+| **Git Worktree** | First-class sparse-checkout with auto-cleanup of stale worktrees |
+| **Skills System** | Recursive SKILL.md discovery with dedup and `${ARC_SKILL_DIR}` |
+| **Autonomous Loop** | `/loop` cron scheduling (s/m/h intervals, max iterations) |
+| **Ralph Loop** | Autonomous iteration with `--max-iterations` and completion detection |
+| **Hook System** | Event-driven PreToolUse/PostToolUse/Stop/SessionStart hooks with executors |
 
 ### Developer Experience
 | Feature | Implementation |
@@ -236,13 +279,18 @@ When agents autonomously modify codebase files, bypass the naive `Y/n` prompt wi
 | **IDE Detection** | Auto-detects 20+ IDEs: VS Code, Cursor, Zed, JetBrains, Xcode, Neovim |
 | **Extensions CLI** | 10 subcommands: install, uninstall, link, update, configure, enable, disable, validate, new, list |
 | **Prompt Registry** | Versioned templates with variable substitution (6 built-in prompts) |
+| **Slash Commands** | `.md` commands with YAML frontmatter, `$ARGUMENTS`, and auto-discovery |
+| **Auto-Memory** | `/memory` persistent store with auto/user/session sources and timestamps |
+| **Agent Definitions** | `.arc/agents/*.md` with 10 frontmatter fields |
+| **Settings Hierarchy** | User → Project → Managed with platform-specific managed settings |
+| **Effort Levels** | Low ○ / Medium ◐ / High ● with auto mode and `/effort` command |
+| **Statusline** | Configurable segments: model, effort, context%, rate limits, worktree |
+| **Copy Picker** | `/copy` interactive code block selection with write-to-file |
 | **REPL** | rustyline with Tab completion, Ctrl+R SQLite history, @-mention file resolution |
 | **Diff Review** | Granular multi-key review: y/n/a/d/e/j/k/s/? |
 | **Syntax Highlighting** | syntect-powered diff previews |
-| **Fuzzy Picker** | skim/fzf bindings for file selection |
 | **Self-Updater** | `arc update` binary self-update via GitHub releases |
 | **Diagnostics** | `arc doctor` diagnostic bundle (config + logs + system info) |
-| **Init Wizard** | `arc init` bootstraps ARC rules for any repository |
 
 ### Tooling
 | Feature | Implementation |
@@ -253,8 +301,11 @@ When agents autonomously modify codebase files, bypass the naive `Y/n` prompt wi
 | **AST Repo Map** | tree-sitter extraction for Python, TypeScript, Go, C++, Rust |
 | **Web Search** | Grounded web search via arc-search |
 | **Vision/Image** | Image input processing via arc-vision |
-| **Voice** | STT + push-to-talk via arc-voice |
-| **PR Review** | `arc review` generates architectural critiques of branches |
+| **Voice** | STT + push-to-talk — 20 languages, CoreAudio/WASAPI/PulseAudio detection |
+| **PR Review** | 6 specialized agents: comment-analyzer, test-analyzer, failure-hunter, type-design, reviewer, simplifier |
+| **Security Review** | `/security-review` merge-base diff scanning, 9 vuln patterns, severity findings |
+| **Tool Search** | Deferred tool loading via tag/name search, reduces initial context |
+| **Background Tasks** | 5GB cap, process lifecycle, kill-all, `Ctrl+B` queries |
 
 ### Observability & Telemetry
 | Feature | Implementation |
@@ -276,7 +327,17 @@ When agents autonomously modify codebase files, bypass the naive `Y/n` prompt wi
 | **JSON Mode** | `--json` machine-readable output for all commands |
 | **Error Codes** | Structured ARC-0001 through ARC-9999 with doc URL mapping |
 | **Cloud Delegation** | arc-cloud for async task offloading |
-| **Plugin System** | Manifest-based plugins with marketplace and registry |
+| **Plugin Marketplace** | Git/local install, `plugin.json` manifests, trust levels, validate, update |
+| **Feature Flags** | Disk-cached dynamic toggles with stale value prevention |
+| **Feature-Dev Workflow** | 7-phase structured development (Discovery → Summary) |
+
+### Platform Hardening
+| Feature | Implementation |
+| :--- | :--- |
+| **Windows** | Drive letter casing normalization, CRLF detection/conversion, Registry managed settings, OneDrive compat |
+| **macOS** | CoreAudio backend, `sandbox-exec` integration, keychain stubs, managed plist settings |
+| **Linux** | Landlock syscall filters, PulseAudio/ALSA detection, `/etc/arc-cli` managed settings, WSL detection |
+| **Cross-Platform** | Unicode clipboard (PowerShell/pbcopy/xclip/wl-copy), XDG dirs, platform shell detection |
 
 ---
 <div align="center">

@@ -15,7 +15,7 @@ pub fn render_diff_list(state: &UiState, theme: &Theme, out: &mut impl Write) ->
     }
 
     let c = &theme.colors;
-    let b = &theme.border;
+    let _b = &theme.border;
 
     writeln!(out)?;
     writeln!(out, "{}{}  Proposed Changes ({} files){}", c.bold, c.accent, meaningful.len(), c.reset)?;
@@ -74,7 +74,7 @@ fn render_collapsed_block(
 fn render_expanded_block(
     diff: &DiffBlock,
     selected: bool,
-    cursor: &str,
+    _cursor: &str,
     theme: &Theme,
     out: &mut impl Write,
 ) -> io::Result<()> {

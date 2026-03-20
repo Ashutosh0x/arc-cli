@@ -1,11 +1,10 @@
 //! Remote client: connects to a running ARC CLI session.
 
 use crate::protocol::{ClientMessage, ServerMessage};
-use futures_util::{stream::SplitSink, SinkExt, StreamExt};
-use reqwest::header::{HeaderMap, HeaderValue, AUTHORIZATION};
-use tokio::net::TcpStream;
+use futures_util::{SinkExt, StreamExt};
+use reqwest::header::{HeaderValue, AUTHORIZATION};
 use tokio::sync::mpsc;
-use tokio_tungstenite::{connect_async, tungstenite::protocol::Message, MaybeTlsStream, WebSocketStream};
+use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
 use tokio_tungstenite::tungstenite::client::IntoClientRequest;
 use tracing::{error, info};
 

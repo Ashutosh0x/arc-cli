@@ -1,9 +1,8 @@
 //! Authentication for the remote control server.
 
 use axum::{
-    body::Body,
     extract::Request,
-    http::{HeaderMap, StatusCode},
+    http::StatusCode,
     middleware::Next,
     response::Response,
 };

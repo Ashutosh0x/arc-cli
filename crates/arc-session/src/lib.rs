@@ -12,6 +12,9 @@ mod rewind;
 // Phase 28: Session Summary Service
 pub mod summary;
 
+// Phase 30: Session Fork/Branch
+pub mod fork;
+
 pub use checkpoint::{CheckpointManager, CheckpointConfig};
 pub use session_db::SessionDatabase;
 pub use session_model::{

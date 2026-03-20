@@ -1,7 +1,7 @@
 use anyhow::Result;
 use console::style;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 /// Run the `arc init` repository wizard.
 pub async fn run(cwd: &Path) -> Result<()> {

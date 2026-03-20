@@ -33,7 +33,7 @@ impl Completer for ArcHelper {
             return Ok((start, matches));
         } else if word.starts_with('@') {
             let path_query = &word[1..];
-            if let Ok((file_start, mut file_matches)) = self.file_completer.complete(path_query, pos - start - 1, ctx) {
+            if let Ok((_file_start, mut file_matches)) = self.file_completer.complete(path_query, pos - start - 1, ctx) {
                 for m in &mut file_matches {
                     m.replacement = format!("@{}", m.replacement);
                 }
@@ -108,7 +108,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
 
     loop {
         let readline = rl.readline("arc> ");
-        let mut input_str = String::new();
+        let input_str;
         
         match readline {
             Ok(line) => {

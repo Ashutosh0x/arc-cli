@@ -1,9 +1,9 @@
-use crate::registry::{AgentProfile, AgentRegistry};
+use crate::registry::AgentRegistry;
 use crate::sub_agent::{SubAgent, SubAgentResult};
 use anyhow::Result;
 use arc_providers::streaming::StreamingClient;
 use std::sync::Arc;
-use tokio::sync::mpsc;
+
 use tracing::{info, instrument};
 use crate::contracts::{PlanOutput, ArchitectOutput, CoderOutput, should_escalate, validate_plan, EscalationDecision};
 

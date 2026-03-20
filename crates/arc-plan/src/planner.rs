@@ -124,7 +124,6 @@ impl Planner {
                     })?;
                     anyhow::bail!("Streaming error during planning: {e}");
                 }
-                _ => {}
             }
         }
 

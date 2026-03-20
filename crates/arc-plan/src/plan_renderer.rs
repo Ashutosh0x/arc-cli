@@ -1,5 +1,4 @@
 use crate::plan_model::*;
-use std::fmt;
 
 /// Renders a Plan as a beautiful terminal-friendly string.
 pub struct PlanRenderer;

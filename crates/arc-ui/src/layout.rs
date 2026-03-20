@@ -1,7 +1,3 @@
-use crossterm::{
-    cursor, execute,
-    terminal::{self, ClearType},
-};
 use std::io::{self, Stdout, Write};
 
 use crate::header;

@@ -1,4 +1,4 @@
-use crate::state::{PlanStep, StepState, UiState};
+use crate::state::{StepState, UiState};
 use crate::theme::Theme;
 use std::io::{self, Write};
 
@@ -18,7 +18,7 @@ pub fn render_plan(state: &UiState, theme: &Theme, out: &mut impl Write) -> io::
         let (icon, color) = match &step.state {
             StepState::Pending      => ("○", c.dim),
             StepState::InProgress   => {
-                let frame = theme.icons.spinner[state.spinner_frame % theme.icons.spinner.len()];
+                let _frame = theme.icons.spinner[state.spinner_frame % theme.icons.spinner.len()];
                 // Can't return borrowed frame easily, so use dot
                 ("◉", c.status_run)
             }
