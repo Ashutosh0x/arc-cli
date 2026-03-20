@@ -12,7 +12,7 @@ thiserror.workspace = true
 tracing.workspace = true
 
 # Tokenizer backend
-tiktoken-rs = "0.5"
+tiktoken-rs = "0.9"
 arc-core = { path = "../arc-core" }
 arc-providers = { path = "../arc-providers" }
 
