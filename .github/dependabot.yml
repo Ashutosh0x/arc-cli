@@ -1,18 +1,6 @@
 version: 2
 updates:
-  # Cargo dependencies - conservative
-  - package-ecosystem: cargo
-    directory: "/"
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 3
-    versioning-strategy: lockfile-only
-    labels:
-      - "dependencies"
-      - "cargo"
-
-  # GitHub Actions - safe to auto-update
+  # GitHub Actions — safe to auto-update
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
@@ -22,3 +10,35 @@ updates:
     labels:
       - "dependencies"
       - "ci"
+
+  # Cargo — ONLY patch updates (0.12.1 → 0.12.2), never minor/major
+  - package-ecosystem: cargo
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "cargo"
+    ignore:
+      # Block ALL major version bumps
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+      # Block minor bumps for these known-breaking crates
+      - dependency-name: "axum"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "redb"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "opentelemetry"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "opentelemetry_sdk"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "rubato"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "notify"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "tokio-tungstenite"
+        update-types: ["version-update:semver-minor"]
+      - dependency-name: "reqwest"
+        update-types: ["version-update:semver-minor"]
