@@ -28,7 +28,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y pkg-config libasound2-dev
     - name: Cache Cargo Registry
-      uses: actions/cache@v3
+      uses: actions/cache@v5
       with:
         path: |
           ~/.cargo/registry
