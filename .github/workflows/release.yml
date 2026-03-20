@@ -54,6 +54,10 @@ jobs:
         if: contains(matrix.target, 'linux')
         run: cargo install cross --locked
 
+      - name: Install musl tools
+        if: contains(matrix.target, 'linux')
+        run: sudo apt-get update && sudo apt-get install -y musl-tools
+
       - name: Cache
         uses: Swatinem/rust-cache@v2
         with:
@@ -61,11 +65,14 @@ jobs:
 
       - name: Build (native)
         if: "!contains(matrix.target, 'linux')"
-        run: cargo build --release --locked --target ${{ matrix.target }}
+        run: cargo build --release --target ${{ matrix.target }}
 
       - name: Build (cross - Linux)
         if: contains(matrix.target, 'linux')
-        run: cross build --release --locked --target ${{ matrix.target }}
+        env:
+          OPENSSL_STATIC: 1
+          OPENSSL_VENDORED: 1
+        run: cross build --release --target ${{ matrix.target }}
 
       - name: Extract version
         id: version
