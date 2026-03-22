@@ -5,6 +5,7 @@ pub mod gemini;
 pub mod message;
 pub mod ollama;
 pub mod openai;
+pub mod openai_compat;
 pub mod provider;
 pub mod router;
 pub mod security;

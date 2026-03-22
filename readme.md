@@ -7,6 +7,7 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/Ashutosh0x/arc-cli/test.yml?branch=main&style=for-the-badge&logo=github-actions&label=CI)](https://github.com/Ashutosh0x/arc-cli/actions)
 [![License](https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge)](LICENSE)
 ![Rust](https://img.shields.io/badge/Rust_1.89+-DEA584?style=for-the-badge&logo=rust&logoColor=white)
+[![Built with Rust](https://img.shields.io/badge/Built_with-Rust-B7410E?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 
 A native agentic CLI that reasons over codebases. One binary. No runtime. Works offline.
 
@@ -29,14 +30,16 @@ cargo install --git https://github.com/Ashutosh0x/arc-cli
 
 ARC is a terminal-native AI coding agent. You point it at a codebase, describe what you want, and it plans, writes, and verifies the changes autonomously.
 
-It connects to Claude, Gemini, OpenAI, or Ollama (fully offline). You pick the provider. If one goes down, it fails over to the next.
+It connects to Claude, Gemini, OpenAI, Groq, xAI Grok, or Ollama (fully offline). You pick the provider. Switch live with `/provider groq`. If one goes down, it fails over to the next.
 
 ```sh
 arc chat                    # start a session
 /plan "add OAuth2 login"    # generate a plan, review it, accept or reject
+/provider groq              # switch to Groq (Llama 3.3 70B)
+/model grok-4-1-fast-non-reasoning  # switch model
 /checkpoint                 # snapshot current state
 /rewind 3                   # undo to checkpoint 3
-/fork experiment            # branch the conversation
+/compact                    # compress context window
 arc review                  # PR critique via 6 specialized agents
 ```
 
@@ -49,7 +52,7 @@ arc review                  # PR critique via 6 specialized agents
 | Binary size | ~15MB | ~200MB+ | ~150MB+ |
 | Runtime deps | None | Node 18+ | Node 18+ |
 | Offline mode | Ollama | No | No |
-| Providers | 4 (Claude, Gemini, OpenAI, Ollama) | Anthropic only | Google only |
+| Providers | 6 (Claude, Gemini, OpenAI, Groq, xAI, Ollama) | Anthropic only | Google only |
 | Unsafe code | `#![forbid(unsafe_code)]` | N/A | N/A |
 
 ARC is a single static binary with no interpreter, no package manager, and no `node_modules`. It boots in under 20 milliseconds.
@@ -61,7 +64,7 @@ ARC is a single static binary with no interpreter, no package manager, and no `n
 ```
 arc-cli          REPL, command dispatch, extensions
 arc-core         Config, credentials, security, memory
-arc-providers    Claude, Gemini, OpenAI, Ollama clients
+arc-providers    Claude, Gemini, OpenAI, Groq, xAI Grok, Ollama clients
 arc-agents       Orchestrator, subagent dispatch, A2A protocol
 arc-session      redb checkpointing, fork, rewind
 arc-plan         Plan mode, dependency mapping, DAG tracking
@@ -121,9 +124,12 @@ arc-a2a          Agent-to-agent HTTP/2 protocol
 | `arc graph impact` | Map git diff → affected symbols + risk scores |
 | `arc graph query <cypher>` | Execute Cypher-like graph queries |
 | `/plan [task]` | Generate and review a modification plan |
+| `/provider [name]` | Switch provider live (anthropic, groq, xai, openai) |
+| `/model [name]` | Switch model (e.g. grok-4-1-fast-non-reasoning) |
 | `/checkpoint` | Save session state |
 | `/rewind [id]` | Restore a previous checkpoint |
 | `/compact` | Compress context window |
+| `/status` | Show current provider, model, message count |
 | `/memory [k] [v]` | Persistent key-value store |
 | `/fork [name]` | Branch the conversation |
 | `/security-review` | Scan diffs for vulnerability patterns |

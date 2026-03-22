@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-03-22
+
+### Added
+- **Groq provider** — Groq LPU inference via OpenAI-compatible API. Models: `llama-3.3-70b-versatile`, `llama-3.1-8b-instant`, `mixtral-8x7b-32768`. Set `GROQ_API_KEY` to enable.
+- **xAI Grok provider** — xAI Grok models via OpenAI-compatible API. Models: `grok-4.20-0309-non-reasoning`, `grok-4-1-fast-non-reasoning`. Set `XAI_API_KEY` to enable.
+- **Unified OpenAI-compatible provider** (`openai_compat.rs`) — single streaming implementation for Groq, xAI, and OpenAI with tool calling support.
+- **Multi-provider REPL** — auto-detects provider from env vars (priority: Anthropic > Groq > xAI > OpenAI). Switch live with `/provider groq`.
+- **`/provider [name]` command** — switch providers during a session (anthropic, groq, xai, openai).
+- **`/model [name]` command** — switch models within current provider.
+- **`/status` command** — show current provider, model, message count, checkpoint count.
+- **Session persistence** — auto-checkpoint on exit and every 5 turns. JSON-based checkpoint files in `~/.local/share/arc/checkpoints/`.
+- **`/checkpoint` command** — manually save session state.
+- **`/rewind [id]` command** — restore a previous checkpoint.
+- **`/compact` command** — compress context window by keeping last 20 messages + system prompt.
+
+### Changed
+- Provider count increased from 4 to 6.
+- REPL fully rewritten with unified tool-use loop for both Anthropic and OpenAI-format APIs.
+- Updated README and docs to reflect new providers and commands.
+
+### Fixed
+- `latency_percentiles_correctness` test — p50 assertion corrected for ceil-based indexing.
+- `evaluate_repomap_token_reduction` test — removed brittle string assertions, validates compression ratio instead.
+- CI `test.yml` — added `libasound2-dev` to `unit-tests` matrix job for Ubuntu builds.
+
 ## [0.6.0] - 2026-03-22
 
 ### Added
