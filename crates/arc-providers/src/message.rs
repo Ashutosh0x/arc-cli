@@ -33,7 +33,27 @@ pub struct ToolDefinition {
     pub parameters: serde_json::Value,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StreamEvent {
-    pub text_delta: String,
+/// Events emitted during streaming completion.
+#[derive(Debug, Clone)]
+pub enum StreamEvent {
+    /// A chunk of text from the assistant.
+    TextDelta(String),
+    /// The assistant wants to call a tool.
+    ToolUse {
+        id: String,
+        name: String,
+        arguments: serde_json::Value,
+    },
+    /// Stream is complete.
+    Done,
+}
+
+impl StreamEvent {
+    /// Helper for legacy code expecting `.text_delta`.
+    pub fn text_delta(&self) -> &str {
+        match self {
+            StreamEvent::TextDelta(s) => s.as_str(),
+            _ => "",
+        }
+    }
 }

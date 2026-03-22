@@ -74,7 +74,7 @@ impl Provider for MockProvider {
             return Err(anyhow::anyhow!("MockProvider artificial error triggered"));
         }
 
-        let stream = futures::stream::iter(vec![Ok(StreamEvent { text_delta: text })]);
+        let stream = futures::stream::iter(vec![Ok(StreamEvent::TextDelta(text))]);
         Ok(Box::pin(stream))
     }
 

@@ -6,7 +6,7 @@ use std::io::{self, Write};
 use std::process::Command as OsCommand;
 
 use arc_providers::anthropic::AnthropicProvider;
-use arc_providers::message::{Message, Role};
+use arc_providers::message::{Message, Role, StreamEvent};
 use arc_providers::traits::Provider;
 use arc_tui::spinner::Spinner;
 
@@ -102,10 +102,12 @@ pub async fn run(base: &str) -> Result<()> {
             }
             chunk = stream.next() => {
                 match chunk {
-                    Some(Ok(event)) => {
-                        print!("{}", event.text_delta);
+                    Some(Ok(StreamEvent::TextDelta(text))) => {
+                        print!("{}", text);
                         io::stdout().flush().unwrap_or(());
                     }
+                    Some(Ok(StreamEvent::Done)) => break,
+                    Some(Ok(_)) => {}
                     Some(Err(e)) => {
                         eprintln!("\n[Stream Disconnect Error]: {}", e);
                         break;
