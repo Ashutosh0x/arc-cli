@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-crossterm = "0.28"
+crossterm = "0.29"
 tokio = { version = "1", features = ["rt", "time", "sync", "signal", "macros"] }
 tokio-stream = "0.1"
 color-eyre = "0.6"

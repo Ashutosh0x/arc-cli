@@ -57,7 +57,7 @@ compact_str = { version = "0.8", features = ["serde"] }
 tiktoken-rs = "0.6"
 memchr = "2.7"
 futures = "0.3"
-crossterm = "0.28"
+crossterm = "0.29"
 dialoguer = "0.11"
 toml = "0.8"
 uuid = { version = "1.11", features = ["v4", "fast-rng", "serde"] }
