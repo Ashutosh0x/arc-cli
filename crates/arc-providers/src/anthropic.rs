@@ -63,7 +63,7 @@ impl AnthropicProvider {
                                 "content": m.content,
                             }]
                         })
-                    }
+                    },
                     Role::Assistant if !m.tool_calls.is_empty() => {
                         // Assistant messages that generated tool calls
                         let mut content_blocks: Vec<Value> = Vec::new();
@@ -85,7 +85,7 @@ impl AnthropicProvider {
                             "role": "assistant",
                             "content": content_blocks,
                         })
-                    }
+                    },
                     _ => {
                         let role_str = match m.role {
                             Role::User => "user",
@@ -96,7 +96,7 @@ impl AnthropicProvider {
                             "role": role_str,
                             "content": m.content,
                         })
-                    }
+                    },
                 }
             })
             .collect();
@@ -158,7 +158,10 @@ impl Provider for AnthropicProvider {
         let payload = self.construct_payload(model, messages, tools);
         let endpoint = "https://api.anthropic.com/v1/messages";
 
-        debug!("Connecting to Anthropic SSE endpoint with {} tools", tools.len());
+        debug!(
+            "Connecting to Anthropic SSE endpoint with {} tools",
+            tools.len()
+        );
 
         let response = self
             .http_client
@@ -196,30 +199,25 @@ impl Provider for AnthropicProvider {
                                 // Text deltas
                                 Some("content_block_delta") => {
                                     if let Some(delta) = parsed.get("delta") {
-                                        let delta_type =
-                                            delta.get("type").and_then(|v| v.as_str());
+                                        let delta_type = delta.get("type").and_then(|v| v.as_str());
                                         match delta_type {
                                             Some("text_delta") => {
                                                 if let Some(text) = delta.get("text") {
                                                     return Some(Ok(StreamEvent::TextDelta(
-                                                        text.as_str()
-                                                            .unwrap_or("")
-                                                            .to_string(),
+                                                        text.as_str().unwrap_or("").to_string(),
                                                     )));
                                                 }
-                                            }
+                                            },
                                             // input_json_delta is handled at content_block_stop
-                                            _ => {}
+                                            _ => {},
                                         }
                                     }
-                                }
+                                },
                                 // Tool use — Anthropic sends the full tool_use in content_block_stop
                                 // but we can also detect it from content_block_start
                                 Some("content_block_start") => {
                                     if let Some(content_block) = parsed.get("content_block") {
-                                        if content_block
-                                            .get("type")
-                                            .and_then(|v| v.as_str())
+                                        if content_block.get("type").and_then(|v| v.as_str())
                                             == Some("tool_use")
                                         {
                                             let id = content_block
@@ -234,13 +232,10 @@ impl Provider for AnthropicProvider {
                                                 .to_string();
                                             // Input comes in subsequent deltas, but for now
                                             // we'll accumulate and emit at message_delta/stop
-                                            debug!(
-                                                "Tool use block started: {} ({})",
-                                                name, id
-                                            );
+                                            debug!("Tool use block started: {} ({})", name, id);
                                         }
                                     }
-                                }
+                                },
                                 // message_delta with stop_reason=tool_use means we need to
                                 // re-fetch the full message to get complete tool inputs
                                 Some("message_delta") => {
@@ -251,15 +246,15 @@ impl Provider for AnthropicProvider {
                                             return Some(Ok(StreamEvent::Done));
                                         }
                                     }
-                                }
+                                },
                                 Some("message_stop") => {
                                     return Some(Ok(StreamEvent::Done));
-                                }
-                                _ => {}
+                                },
+                                _ => {},
                             }
                         }
                         None
-                    }
+                    },
                     Err(e) => Some(Err(e)),
                 }
             }

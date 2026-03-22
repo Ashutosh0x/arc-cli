@@ -224,7 +224,8 @@ pub async fn run_repl(api_key: String) -> Result<()> {
     // Check for existing session to resume
     if let Ok(entries) = std::fs::read_dir(&checkpoint_dir) {
         let mut checkpoints: Vec<_> = entries.filter_map(|e| e.ok()).collect();
-        checkpoints.sort_by_key(|e| std::cmp::Reverse(e.metadata().ok().and_then(|m| m.modified().ok())));
+        checkpoints
+            .sort_by_key(|e| std::cmp::Reverse(e.metadata().ok().and_then(|m| m.modified().ok())));
         if let Some(latest) = checkpoints.first() {
             println!(
                 ">>> Found previous session: {}",
@@ -252,26 +253,31 @@ pub async fn run_repl(api_key: String) -> Result<()> {
             Ok(line) => {
                 let _ = rl.add_history_entry(line.as_str());
                 input_str = line;
-            }
+            },
             Err(rustyline::error::ReadlineError::Interrupted) => {
                 println!("  Ctrl+C. Type /exit to quit.");
                 continue;
-            }
+            },
             Err(rustyline::error::ReadlineError::Eof) => {
                 println!("  EOF. Exiting...");
                 input_str = "/exit".to_string();
-            }
+            },
             Err(e) => {
                 eprintln!("  REPL Error: {:?}", e);
                 break;
-            }
+            },
         }
 
         let input = input_str.trim();
 
         if input == "/exit" {
             // Auto-checkpoint on exit
-            save_checkpoint(&checkpoint_dir, &session_id, &session_messages, checkpoint_count);
+            save_checkpoint(
+                &checkpoint_dir,
+                &session_id,
+                &session_messages,
+                checkpoint_count,
+            );
             let _ = rl.save_history(&history_file);
             break;
         }
@@ -289,7 +295,12 @@ pub async fn run_repl(api_key: String) -> Result<()> {
 
         if input == "/checkpoint" {
             checkpoint_count += 1;
-            save_checkpoint(&checkpoint_dir, &session_id, &session_messages, checkpoint_count);
+            save_checkpoint(
+                &checkpoint_dir,
+                &session_id,
+                &session_messages,
+                checkpoint_count,
+            );
             println!(
                 "  Checkpoint #{} saved ({} messages)",
                 checkpoint_count,
@@ -305,7 +316,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                     let count = restored.len();
                     session_messages = restored;
                     println!("  Rewound to {} messages", count);
-                }
+                },
                 None => {
                     println!("  No checkpoint found to rewind to.");
                     // Try listing available checkpoints
@@ -319,7 +330,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                             println!("  Available checkpoints: {:?}", files);
                         }
                     }
-                }
+                },
             }
             continue;
         }
@@ -340,12 +351,10 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                         new_active.model
                     );
                     active = new_active;
-                }
+                },
                 None => {
-                    println!(
-                        "  Failed: set the API key env var first (e.g. GROQ_API_KEY)"
-                    );
-                }
+                    println!("  Failed: set the API key env var first (e.g. GROQ_API_KEY)");
+                },
             }
             continue;
         }
@@ -404,7 +413,11 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                 let path_str = &files[idx];
                 if let Ok(content) = std::fs::read_to_string(path_str) {
                     use console::style;
-                    println!("  {} Attached {}", style("+").green(), style(path_str).bold());
+                    println!(
+                        "  {} Attached {}",
+                        style("+").green(),
+                        style(path_str).bold()
+                    );
                     session_messages.push(Message {
                         role: Role::User,
                         content: format!("\n\n```{}\n{}\n```", path_str, content),
@@ -446,7 +459,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                 Err(e) => {
                     eprintln!("  [Provider Error]: {}", e);
                     break;
-                }
+                },
             };
 
             print!("|ARC|: ");
@@ -505,7 +518,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                         &tool_definitions,
                     )
                     .await
-                }
+                },
                 _ => {
                     oai_compat::fetch_complete_response(
                         &client,
@@ -516,18 +529,15 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                         &tool_definitions,
                     )
                     .await
-                }
+                },
             };
 
             match complete_response {
                 Ok(response_body) => {
-                    let (stop_reason, tool_calls, text_content) =
-                        match active.kind {
-                            ProviderKind::Anthropic => {
-                                parse_anthropic_response(&response_body)
-                            }
-                            _ => parse_openai_response(&response_body),
-                        };
+                    let (stop_reason, tool_calls, text_content) = match active.kind {
+                        ProviderKind::Anthropic => parse_anthropic_response(&response_body),
+                        _ => parse_openai_response(&response_body),
+                    };
 
                     if (stop_reason == "tool_use" || stop_reason == "tool_calls")
                         && !tool_calls.is_empty()
@@ -551,9 +561,8 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                                 &tc.id[..8.min(tc.id.len())]
                             );
 
-                            let result = tool_registry
-                                .execute(&tc.name, tc.arguments.clone())
-                                .await;
+                            let result =
+                                tool_registry.execute(&tc.name, tc.arguments.clone()).await;
 
                             let result_text = match result {
                                 Ok(output) => output,
@@ -591,7 +600,7 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                         });
                         break;
                     }
-                }
+                },
                 Err(e) => {
                     eprintln!("  [Warning: Could not verify tool use: {}]", e);
                     session_messages.push(Message {
@@ -601,15 +610,23 @@ pub async fn run_repl(api_key: String) -> Result<()> {
                         tool_call_id: None,
                     });
                     break;
-                }
+                },
             }
         }
 
         // Auto-checkpoint every 5 turns
-        let user_turn_count = session_messages.iter().filter(|m| m.role == Role::User).count();
+        let user_turn_count = session_messages
+            .iter()
+            .filter(|m| m.role == Role::User)
+            .count();
         if user_turn_count % 5 == 0 && user_turn_count > 0 {
             checkpoint_count += 1;
-            save_checkpoint(&checkpoint_dir, &session_id, &session_messages, checkpoint_count);
+            save_checkpoint(
+                &checkpoint_dir,
+                &session_id,
+                &session_messages,
+                checkpoint_count,
+            );
         }
 
         let _ = notify_rust::Notification::new()
@@ -644,15 +661,23 @@ fn parse_anthropic_response(body: &serde_json::Value) -> (String, Vec<ToolCall>,
                 if let Some(text) = block.get("text").and_then(|v| v.as_str()) {
                     text_content.push_str(text);
                 }
-            }
+            },
             Some("tool_use") => {
                 tool_calls.push(ToolCall {
-                    id: block.get("id").and_then(|v| v.as_str()).unwrap_or("").to_string(),
-                    name: block.get("name").and_then(|v| v.as_str()).unwrap_or("").to_string(),
+                    id: block
+                        .get("id")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("")
+                        .to_string(),
+                    name: block
+                        .get("name")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("")
+                        .to_string(),
                     arguments: block.get("input").cloned().unwrap_or(serde_json::json!({})),
                 });
-            }
-            _ => {}
+            },
+            _ => {},
         }
     }
 
@@ -725,7 +750,7 @@ fn switch_provider(client: &Client, name: &str) -> Option<ActiveProvider> {
                 base_url: "https://api.anthropic.com/v1".to_string(),
                 api_key: key,
             })
-        }
+        },
         "groq" => {
             let key = std::env::var("GROQ_API_KEY").ok()?;
             Some(ActiveProvider {
@@ -735,7 +760,7 @@ fn switch_provider(client: &Client, name: &str) -> Option<ActiveProvider> {
                 base_url: "https://api.groq.com/openai/v1".to_string(),
                 api_key: key,
             })
-        }
+        },
         "xai" | "grok" => {
             let key = std::env::var("XAI_API_KEY").ok()?;
             Some(ActiveProvider {
@@ -745,7 +770,7 @@ fn switch_provider(client: &Client, name: &str) -> Option<ActiveProvider> {
                 base_url: "https://api.x.ai/v1".to_string(),
                 api_key: key,
             })
-        }
+        },
         "openai" => {
             let key = std::env::var("OPENAI_API_KEY").ok()?;
             Some(ActiveProvider {
@@ -755,28 +780,19 @@ fn switch_provider(client: &Client, name: &str) -> Option<ActiveProvider> {
                 base_url: "https://api.openai.com/v1".to_string(),
                 api_key: key,
             })
-        }
+        },
         _ => None,
     }
 }
 
-fn save_checkpoint(
-    dir: &std::path::Path,
-    session_id: &str,
-    messages: &[Message],
-    count: u32,
-) {
+fn save_checkpoint(dir: &std::path::Path, session_id: &str, messages: &[Message], count: u32) {
     let filename = dir.join(format!("{}_{}.json", session_id, count));
     if let Ok(json) = serde_json::to_string_pretty(messages) {
         let _ = std::fs::write(filename, json);
     }
 }
 
-fn load_checkpoint(
-    dir: &std::path::Path,
-    session_id: &str,
-    target: &str,
-) -> Option<Vec<Message>> {
+fn load_checkpoint(dir: &std::path::Path, session_id: &str, target: &str) -> Option<Vec<Message>> {
     // If target is a number, load that specific checkpoint
     if let Ok(num) = target.parse::<u32>() {
         let filename = dir.join(format!("{}_{}.json", session_id, num));
@@ -797,7 +813,7 @@ fn load_checkpoint(
                     .and_then(|s| s.strip_suffix(".json"))
                 {
                     if let Ok(num) = num_str.parse::<u32>() {
-                        if latest.is_none() || num > latest.as_ref().unwrap().0 {
+                        if latest.as_ref().map_or(true, |(prev, _)| num > *prev) {
                             latest = Some((num, entry.path()));
                         }
                     }
@@ -838,10 +854,7 @@ fn compact_messages(messages: &mut Vec<Message>) {
     }
 
     // Extract system message
-    let system = messages
-        .iter()
-        .find(|m| m.role == Role::System)
-        .cloned();
+    let system = messages.iter().find(|m| m.role == Role::System).cloned();
 
     // Summarize dropped messages
     let dropped_count = messages.len() - keep_last - 1;
@@ -904,14 +917,20 @@ pub struct FileChange {
 
 pub async fn handle_agent_output(changes: Vec<FileChange>) {
     use arc_ui::{TerminalUi, diff::compute_diff};
-    let mut ui = TerminalUi::new().unwrap();
+    let Ok(mut ui) = TerminalUi::new() else {
+        eprintln!("Failed to initialize terminal UI");
+        return;
+    };
 
     let diffs: Vec<_> = changes
         .iter()
         .map(|ch| compute_diff(&ch.path, &ch.old_content, &ch.new_content))
         .collect();
 
-    let result = ui.enter_review(diffs).unwrap();
+    let Ok(result) = ui.enter_review(diffs) else {
+        eprintln!("Failed to enter diff review");
+        return;
+    };
 
     for path in &result.accepted {
         println!("Accepted changes to {}", path);

@@ -57,11 +57,7 @@ pub struct McpClient {
 
 impl McpClient {
     /// Spawn an MCP server process and return a connected client.
-    pub async fn spawn(
-        command: &str,
-        args: &[String],
-        name: &str,
-    ) -> Result<Self, McpClientError> {
+    pub async fn spawn(command: &str, args: &[String], name: &str) -> Result<Self, McpClientError> {
         debug!("Spawning MCP server: {} {:?}", command, args);
 
         let mut child = Command::new(command)
@@ -148,16 +144,11 @@ impl McpClient {
 
     /// List available tools from the MCP server.
     pub async fn list_tools(&self) -> Result<Value, McpClientError> {
-        self.send_request("tools/list", serde_json::json!({}))
-            .await
+        self.send_request("tools/list", serde_json::json!({})).await
     }
 
     /// Send a JSON-RPC request and wait for the response.
-    async fn send_request(
-        &self,
-        method: &str,
-        params: Value,
-    ) -> Result<Value, McpClientError> {
+    async fn send_request(&self, method: &str, params: Value) -> Result<Value, McpClientError> {
         let id = REQUEST_ID.fetch_add(1, Ordering::Relaxed);
 
         let request = JsonRpcRequest {

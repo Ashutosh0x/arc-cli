@@ -96,11 +96,7 @@ pub struct ContentBlock {
 impl ToolResult {
     /// Extract the text content from the first content block.
     pub fn text(&self) -> Option<&str> {
-        self.content
-            .as_ref()?
-            .first()?
-            .text
-            .as_deref()
+        self.content.as_ref()?.first()?.text.as_deref()
     }
 
     /// Parse the text content as JSON.

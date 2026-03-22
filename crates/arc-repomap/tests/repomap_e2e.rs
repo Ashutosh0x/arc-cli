@@ -41,10 +41,7 @@ fn evaluate_repomap_token_reduction() {
     );
 
     // Validate repomap produces meaningful output
-    assert!(
-        !map_output.is_empty(),
-        "Repomap output must not be empty"
-    );
+    assert!(!map_output.is_empty(), "Repomap output must not be empty");
 
     // Validate at least 50% compression is achieved
     assert!(

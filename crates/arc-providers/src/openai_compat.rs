@@ -78,19 +78,21 @@ impl OpenAICompatProvider {
     ) -> Value {
         let api_messages: Vec<Value> = messages
             .iter()
-            .map(|m| {
-                match m.role {
-                    Role::System => json!({
-                        "role": "system",
-                        "content": m.content,
-                    }),
-                    Role::Tool => json!({
-                        "role": "tool",
-                        "tool_call_id": m.tool_call_id.as_deref().unwrap_or(""),
-                        "content": m.content,
-                    }),
-                    Role::Assistant if !m.tool_calls.is_empty() => {
-                        let tool_calls: Vec<Value> = m.tool_calls.iter().map(|tc| {
+            .map(|m| match m.role {
+                Role::System => json!({
+                    "role": "system",
+                    "content": m.content,
+                }),
+                Role::Tool => json!({
+                    "role": "tool",
+                    "tool_call_id": m.tool_call_id.as_deref().unwrap_or(""),
+                    "content": m.content,
+                }),
+                Role::Assistant if !m.tool_calls.is_empty() => {
+                    let tool_calls: Vec<Value> = m
+                        .tool_calls
+                        .iter()
+                        .map(|tc| {
                             json!({
                                 "id": tc.id,
                                 "type": "function",
@@ -99,28 +101,28 @@ impl OpenAICompatProvider {
                                     "arguments": tc.arguments.to_string(),
                                 }
                             })
-                        }).collect();
-                        let mut msg = json!({
-                            "role": "assistant",
-                            "tool_calls": tool_calls,
-                        });
-                        if !m.content.is_empty() {
-                            msg["content"] = json!(m.content);
-                        }
-                        msg
-                    }
-                    _ => {
-                        let role_str = match m.role {
-                            Role::User => "user",
-                            Role::Assistant => "assistant",
-                            _ => "user",
-                        };
-                        json!({
-                            "role": role_str,
-                            "content": m.content,
                         })
+                        .collect();
+                    let mut msg = json!({
+                        "role": "assistant",
+                        "tool_calls": tool_calls,
+                    });
+                    if !m.content.is_empty() {
+                        msg["content"] = json!(m.content);
                     }
-                }
+                    msg
+                },
+                _ => {
+                    let role_str = match m.role {
+                        Role::User => "user",
+                        Role::Assistant => "assistant",
+                        _ => "user",
+                    };
+                    json!({
+                        "role": role_str,
+                        "content": m.content,
+                    })
+                },
             })
             .collect();
 
@@ -233,8 +235,7 @@ impl Provider for OpenAICompatProvider {
 
                                 // Text delta
                                 if let Some(d) = delta {
-                                    if let Some(content) =
-                                        d.get("content").and_then(|v| v.as_str())
+                                    if let Some(content) = d.get("content").and_then(|v| v.as_str())
                                     {
                                         if !content.is_empty() {
                                             return Some(Ok(StreamEvent::TextDelta(
@@ -261,10 +262,7 @@ impl Provider for OpenAICompatProvider {
                                                     .to_string();
                                                 if !name.is_empty() && !id.is_empty() {
                                                     // First chunk with ID+name
-                                                    debug!(
-                                                        "Tool call started: {} ({})",
-                                                        name, id
-                                                    );
+                                                    debug!("Tool call started: {} ({})", name, id);
                                                 }
                                             }
                                         }
@@ -282,7 +280,7 @@ impl Provider for OpenAICompatProvider {
                         }
                     }
                     None
-                }
+                },
                 Err(e) => Some(Err(e)),
             }
         });
