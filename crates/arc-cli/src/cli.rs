@@ -115,6 +115,54 @@ pub enum Command {
         #[command(subcommand)]
         action: SessionAction,
     },
+    /// Structural code intelligence via knowledge graph (codebase-memory-mcp)
+    Graph {
+        #[command(subcommand)]
+        action: GraphAction,
+    },
+}
+
+#[derive(Subcommand, Debug, Clone)]
+pub enum GraphAction {
+    /// Index the current project into the knowledge graph
+    Index {
+        /// Path to the repository (defaults to current directory)
+        path: Option<String>,
+    },
+    /// Structural search by name pattern (functions, classes, types)
+    Search {
+        /// Name pattern to search for (regex supported)
+        pattern: String,
+        /// Filter by label: Function, Class, Method, Interface, etc.
+        #[arg(short, long)]
+        label: Option<String>,
+        /// Filter by file path pattern
+        #[arg(short, long)]
+        file_pattern: Option<String>,
+    },
+    /// Trace call paths — who calls a function and what it calls
+    Trace {
+        /// Function name to trace
+        function: String,
+        /// Direction: inbound, outbound, or both
+        #[arg(short, long, default_value = "both")]
+        direction: String,
+        /// Traversal depth (1-5)
+        #[arg(long, default_value = "3")]
+        depth: u32,
+    },
+    /// Get full architecture overview (languages, packages, routes, hotspots)
+    Architecture,
+    /// Map uncommitted git changes to affected symbols with risk scores
+    Impact {
+        /// Path to the repository (defaults to current directory)
+        path: Option<String>,
+    },
+    /// Execute a Cypher-like graph query
+    Query {
+        /// Cypher query string
+        cypher: String,
+    },
 }
 
 #[derive(Subcommand, Debug, Clone)]

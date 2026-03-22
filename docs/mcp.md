@@ -32,3 +32,59 @@ LLMs constantly leak sensitive context (like `GOOGLE_API_KEY` or environment var
 Even if a malicious MCP server bypasses the payload minimization, it executes within absolute constraint.
 - **Shadow Workspaces**: Any filesystem-altering capability requested by an MCP tool is intercepted. The OS dynamically shifts the `CWD` into `.arc-shadow/{uuid}` (created via fast hard-links). The MCP tool executes its logic in this physical sandbox. The ARC `Reviewer` agent then inspects the shadow diffs natively before deciding to splice it back to your real `src/` directory.
 - **Resource Limits**: The `RateLimiter` ensures MCP servers cannot flood the system with infinite I/O spin-loops by throttling stdio throughput dynamically natively avoiding internal DoS.
+
+## 4. Code Intelligence Graph (codebase-memory-mcp)
+
+ARC ships with native integration for [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) — a zero-dependency structural analysis engine that builds a persistent knowledge graph from your codebase.
+
+### Architecture
+
+```
+arc-cli (graph commands)
+    ↓
+arc-mcp/client.rs     JSON-RPC 2.0 stdio client
+    ↓ spawns
+codebase-memory-mcp   Pure C binary, tree-sitter AST, SQLite graph
+    ↓ returns
+arc-mcp/tools.rs      Typed result structs → agent context
+```
+
+### Configuration
+
+The MCP server auto-configures in `~/.arc/config.toml`:
+
+```toml
+[[mcp.servers]]
+name = "codebase-memory"
+command = "codebase-memory-mcp"
+args = []
+auto_start = true
+enabled = true
+```
+
+### 14 MCP Tools Available
+
+| Category | Tools |
+|----------|-------|
+| **Indexing** | `index_repository`, `list_projects`, `delete_project`, `index_status` |
+| **Querying** | `search_graph`, `trace_call_path`, `detect_changes`, `query_graph` |
+| **Analysis** | `get_architecture`, `get_graph_schema`, `get_code_snippet`, `search_code` |
+| **Management** | `manage_adr`, `ingest_traces` |
+
+### CLI Interface
+
+```sh
+arc graph index                    # index current project
+arc graph search ".*Handler.*"     # structural search
+arc graph trace main               # call graph from main()
+arc graph architecture             # full architecture overview
+arc graph impact                   # blast radius of uncommitted changes
+arc graph query 'MATCH ...'        # Cypher-like queries
+```
+
+### Performance Impact
+
+- **99.2% token reduction** — 5 structural queries consume ~3,400 tokens vs ~412,000 via grep
+- **<1ms query latency** — pre-indexed graph responses
+- **64 languages** — vendored tree-sitter grammars vs 5 in the basic repomap
+- **Persistent memory** — SQLite-backed graph survives sessions and context compaction

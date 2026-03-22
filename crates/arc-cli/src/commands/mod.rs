@@ -3,6 +3,7 @@ pub mod diagnostic;
 pub mod doctor;
 pub mod extensions;
 pub mod fix;
+pub mod graph;
 pub mod init;
 pub mod review;
 pub mod security_doctor;

@@ -29,6 +29,53 @@ pub struct ArcConfig {
 
     #[serde(default)]
     pub memory: MemoryConfig,
+
+    #[serde(default)]
+    pub mcp: McpConfig,
+}
+
+/// MCP server configuration — external tools that ARC can spawn as sidecars.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct McpConfig {
+    /// List of MCP servers to manage.
+    #[serde(default)]
+    pub servers: Vec<McpServerEntry>,
+}
+
+impl Default for McpConfig {
+    fn default() -> Self {
+        Self {
+            servers: vec![McpServerEntry {
+                name: "codebase-memory".to_string(),
+                command: "codebase-memory-mcp".to_string(),
+                args: Vec::new(),
+                auto_start: true,
+                enabled: true,
+            }],
+        }
+    }
+}
+
+/// A single MCP server entry.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct McpServerEntry {
+    /// Human-readable name for this server.
+    pub name: String,
+    /// Command to execute (binary path or name on $PATH).
+    pub command: String,
+    /// Arguments to pass to the command.
+    #[serde(default)]
+    pub args: Vec<String>,
+    /// Whether to auto-start this server when ARC launches.
+    #[serde(default = "default_true")]
+    pub auto_start: bool,
+    /// Whether this server is enabled.
+    #[serde(default = "default_true")]
+    pub enabled: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -198,10 +245,6 @@ impl Default for SecurityConfig {
     }
 }
 
-fn default_true() -> bool {
-    true
-}
-
 fn default_rate_limit() -> u32 {
     60
 }
@@ -218,6 +261,7 @@ impl Default for ArcConfig {
             routing: RoutingConfig::default(),
             security: SecurityConfig::default(),
             memory: MemoryConfig::default(),
+            mcp: McpConfig::default(),
         }
     }
 }

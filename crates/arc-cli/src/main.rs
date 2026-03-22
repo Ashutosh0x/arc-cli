@@ -194,6 +194,34 @@ async fn main() -> Result<()> {
         Some(cli::Command::Config { action }) => {
             commands::config::run(action).await?;
         },
+        Some(cli::Command::Graph { action }) => match action {
+            cli::GraphAction::Index { path } => {
+                commands::graph::run_index(path).await?;
+            },
+            cli::GraphAction::Search {
+                pattern,
+                label,
+                file_pattern,
+            } => {
+                commands::graph::run_search(&pattern, label, file_pattern).await?;
+            },
+            cli::GraphAction::Trace {
+                function,
+                direction,
+                depth,
+            } => {
+                commands::graph::run_trace(&function, Some(direction), Some(depth)).await?;
+            },
+            cli::GraphAction::Architecture => {
+                commands::graph::run_architecture().await?;
+            },
+            cli::GraphAction::Impact { path } => {
+                commands::graph::run_impact(path).await?;
+            },
+            cli::GraphAction::Query { cypher } => {
+                commands::graph::run_query(&cypher).await?;
+            },
+        },
     }
 
     Ok(())

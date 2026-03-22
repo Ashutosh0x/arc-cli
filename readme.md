@@ -66,6 +66,7 @@ arc-agents       Orchestrator, subagent dispatch, A2A protocol
 arc-session      redb checkpointing, fork, rewind
 arc-plan         Plan mode, dependency mapping, DAG tracking
 arc-tools        File ops, shell exec, MCP client, search
+arc-mcp          MCP JSON-RPC client, code intelligence graph integration
 arc-policy       Permission engine, sandbox policies
 arc-hooks        Event-driven pre/post tool hooks
 arc-diff         Structural diffs, patch engine
@@ -113,6 +114,12 @@ arc-a2a          Agent-to-agent HTTP/2 protocol
 | `arc doctor` | Run diagnostics on your setup |
 | `arc review` | AI-powered PR review |
 | `arc --stats` | Token usage and cost tracking |
+| `arc graph index` | Index codebase into knowledge graph (64 languages) |
+| `arc graph search <pattern>` | Structural search: functions, classes, types |
+| `arc graph trace <function>` | Call graph — who calls what, BFS depth 1-5 |
+| `arc graph architecture` | Architecture overview: layers, clusters, hotspots |
+| `arc graph impact` | Map git diff → affected symbols + risk scores |
+| `arc graph query <cypher>` | Execute Cypher-like graph queries |
 | `/plan [task]` | Generate and review a modification plan |
 | `/checkpoint` | Save session state |
 | `/rewind [id]` | Restore a previous checkpoint |
@@ -121,6 +128,28 @@ arc-a2a          Agent-to-agent HTTP/2 protocol
 | `/fork [name]` | Branch the conversation |
 | `/security-review` | Scan diffs for vulnerability patterns |
 | `/copy` | Pick and copy code blocks |
+
+## Code Intelligence
+
+ARC integrates with [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) to provide structural code intelligence via a persistent knowledge graph.
+
+```sh
+arc graph index                                    # index your project (seconds for typical repos)
+arc graph search ".*Handler.*"                     # find all handler functions
+arc graph trace authenticate --direction inbound   # who calls authenticate()?
+arc graph architecture                             # languages, packages, routes, hotspots
+arc graph impact                                   # what breaks from your uncommitted changes?
+arc graph query 'MATCH (f:Function)-[:CALLS]->(g) WHERE f.name = "main" RETURN g.name'
+```
+
+| Metric | Without graph | With graph |
+|--------|--------------|------------|
+| Context tokens per query | ~412,000 | ~3,400 |
+| Symbol lookup | 50-500ms (grep) | <1ms |
+| Languages parsed | 5 | 64 |
+| Call graph | No | Yes, BFS depth 1-5 |
+| Dead code detection | No | Yes, ~150ms |
+| Session memory | Resets | Persists (SQLite) |
 
 ## Diff review keybindings
 
