@@ -10,16 +10,17 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+permissions: read-all
 
 jobs:
   benchmark:
     if: github.actor != 'dependabot[bot]'
     name: Run Criterion Benchmarks
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
 
     steps:
     - uses: actions/checkout@v4
