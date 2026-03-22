@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge)](LICENSE)
 ![Rust](https://img.shields.io/badge/Rust_1.89+-DEA584?style=for-the-badge&logo=rust&logoColor=white)
 [![Built with Rust](https://img.shields.io/badge/Built_with-Rust-B7410E?style=for-the-badge&logo=rust&logoColor=white)](https://www.rust-lang.org/)
-[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Ashutosh0x/arc-cli/badge)](https://scorecard.dev/viewer/?uri=github.com/Ashutosh0x/arc-cli)
+[![OpenSSF Scorecard](https://img.shields.io/ossf-scorecard/github.com/Ashutosh0x/arc-cli?style=for-the-badge&label=Scorecard&logo=opensourcesecurityfoundation&logoColor=white)](https://scorecard.dev/viewer/?uri=github.com/Ashutosh0x/arc-cli)
 
 [![OpenAI](https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white)](https://platform.openai.com/)
 [![Anthropic](https://img.shields.io/badge/Anthropic-191919?style=for-the-badge&logo=anthropic&logoColor=white)](https://www.anthropic.com/)
