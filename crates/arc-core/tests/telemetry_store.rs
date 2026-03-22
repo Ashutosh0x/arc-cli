@@ -91,7 +91,11 @@ fn latency_percentiles_correctness() {
     let summary = store.aggregate_all().unwrap();
     let stats = &summary.providers["test"];
 
-    assert_eq!(stats.p50(), Some(500));
+    // With 10 values (100..=1000), ceil-based percentile indexing gives:
+    // p50 = value at ceil(10 * 0.50) = index 5 = 600
+    // p95 = value at ceil(10 * 0.95) = index 10 = 1000
+    // p99 = value at ceil(10 * 0.99) = index 10 = 1000
+    assert_eq!(stats.p50(), Some(600));
     assert!(stats.p95().unwrap() >= 900);
     assert_eq!(stats.p99(), Some(1000));
 }
