@@ -55,7 +55,7 @@ rustyline = "17.0.2"
 notify-rust = "4.12.0"
 uuid.workspace = true
 mimalloc = "0.1.48"
-self_update = { version = "0.43.1", features = ["archive-tar", "archive-zip", "compression-zip-bzip2"] }
+self_update = { version = "0.43.1", default-features = false, features = ["reqwest", "rustls", "archive-tar", "archive-zip", "compression-zip-bzip2"] }
 
 [lints]
 workspace = true
