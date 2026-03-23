@@ -49,7 +49,7 @@ ctrlc = "3"
 console.workspace = true
 futures.workspace = true
 clap_complete = "4.6.0"
-dialoguer = { version = "0.11.0", features = ["fuzzy-select"] }
+dialoguer = { version = "0.12.0", features = ["fuzzy-select"] }
 walkdir = "2.5.0"
 rustyline = "17.0.2"
 notify-rust = "4.12.0"
