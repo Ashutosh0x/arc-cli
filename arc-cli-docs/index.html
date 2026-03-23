@@ -1141,20 +1141,20 @@ default_model = "llama3"</code></pre>
           </div>
 
           <h2 class="section-heading">Data Flow</h2>
-          <div class="code-block">
-            <div class="code-block-header"><span>Architecture Diagram</span></div>
-            <pre><code>┌─────────────┐     ┌───────────────┐     ┌──────────────┐
-│   arc-cli   │────▶│   arc-core    │────▶│ arc-provider │
-│  (REPL UI)  │     │ (Orchestrator)│     │  (AI APIs)   │
-└─────────────┘     └───────┬───────┘     └──────────────┘
-                            │
-              ┌─────────────┼─────────────┐
-              ▼             ▼             ▼
-      ┌──────────┐  ┌─────────────┐  ┌──────────┐
-      │arc-config│  │arc-analyzer │  │knowledge │
-      │ (Config) │  │(Tree-sitter)│  │  -graph  │
-      └──────────┘  └─────────────┘  │  (RAG)   │
-                                     └──────────┘</code></pre>
+          <div class="code-block" style="background: transparent; border: none; padding: 0;">
+            <div class="code-block-header" style="background: var(--bg-100);"><span>Architecture Diagram</span></div>
+            <div class="mermaid" style="text-align: center; padding: 2rem; background: var(--bg-100); border-radius: 0 0 8px 8px; border: 1px solid var(--border-100); border-top: none;">
+graph TD
+    classDef default fill:transparent,stroke:#555,stroke-width:2px,color:inherit,rx:8px,ry:8px;
+    classDef main fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:white,rx:8px,ry:8px;
+    
+    A["arc-cli<br/><small>(REPL UI)</small>"]:::main --> B["arc-core<br/><small>(Orchestrator)</small>"]:::main
+    B --> C["arc-provider<br/><small>(AI APIs)</small>"]
+    
+    B --> D["arc-config<br/><small>(Config)</small>"]
+    B --> E["arc-analyzer<br/><small>(Tree-sitter)</small>"]
+    B --> F["knowledge-graph<br/><small>(RAG)</small>"]
+            </div>
           </div>
 
           <h2 class="section-heading">Platform Support</h2>
@@ -1335,6 +1335,29 @@ default_model = "llama3"</code></pre>
         document.getElementById('searchInput').blur();
       }
     });
+  </script>
+  
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    mermaid.initialize({ 
+      startOnLoad: true, 
+      theme: isDark ? 'dark' : 'default',
+      securityLevel: 'loose'
+    });
+    
+    // Attempt re-render on theme toggle
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          const newTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'default';
+          mermaid.initialize({ theme: newTheme });
+          // Note: In a true reactive app you would re-render the mermaid diagrams here.
+        }
+      });
+    });
+    observer.observe(document.documentElement, { attributes: true });
   </script>
 </body>
 </html>
