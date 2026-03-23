@@ -328,11 +328,13 @@
       padding: 3rem 0 2rem;
     }
     .hero-logo {
-      width: 80px;
-      height: 80px;
-      border-radius: 16px;
-      margin: 0 auto 1.5rem;
-      box-shadow: 0 4px 24px hsl(var(--always-black) / 8%);
+      width: 100%;
+      max-width: 600px;
+      height: auto;
+      border-radius: 12px;
+      margin: 0 auto 2rem;
+      box-shadow: 0 12px 32px hsl(var(--always-black) / 12%);
+      border: 1px solid hsl(var(--border-300) / 0.2);
     }
     .hero-title {
       font-family: var(--font-ui-serif);
@@ -751,7 +753,7 @@
       <div class="section active" id="section-home">
         <div class="content-wrapper">
           <div class="hero">
-            <img src="assets/img/arc-cli.png" alt="ARC CLI" class="hero-logo"/>
+            <img src="assets/img/arc_cli_terminal.png" alt="ARC CLI Terminal" class="hero-logo"/>
             <h1 class="hero-title">ARC CLI</h1>
             <p class="hero-tagline">A native agentic CLI that reasons over codebases. One binary. No runtime. Works offline. 31 crates. &lt;20ms cold boot.</p>
             <div class="hero-badges">
