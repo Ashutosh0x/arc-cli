@@ -14,8 +14,8 @@ jobs:
       matrix:
         target: [sse_parser, config_parser, hook_config, plugin_manifest]
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@nightly
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: dtolnay/rust-toolchain@0f1b44df7e9cbb178d781a242338dfa5e243ad7f # nightly
 
       - name: Install cargo-fuzz
         run: cargo install cargo-fuzz
@@ -24,3 +24,4 @@ jobs:
         run: |
           cd fuzz
           cargo +nightly fuzz run ${{ matrix.target }} -- -max_total_time=300
+
