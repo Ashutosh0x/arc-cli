@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-      - uses: dtolnay/rust-toolchain@78c2cd7546db85145bb10485288dd4e5063c5093 # 1.89.0
+      - uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # 1.89.0
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
       - name: Install system dependencies
         run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
