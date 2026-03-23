@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Property tests for hook event matching.
 
 use proptest::prelude::*;

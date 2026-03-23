@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # ARC.md Project Context Auto-Loader
 //!
 //! Automatically discovers and loads project context files from the

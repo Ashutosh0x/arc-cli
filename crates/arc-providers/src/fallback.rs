@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Policy-Driven Fallback Handler
 //!
 //! Classifies failure kinds and resolves fallback chains.

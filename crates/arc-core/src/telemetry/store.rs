@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! `redb`-backed persistent telemetry store.
 
 use std::path::{Path, PathBuf};

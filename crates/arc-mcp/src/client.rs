@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! MCP (Model Context Protocol) JSON-RPC 2.0 stdio client.
 //!
 //! Spawns an MCP server binary as a child process and communicates

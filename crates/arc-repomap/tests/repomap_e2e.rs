@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use arc_repomap::RepoMap;
 use std::path::PathBuf;
 

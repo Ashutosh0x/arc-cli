@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Agent card discovery with caching and validation.
 //! Fetches agent cards from `<endpoint>/.well-known/agent.json`.
 

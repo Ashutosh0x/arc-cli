@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! 3-Layer Loop Detection Service
 //!
 //! Prevents the LLM from getting stuck in unproductive loops:

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Interactive model picker for the setup wizard.
 
 use crate::models::ModelRegistry;

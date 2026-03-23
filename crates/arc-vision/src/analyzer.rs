@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::decoder::ImageDecoder;
 use anyhow::Result;
 use arc_providers::message::{Message, Role};

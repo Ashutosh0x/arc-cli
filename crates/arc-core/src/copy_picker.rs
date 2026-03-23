@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # /copy Picker — Interactive Code Block Selection
 //!
 //! Pick code blocks from responses, copy full response, write to file.

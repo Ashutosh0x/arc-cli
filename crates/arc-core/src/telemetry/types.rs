@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Data types for the telemetry subsystem.
 
 use serde::{Deserialize, Serialize};

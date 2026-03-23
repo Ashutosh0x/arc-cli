@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Marketplace client: search, browse, and fetch plugin metadata from remote registries.
 
 use serde::{Deserialize, Serialize};

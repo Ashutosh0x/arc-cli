@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-remote
 //!
 //! Enables connecting to a running ARC CLI session from another terminal window,

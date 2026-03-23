@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use serde::{Deserialize, Serialize};
 
 /// What the Planner agent MUST return

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Authentication and message integrity for A2A communications.
 //! Supports JWT bearer tokens and HMAC-SHA256 request signing.
 

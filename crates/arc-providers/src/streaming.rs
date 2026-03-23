@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Zero-copy SSE (Server-Sent Events) line parser for streaming responses.
 
 use bytes::BytesMut;

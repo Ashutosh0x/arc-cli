@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Config file permissions guard.
 //! Ensures config files are not world-readable.
 

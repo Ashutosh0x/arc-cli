@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! `arc doctor` — system health check.
 
 use anyhow::Result;

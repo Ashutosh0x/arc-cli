@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! ARC Memory Subsystem
 //!
 //! Implementing a tiered memory architecture for autonomous agents:

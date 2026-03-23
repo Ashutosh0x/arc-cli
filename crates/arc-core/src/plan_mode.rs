@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Plan Mode — Full /plan Command with Accept/Reject/Feedback
 //!
 //! `/plan [description]` enters read-only analysis mode.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Extensions CLI — Full plugin lifecycle management
 //!
 //! Subcommands: install, uninstall, link, update, configure, enable, disable, validate, new

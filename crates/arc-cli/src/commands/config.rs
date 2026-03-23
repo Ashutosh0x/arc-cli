@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use arc_core::config::ArcConfig;
 use std::fs;

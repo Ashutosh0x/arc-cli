@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Agent Definitions — .arc/agents/*.md with Frontmatter
 //!
 //! User-defined agents with name, description, tools, model, color,

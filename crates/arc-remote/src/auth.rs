@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Authentication for the remote control server.
 
 use axum::{extract::Request, http::StatusCode, middleware::Next, response::Response};

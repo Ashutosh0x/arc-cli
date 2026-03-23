@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-diff
 //!
 //! Advanced structural diffing and patching engine. Understands semantic

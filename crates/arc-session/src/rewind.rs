@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::session_db::SessionDatabase;
 use crate::session_model::{CheckpointId, SessionState};
 use anyhow::{Context, Result};

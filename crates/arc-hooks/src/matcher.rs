@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Hook matching: determines which hooks fire for a given event.
 //! Supports exact event name matching + regex-based tool name filtering.
 

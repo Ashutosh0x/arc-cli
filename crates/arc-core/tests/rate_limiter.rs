@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Unit tests for the rate limiter.
 
 use arc_core::security::rate_limiter::{RateLimitConfig, RateLimiter};

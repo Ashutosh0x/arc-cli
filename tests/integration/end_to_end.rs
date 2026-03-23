@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! End-to-end tests that verify the complete CLI workflow.
 
 use std::io::Write;

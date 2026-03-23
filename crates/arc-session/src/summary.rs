@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Session Summary Service
 //!
 //! Auto-generates 1-line session titles (≤80 chars) using a sliding window

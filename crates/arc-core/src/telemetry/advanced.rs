@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Advanced Telemetry — Activity Monitor, Memory Monitor, Startup Profiler
 
 use std::time::{Duration, Instant};

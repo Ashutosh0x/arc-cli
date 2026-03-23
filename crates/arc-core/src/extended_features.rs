@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Interactive Question Tool — agent can prompt user mid-execution.
 //! Bundled Slash Commands — /simplify, /batch, /explain.
 //! ExitWorktree tool — complement to worktree.rs enter.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod config;
 pub mod diagnostic;
 pub mod doctor;

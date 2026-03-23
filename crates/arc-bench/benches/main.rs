@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use criterion::{criterion_group, criterion_main, Criterion};
 
 pub fn dummy_bench(c: &mut Criterion) {

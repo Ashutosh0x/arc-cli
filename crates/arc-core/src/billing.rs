@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Billing & Quota Management
 //!
 //! Tracks API credit balance per provider, overage strategy,

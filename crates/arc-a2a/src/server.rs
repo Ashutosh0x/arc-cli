@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Axum-based A2A server for receiving messages from remote agents.
 //! Serves the agent card, accepts task requests, and streams progress via SSE.
 

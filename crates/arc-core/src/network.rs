@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::config::ProvidersConfig;
 use std::time::Duration;
 

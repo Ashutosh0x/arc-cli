@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::{Result, anyhow};
 use reqwest::Client;
 use scraper::{Html, Selector};

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Secure credential management via OS keyring.
 //! API keys are NEVER written to config files — only to the OS secret service.
 //! All secrets are wrapped in `Zeroizing<String>` to ensure memory cleanup.

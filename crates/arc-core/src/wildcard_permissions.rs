@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Wildcard Tool Permissions — glob-style permission rules.
 //! Supports patterns like Bash(npm *), Bash(*-h*), Read(src/**).
 

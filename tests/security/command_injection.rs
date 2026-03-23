@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Command injection prevention tests.
 
 fn is_safe_command(cmd: &str) -> bool {

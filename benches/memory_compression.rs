@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Memory/context compression benchmark.
 //! Measures compression ratio and speed for conversation compaction.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Diff Context Snippet Generator
 //!
 //! Shows head+tail around changed lines with merged ranges.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use std::io;
 use std::path::{Path, PathBuf};
 

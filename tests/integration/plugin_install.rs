@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Plugin installation integration tests.
 
 use std::io::Write;

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Authentication module — dispatches between API key and OAuth flows.
 
 pub mod api_key;

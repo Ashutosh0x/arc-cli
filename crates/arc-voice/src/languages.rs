@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use std::collections::HashMap;
 
 /// 20+ supported speech recognition languages

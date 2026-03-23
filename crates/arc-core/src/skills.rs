@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Skills System — .arc/skills/*.md with Auto-Discovery
 //!
 //! SKILL.md frontmatter: name, description. ${ARC_SKILL_DIR} variable.

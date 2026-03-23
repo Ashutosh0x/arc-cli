@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::events::HookEvent;
 use anyhow::Result;
 use std::path::PathBuf;

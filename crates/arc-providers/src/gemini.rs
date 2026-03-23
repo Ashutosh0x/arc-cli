@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Google Gemini provider implementation.
 
 use crate::provider::*;

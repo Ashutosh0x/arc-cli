@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Cold boot benchmark — measures total CLI startup time.
 //! Target: <20ms to interactive prompt.
 //! Competitor reference: Claude Code ~800ms, Aider ~2s.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-hooks
 //!
 //! Enables automated execution of tasks at specific events, particularly

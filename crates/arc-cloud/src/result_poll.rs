@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::delegation::CloudDelegator;
 use anyhow::Result;
 use std::sync::Arc;

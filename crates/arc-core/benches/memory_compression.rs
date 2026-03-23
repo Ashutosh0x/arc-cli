@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use arc_core::memory::compressor::Compressor;
 use arc_core::memory::working::MemoryMessage;
 use criterion::{BenchmarkId, Criterion, criterion_group, criterion_main};

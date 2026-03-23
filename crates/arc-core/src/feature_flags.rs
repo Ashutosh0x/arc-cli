@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Feature Flags — Dynamic Feature Gating with Disk Cache
 //!
 //! Runtime feature toggles with stale value prevention.

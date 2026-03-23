@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Data privacy & leak prevention.
 //! Scans outgoing prompts and incoming responses for sensitive data.
 

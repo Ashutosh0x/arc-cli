@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use futures::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};

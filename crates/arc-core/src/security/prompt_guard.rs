@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Prompt Injection Defense — layered defense-in-depth.
 //! Implements: instruction hierarchy, context isolation, pattern detection,
 //! lethal trifecta warnings, and output scanning.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::plan_model::{DependencyEdge, DependencyGraph, DependencyNode, EdgeType, NodeType};
 use crate::read_only_tools::{FileDependencies, ReadOnlyToolSet};
 use anyhow::Result;

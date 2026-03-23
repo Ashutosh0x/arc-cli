@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Session forking and resume integration tests.
 
 use std::io::Write;

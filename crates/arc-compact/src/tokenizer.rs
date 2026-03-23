@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use tiktoken_rs::cl100k_base;
 

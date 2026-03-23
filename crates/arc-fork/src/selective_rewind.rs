@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Selective rewind: revert code changes only, keep conversation context.
 //! Or revert conversation only, keep code changes.
 
@@ -35,9 +36,7 @@ pub fn selective_rewind(
 ) -> Result<RewindResult, RewindError> {
     let mut files_reverted = Vec::new();
     let mut files_skipped = Vec::new();
-    let conversation_reverted;
-
-    match scope {
+    let conversation_reverted = match scope {
         RewindScope::Full => {
             revert_files(
                 &snapshot.file_state,
@@ -46,7 +45,7 @@ pub fn selective_rewind(
                 &mut files_reverted,
                 &mut files_skipped,
             )?;
-            conversation_reverted = true;
+            true
         },
         RewindScope::CodeOnly => {
             revert_files(
@@ -56,11 +55,9 @@ pub fn selective_rewind(
                 &mut files_reverted,
                 &mut files_skipped,
             )?;
-            conversation_reverted = false;
+            false
         },
-        RewindScope::ConversationOnly => {
-            conversation_reverted = true;
-        },
+        RewindScope::ConversationOnly => true,
         RewindScope::SpecificFiles(ref paths) => {
             revert_files(
                 &snapshot.file_state,
@@ -69,9 +66,9 @@ pub fn selective_rewind(
                 &mut files_reverted,
                 &mut files_skipped,
             )?;
-            conversation_reverted = false;
+            false
         },
-    }
+    };
 
     info!(
         files_reverted = files_reverted.len(),

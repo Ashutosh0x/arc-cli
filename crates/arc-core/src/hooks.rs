@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Hook System — Event-Driven Extensibility Engine
 //!
 //! Implements the 10+ event lifecycle hooks inspired by Claude Code:

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #![forbid(unsafe_code)]
 //! ARC MCP — Model Context Protocol client and tool integration.
 //!

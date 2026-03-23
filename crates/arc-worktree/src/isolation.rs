@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Subagent isolation modes using worktrees.
 
 use serde::{Deserialize, Serialize};

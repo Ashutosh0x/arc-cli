@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Central scheduler for long-running sessions.
 
 use chrono::{DateTime, Utc};

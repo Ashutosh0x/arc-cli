@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::suites::BenchmarkSuite;
 use anyhow::Result;
 use std::time::Instant;

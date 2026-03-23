@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Core A2A protocol types following Google's Agent-to-Agent spec
 //! with ARC-specific extensions for speed and security.
 

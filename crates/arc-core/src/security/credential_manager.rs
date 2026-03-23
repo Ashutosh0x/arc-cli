@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Hardened credential manager wrapping the OS keyring.
 //!
 //! Features:

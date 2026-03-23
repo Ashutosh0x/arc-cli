@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::error::ArcError;
 use fs2::FileExt;
 use std::path::{Path, PathBuf};

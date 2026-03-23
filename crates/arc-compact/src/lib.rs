@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod sliding_window;
 pub mod summarize;
 pub mod tokenizer;

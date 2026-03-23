@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-worktree
 //!
 //! Subsystem for managing parallel Git Worktrees natively instead of shadow

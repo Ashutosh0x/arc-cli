@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::languages::Language;
 use anyhow::Result;
 use reqwest::Client;

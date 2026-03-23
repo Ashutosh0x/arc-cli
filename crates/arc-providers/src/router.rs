@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Smart routing engine — fallback chain, latency racing, round-robin.
 
 use crate::provider::{ChatMessage, ChatResponse, Provider};

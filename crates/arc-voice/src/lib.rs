@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod audio_capture;
 pub mod languages;
 pub mod push_to_talk;

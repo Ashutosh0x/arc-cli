@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Stress test: many checkpoints in sequence.
 
 use redb::{Database, ReadableTable, TableDefinition};

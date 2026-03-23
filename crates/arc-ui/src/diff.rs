@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::state::{DiffBlock, DiffLine, Hunk};
 use similar::{ChangeTag, TextDiff};
 

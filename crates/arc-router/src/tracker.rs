@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use dashmap::DashMap;
 use std::sync::atomic::{AtomicUsize, Ordering};
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Session & context memory safety.
 //! Detects behavioral anomalies, multi-stage attacks, and context manipulation.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Typed error hierarchy for the A2A protocol layer.
 
 use thiserror::Error;

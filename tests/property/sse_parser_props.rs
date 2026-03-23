@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Property-based tests for the SSE parser.
 
 use proptest::prelude::*;

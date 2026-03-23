@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Long-Term Memory — persistent storage across sessions.
 //! Uses Redb for fast, safe embedded key-value storage.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub struct Theme {
     pub border: BorderChars,
     pub colors: Colors,

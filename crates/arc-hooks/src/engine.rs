@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! The hook engine: central coordinator that integrates with the ARC agent loop.
 //!
 //! Usage:

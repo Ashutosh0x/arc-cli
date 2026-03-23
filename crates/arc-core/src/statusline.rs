@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Statusline Scripts — Custom Status Bar
 //!
 //! Rate limits, workspace info, model effort level, worktree.

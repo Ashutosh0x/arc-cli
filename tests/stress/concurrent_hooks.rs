@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Stress test: many hooks firing concurrently.
 
 #[tokio::test]

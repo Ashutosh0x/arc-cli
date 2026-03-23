@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! HTTP Hook Executor — POST JSON to a URL and receive JSON back.
 //! Supports custom headers, env var interpolation, and timeout control.
 

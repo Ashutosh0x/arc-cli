@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-shadow
 //!
 //! Shadow Workspace implementation. Clones the current project state into

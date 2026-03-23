@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use chrono::{DateTime, Utc};
 use compact_str::CompactString;
 use serde::{Deserialize, Serialize};

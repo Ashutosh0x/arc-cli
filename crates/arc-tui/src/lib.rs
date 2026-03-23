@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #![forbid(unsafe_code)]
 
 //! Terminal UI components for ARC CLI.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Google OAuth 2.1 + PKCE (S256) authentication flow.
 //! Uses a localhost redirect URI to capture the authorization code.
 //! Enforces: PKCE S256, CSRF state, exact redirect URI matching, RTR.
@@ -30,15 +31,11 @@ pub async fn authenticate_with_oauth(provider: Provider) -> ArcResult<()> {
     info!("Starting OAuth 2.1 + PKCE flow for {provider}");
 
     // 1. Bind a random localhost port for the redirect
-    let listener = TcpListener::bind(format!("{REDIRECT_HOST}:0")).map_err(|e| {
-        crate::error::ArcError::Auth(format!(
-            "OAuth failed: {}",
-            format!("Failed to bind localhost: {e}")
-        ))
-    })?;
+    let listener = TcpListener::bind(format!("{REDIRECT_HOST}:0"))
+        .map_err(|e| crate::error::ArcError::Auth(format!("Failed to bind localhost: {e}")))?;
     let port = listener
         .local_addr()
-        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string())))?
+        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?
         .port();
 
     let redirect_uri = format!("http://{REDIRECT_HOST}:{port}");
@@ -46,15 +43,18 @@ pub async fn authenticate_with_oauth(provider: Provider) -> ArcResult<()> {
 
     // 2. Build the OAuth client (public client — no secret)
     let client = BasicClient::new(ClientId::new(GOOGLE_CLIENT_ID.to_string()))
-        .set_auth_uri(AuthUrl::new(GOOGLE_AUTH_URL.to_string()).map_err(|e| {
-            crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string()))
-        })?)
-        .set_token_uri(TokenUrl::new(GOOGLE_TOKEN_URL.to_string()).map_err(|e| {
-            crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string()))
-        })?)
-        .set_redirect_uri(RedirectUrl::new(redirect_uri.clone()).map_err(|e| {
-            crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string()))
-        })?);
+        .set_auth_uri(
+            AuthUrl::new(GOOGLE_AUTH_URL.to_string())
+                .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?,
+        )
+        .set_token_uri(
+            TokenUrl::new(GOOGLE_TOKEN_URL.to_string())
+                .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?,
+        )
+        .set_redirect_uri(
+            RedirectUrl::new(redirect_uri.clone())
+                .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?,
+        );
 
     // 3. Generate PKCE challenge (S256 ONLY — never plain)
     let (pkce_challenge, pkce_verifier) = PkceCodeChallenge::new_random_sha256();
@@ -80,39 +80,31 @@ pub async fn authenticate_with_oauth(provider: Provider) -> ArcResult<()> {
     let (code, returned_state) = timeout(Duration::from_secs(120), async {
         tokio::task::spawn_blocking(move || wait_for_callback(listener, &redirect_uri))
             .await
-            .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string())))?
+            .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?
     })
     .await
     .map_err(|_| {
-        crate::error::ArcError::Auth(format!(
-            "OAuth failed: {}",
-            "OAuth callback timed out after 120 seconds"
-        ))
+        crate::error::ArcError::Auth("OAuth callback timed out after 120 seconds".into())
     })??;
 
     // 7. Verify CSRF state — MUST match exactly
     if returned_state.secret() != csrf_state.secret() {
         error!("CSRF state mismatch! Possible attack.");
-        return Err(crate::error::ArcError::Auth("CSRF Mismatch".into()).into());
+        return Err(crate::error::ArcError::Auth("CSRF Mismatch".into()));
     }
 
     // 8. Exchange code for tokens (with PKCE verifier)
     let http_client = oauth2_reqwest::ClientBuilder::new()
         .redirect(oauth2_reqwest::redirect::Policy::none())
         .build()
-        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string())))?;
+        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?;
 
     let token_result = client
         .exchange_code(code)
         .set_pkce_verifier(pkce_verifier)
         .request_async(&http_client)
         .await
-        .map_err(|e| {
-            crate::error::ArcError::Auth(format!(
-                "OAuth failed: {}",
-                format!("Token exchange failed: {e}")
-            ))
-        })?;
+        .map_err(|e| crate::error::ArcError::Auth(format!("Token exchange failed: {e}")))?;
 
     // 9. Store access token
     let access_token = Zeroizing::new(token_result.access_token().secret().to_string());
@@ -135,44 +127,38 @@ fn wait_for_callback(
     listener: TcpListener,
     expected_redirect: &str,
 ) -> ArcResult<(AuthorizationCode, CsrfToken)> {
-    let (mut stream, _) = listener.accept().map_err(|e| {
-        crate::error::ArcError::Auth(format!(
-            "OAuth failed: {}",
-            format!("Failed to accept connection: {e}")
-        ))
-    })?;
+    let (mut stream, _) = listener
+        .accept()
+        .map_err(|e| crate::error::ArcError::Auth(format!("Failed to accept connection: {e}")))?;
 
     let mut reader = std::io::BufReader::new(&stream);
     let mut request_line = String::new();
     reader
         .read_line(&mut request_line)
-        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string())))?;
+        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?;
 
     // Parse the URL from the HTTP request line
-    let redirect_url = request_line.split_whitespace().nth(1).ok_or_else(|| {
-        crate::error::ArcError::Auth(format!("OAuth failed: {}", "Invalid HTTP request"))
-    })?;
+    let redirect_url = request_line
+        .split_whitespace()
+        .nth(1)
+        .ok_or_else(|| crate::error::ArcError::Auth("Invalid HTTP request".into()))?;
 
     let full_url = format!("{expected_redirect}{redirect_url}");
     let url = Url::parse(&full_url)
-        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {}", e.to_string())))?;
+        .map_err(|e| crate::error::ArcError::Auth(format!("OAuth failed: {e}")))?;
 
     // Extract code and state from query params
     let code = url
         .query_pairs()
         .find(|(k, _)| k == "code")
         .map(|(_, v)| AuthorizationCode::new(v.into_owned()))
-        .ok_or_else(|| {
-            crate::error::ArcError::Auth(format!("OAuth failed: {}", "Missing 'code' in callback"))
-        })?;
+        .ok_or_else(|| crate::error::ArcError::Auth("Missing 'code' in callback".into()))?;
 
     let state = url
         .query_pairs()
         .find(|(k, _)| k == "state")
         .map(|(_, v)| CsrfToken::new(v.into_owned()))
-        .ok_or_else(|| {
-            crate::error::ArcError::Auth(format!("OAuth failed: {}", "Missing 'state' in callback"))
-        })?;
+        .ok_or_else(|| crate::error::ArcError::Auth("Missing 'state' in callback".into()))?;
 
     // Send a nice response to the browser
     let response = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n\

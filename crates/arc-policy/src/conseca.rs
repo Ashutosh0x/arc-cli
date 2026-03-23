@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Conseca Dynamic Safety Checker
 //!
 //! LLM-generated security policy engine:

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Hardened HTTP client factory.
 //! Enforces: rustls TLS, redirect protection, connection pooling, timeouts.
 

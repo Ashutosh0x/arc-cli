@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::Arc;

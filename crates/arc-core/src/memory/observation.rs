@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Observation System — extracts facts and intents from user inputs.
 //!
 //! Uses a fast regex/keyword heuristic on the first pass to avoid LLM calls

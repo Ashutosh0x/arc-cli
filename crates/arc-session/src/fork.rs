@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Session Fork/Branch — /fork and /branch commands
 //!
 //! Selective state copying with per-fork plan files.

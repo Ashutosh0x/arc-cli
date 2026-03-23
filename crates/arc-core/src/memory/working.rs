@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Working Memory — manages the active context window.
 //!
 //! Implements the MemGPT-inspired block architecture:

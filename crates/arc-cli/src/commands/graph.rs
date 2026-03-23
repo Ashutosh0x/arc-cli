@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! `arc graph` subcommands — structural code intelligence via codebase-memory-mcp.
 
 use arc_mcp::client::McpClient;

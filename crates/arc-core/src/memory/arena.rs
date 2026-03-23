@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Memory Arena — contiguous allocation for high-performance string processing.
 //! Used during context window compression and observation generation to minimize
 //! allocator overhead when processing thousands of tokens of chat history.

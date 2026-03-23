@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Hook engine dispatch latency benchmark.
 //! Target: <50ms per hook (vs Claude Code's ~200ms).
 //! Target: <5ms for hook matching (no execution).

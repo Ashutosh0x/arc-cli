@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Remote client: connects to a running ARC CLI session.
 
 use crate::protocol::{ClientMessage, ServerMessage};

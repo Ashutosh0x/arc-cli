@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
 use flume::Sender;
 use std::sync::Arc;

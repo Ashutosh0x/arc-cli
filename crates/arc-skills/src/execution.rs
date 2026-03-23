@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::registry::SkillRegistry;
 use crate::skill::{SkillContext, SkillResult};
 use anyhow::{Result, anyhow};

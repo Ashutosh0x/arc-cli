@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Ollama local inference provider.
 
 use crate::provider::*;

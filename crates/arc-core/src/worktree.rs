@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Worktree Isolation — Git Worktree-Based Session Isolation
 //!
 //! `--worktree` flag support: sparse-checkout, Enter/ExitWorktree tools,

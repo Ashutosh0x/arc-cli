@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Effort Levels — Low/Medium/High + /effort Command
 //!
 //! Per-agent effort override. Status bar indicator. Symbols: ○ ◐ ●

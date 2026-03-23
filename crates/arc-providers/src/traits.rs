@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::message::{Message, StreamEvent, ToolDefinition};
 use async_trait::async_trait;
 use futures::stream::BoxStream;

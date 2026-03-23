@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # PR Review Toolkit — 6 Specialized Agents + Feature-Dev Workflow
 //!
 //! Agents: comment-analyzer, pr-test-analyzer, silent-failure-hunter,

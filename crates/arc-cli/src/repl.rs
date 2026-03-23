@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use futures::StreamExt;
 use reqwest::Client;

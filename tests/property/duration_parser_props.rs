@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Property tests for the /loop interval parser.
 
 use proptest::prelude::*;

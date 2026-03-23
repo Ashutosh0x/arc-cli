@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use serde_json::json;
 use std::env;
 use std::fs::File;

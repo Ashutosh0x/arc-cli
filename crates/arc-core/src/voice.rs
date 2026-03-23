@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Voice Mode — STT + Push-to-Talk Framework
 //!
 //! Framework for voice input: WebSocket audio streaming,

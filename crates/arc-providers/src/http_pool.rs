@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use reqwest::Client;
 use std::sync::OnceLock;
 use std::time::Duration;

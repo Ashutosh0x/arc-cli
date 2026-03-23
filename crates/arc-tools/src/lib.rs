@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #![forbid(unsafe_code)]
 pub mod file_edit;
 pub mod file_read;

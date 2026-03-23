@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use std::collections::HashSet;
 use std::path::{Path, PathBuf};

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Short-Term Memory — in-memory session history with ring-buffer eviction.
 //! Holds the complete raw conversation history for the current session,
 //! independent of what's in the working memory context window.

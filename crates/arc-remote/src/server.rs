@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Remote control server running within the main ARC CLI process.
 
 use axum::{

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Path traversal attack prevention tests.
 
 use std::path::PathBuf;

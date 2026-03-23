@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Config serialization round-trip tests.
 
 use arc_core::config::ArcConfig;

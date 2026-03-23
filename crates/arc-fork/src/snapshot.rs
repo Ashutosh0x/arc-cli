@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Snapshot: captures both conversation state AND file state atomically.
 
 use chrono::{DateTime, Utc};

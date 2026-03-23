@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::{Result, anyhow};
 use std::path::{Path, PathBuf};
 
@@ -7,6 +8,12 @@ use std::path::{Path, PathBuf};
 /// prior to command execution to prevent directory traversal escapes.
 pub struct WindowsSandbox {
     allowed_paths: Vec<PathBuf>,
+}
+
+impl Default for WindowsSandbox {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl WindowsSandbox {

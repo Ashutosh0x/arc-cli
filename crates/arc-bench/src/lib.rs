@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-bench
 //!
 //! Benchmarking and evaluation subsystem (ARC-EVAL).

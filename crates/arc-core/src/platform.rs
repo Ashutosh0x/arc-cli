@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Platform Hardening — Cross-Platform Compatibility Layer
 //!
 //! Windows path casing, CRLF handling, clipboard Unicode, terminal rendering fixes.

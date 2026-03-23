@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Context Compaction — Intelligent Context Window Management
 //!
 //! Auto-compacts when context limit approached. Circuit breaker after 3 failures.

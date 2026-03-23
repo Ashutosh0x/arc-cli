@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Dynamic Model Discovery Engine.
 //! Fetches model lists from provider APIs in real-time.
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::skill::Skill;
 use anyhow::{Result, anyhow};
 use dashmap::DashMap;

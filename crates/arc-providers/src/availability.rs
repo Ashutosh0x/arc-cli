@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Model Availability Service
 //!
 //! Tracks per-model health with terminal vs sticky-retry failure modes.

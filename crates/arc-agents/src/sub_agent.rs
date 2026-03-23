@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::registry::AgentProfile;
 use anyhow::Result;
 use arc_providers::streaming::{StreamEvent, StreamingClient};

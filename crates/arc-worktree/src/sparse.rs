@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use std::path::{Path, PathBuf};
 use std::process::Command;

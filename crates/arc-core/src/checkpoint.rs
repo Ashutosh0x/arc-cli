@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use std::path::{Path, PathBuf};
 use git2::{Repository, Signature, IndexAddOption};
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # /security-review — Merge-Base Security Audit Command
 //!
 //! Audits the current branch diff against merge-base for security issues.

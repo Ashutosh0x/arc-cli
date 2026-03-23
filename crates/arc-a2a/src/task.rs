@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Task lifecycle state machine with compile-time transition validation.
 
 use chrono::{DateTime, Utc};

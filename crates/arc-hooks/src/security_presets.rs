@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Built-in security hook presets that ship as default hooks.
 //!
 //! These implement the 9+ security patterns that Claude Code's PreToolUse scanner checks,

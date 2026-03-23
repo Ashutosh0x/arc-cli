@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Security subsystem — defense-in-depth for ARC.
 
 pub mod audit;

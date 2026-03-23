@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use redb::{Database, TableDefinition};
 use std::path::Path;

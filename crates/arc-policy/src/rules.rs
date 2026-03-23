@@ -1,5 +1,6 @@
+// SPDX-License-Identifier: MIT
 use crate::engine::PolicyViolation;
-use std::path::PathBuf;
+use std::path::Path;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum RuleSeverity {
@@ -68,7 +69,7 @@ impl PolicyRule {
         }
     }
 
-    pub fn check_file_access(&self, path: &PathBuf, is_write: bool) -> Option<PolicyViolation> {
+    pub fn check_file_access(&self, path: &Path, is_write: bool) -> Option<PolicyViolation> {
         let path_str = path.to_string_lossy();
 
         match self {

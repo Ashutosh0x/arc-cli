@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Configuration management for ARC.
 //! Stores non-sensitive preferences in `~/.arc/config.toml`.
 //! Uses `OnceLock` for singleton lazy initialization.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Cron task definition.
 
 use chrono::{DateTime, Utc};

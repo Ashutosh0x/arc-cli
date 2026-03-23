@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TaskType {
     Coding,

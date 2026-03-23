@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Prompt Registry & Snippet System
 //!
 //! Versioned prompt templates with variable substitution.

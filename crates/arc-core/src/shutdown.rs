@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Graceful shutdown coordination via `CancellationToken`.
 
 use std::time::Duration;

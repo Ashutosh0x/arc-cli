@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::tokenizer::Tokenizer;
 use arc_providers::message::Message;
 use std::collections::VecDeque;

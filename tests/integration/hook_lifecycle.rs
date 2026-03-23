@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Integration tests for the full hook lifecycle.
 
 use std::io::Write;

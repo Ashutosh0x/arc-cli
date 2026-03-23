@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Tool Output Masking Service — Hybrid Backward-Scanned FIFO
 //!
 //! Manages context window efficiency by masking bulky tool outputs:

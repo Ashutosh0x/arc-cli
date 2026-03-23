@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! High-performance A2A client with automatic discovery, retry,
 //! authentication, message signing, and SSE streaming.
 

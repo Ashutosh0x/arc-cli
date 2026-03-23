@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Property tests for config serialization roundtrips.
 
 use proptest::prelude::*;

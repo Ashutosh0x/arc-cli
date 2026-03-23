@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod animation;
 pub mod diff;
 pub mod footer;

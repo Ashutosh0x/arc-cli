@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::registry::AgentRegistry;
 use crate::sub_agent::{SubAgent, SubAgentResult};
 use anyhow::Result;

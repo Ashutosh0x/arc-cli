@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use notify::{Event, RecursiveMode, Watcher};
 use std::path::PathBuf;

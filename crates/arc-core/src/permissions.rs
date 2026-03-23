@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Permission System — 3-Tier Tool Access Control
 //!
 //! Implements `allow/ask/deny` permission rules per tool, with compound bash

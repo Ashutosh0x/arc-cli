@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Persistent telemetry: token accounting, latency histograms, cost tracking.
 
 pub mod advanced;

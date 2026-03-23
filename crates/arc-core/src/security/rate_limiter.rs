@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Token-bucket rate limiter per provider.
 
 use std::collections::HashMap;

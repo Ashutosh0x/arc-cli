@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Cron Scheduling — /loop Recurring Prompts Within Session
 //!
 //! `/loop 5m check deploy` — schedule recurring prompts.

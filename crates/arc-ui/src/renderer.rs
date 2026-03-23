@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::state::{DiffBlock, DiffLine, Hunk, UiState};
 use crate::theme::Theme;
 use std::io::{self, Write};

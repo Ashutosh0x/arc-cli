@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Session Management — persistent storage of full conversation histories.
 
 use crate::error::{ArcError, ArcResult};

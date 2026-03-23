@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Mandatory authentication middleware for all A2A endpoints.
 //!
 //! Fixes: A2A server accepts unauthenticated task submissions/cancellations/streams.

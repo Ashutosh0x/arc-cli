@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Centralised error hierarchy for all ARC crates.
 
 use thiserror::Error;

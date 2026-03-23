@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Data models and DTOs exchanged via WebSocket.
 
 use chrono::{DateTime, Utc};

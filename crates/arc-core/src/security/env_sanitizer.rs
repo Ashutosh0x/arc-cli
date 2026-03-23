@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Environment Variable Sanitization
 //!
 //! Blocks sensitive environment variables from being passed to the LLM:

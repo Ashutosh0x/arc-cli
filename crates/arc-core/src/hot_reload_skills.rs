@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Hot-Reload Skills — fsnotify watcher on skill directories.
 //! New or updated skills become available immediately without restarting.
 

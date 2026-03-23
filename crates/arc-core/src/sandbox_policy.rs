@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Sandbox Network Policy — Filesystem + Network Isolation
 //!
 //! Controls allowedDomains, proxy ports, unix sockets, excluded commands.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Tests for the zero-copy SSE parser.
 
 use arc_providers::streaming::parse_sse_chunk;

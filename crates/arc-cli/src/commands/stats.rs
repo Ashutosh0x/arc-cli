@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! `arc stats` — display usage analytics from the telemetry store.
 
 use std::path::Path;

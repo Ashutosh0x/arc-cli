@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Context Window Compressor
 //!
 //! Responsible for shrinking the working memory when it nears the context limits.

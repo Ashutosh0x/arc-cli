@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use std::io;
 
 /// Enforces fail-closed Landlock strict mode (Linux) for restricting filesystem access.

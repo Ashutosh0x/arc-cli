@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Background Bash Tasks — 5GB Cap + Process Cleanup + Ctrl+B Queries
 //!
 //! Manages long-running background shell tasks with output limits.

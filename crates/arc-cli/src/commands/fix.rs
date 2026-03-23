@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use anyhow::Result;
 use arc_providers::message::{Message, Role};
 use arc_providers::traits::Provider;

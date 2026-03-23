@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Config parsing benchmark.
 //! Target: <100µs for hierarchical config merge (global + project + local).
 

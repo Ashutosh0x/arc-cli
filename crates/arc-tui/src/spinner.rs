@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Professional terminal spinner with phase-aware status messages.
 //!
 //! Features:

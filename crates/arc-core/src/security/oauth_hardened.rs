@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Hardened OAuth 2.1 implementation.
 //! Enforces: PKCE S256, CSRF state, exact redirect URI, Refresh Token Rotation (RTR).
 

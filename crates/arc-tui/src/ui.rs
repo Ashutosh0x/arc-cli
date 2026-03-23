@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use ratatui::{
     layout::{Constraint, Direction, Layout},
     style::{Color, Style},

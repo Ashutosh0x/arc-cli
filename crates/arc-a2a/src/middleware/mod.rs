@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod auth;
 
 pub use auth::{

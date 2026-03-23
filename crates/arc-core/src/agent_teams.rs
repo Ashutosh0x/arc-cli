@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Agent Teams — Leader/Teammate Model with Background Agents
 //!
 //! Multi-agent orchestration with leader coordination, background workers,

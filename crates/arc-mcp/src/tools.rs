@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Typed wrappers for codebase-memory-mcp MCP tools.
 //!
 //! Each function wraps a specific MCP tool call with typed parameters

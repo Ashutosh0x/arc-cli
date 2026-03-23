@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Tool Search — Deferred Tool Loading via ToolSearch
 //!
 //! Reduces initial context by loading tool schemas on demand.

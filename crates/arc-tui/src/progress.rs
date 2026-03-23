@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Multi-step progress indicator for compound LLM operations.
 //!
 //! Shows a checklist-style output:

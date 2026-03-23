@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use clap::{Parser, Subcommand, ValueEnum};
 
 #[derive(Parser, Debug)]

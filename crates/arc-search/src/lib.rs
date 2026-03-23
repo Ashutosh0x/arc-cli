@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod duckduckgo;
 pub mod engine;
 pub mod web_reader;

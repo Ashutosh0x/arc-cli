@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::state::{StepState, UiState};
 use crate::theme::Theme;
 use std::io::{self, Write};

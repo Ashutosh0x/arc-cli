@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Settings Hierarchy — User → Project → Managed + Hot-Reload
 //!
 //! Layered settings with enterprise managed override support.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Structured audit logging system.
 //! Writes security-relevant events to `~/.arc/audit.log` in JSON format.
 

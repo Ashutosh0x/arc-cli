@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Interactive Setup Wizard — guides users through provider configuration.
 
 use crate::auth;

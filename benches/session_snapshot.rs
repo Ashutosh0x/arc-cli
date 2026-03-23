@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Session snapshot benchmark — fork/checkpoint speed.
 //! Target: <100ms to snapshot a 50-file project with 200k token conversation.
 

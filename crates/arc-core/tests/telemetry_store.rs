@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Integration tests for the telemetry store.
 
 use arc_core::telemetry::store::TelemetryStore;

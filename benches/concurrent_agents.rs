@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Multi-agent throughput benchmark.
 //! Measures overhead of dispatching N parallel agent tasks.
 

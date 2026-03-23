@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use async_trait::async_trait;
 use futures::stream::BoxStream;
 use reqwest::Client;

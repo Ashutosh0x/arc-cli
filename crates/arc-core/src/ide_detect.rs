@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! IDE Detection Service
 //!
 //! Auto-detects 20+ IDEs from environment variables and process info.

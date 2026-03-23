@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::audio_capture::AudioCapture;
 use crate::languages::Language;
 use crate::push_to_talk::{PttEvent, PushToTalkController};

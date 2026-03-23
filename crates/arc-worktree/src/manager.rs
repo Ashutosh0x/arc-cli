@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Worktree manager: create, list, and cleanup git worktrees for isolated sessions.
 
 use chrono::{DateTime, Utc};

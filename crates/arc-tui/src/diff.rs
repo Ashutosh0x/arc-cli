@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use ratatui::{
     style::{Color, Style},
     text::{Line, Span},

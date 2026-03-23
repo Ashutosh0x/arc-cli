@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! OpenAI provider implementation.
 
 use crate::provider::*;

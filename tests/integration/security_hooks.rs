@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Security hook integration tests — verify all 9+ security patterns are caught.
 
 #[cfg(unix)]

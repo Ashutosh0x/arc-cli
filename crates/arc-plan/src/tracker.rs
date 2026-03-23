@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Persistent Task Tracker with DAG dependency validation
 //!
 //! Disk-backed task management with parent-child hierarchy,

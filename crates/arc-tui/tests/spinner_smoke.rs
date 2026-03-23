@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Smoke tests — verify the spinner compiles, starts, and stops
 //! without panicking.  No visual assertion (terminal output).
 

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Slash Command System — .md Commands with YAML Frontmatter
 //!
 //! Plugin-shipped `.md` commands with description, argument-hint,

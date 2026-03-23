@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Server-Sent Events (SSE) streaming for real-time task updates.
 //! Enables agents to push progress, partial results, and state changes
 //! to the requesting agent without polling.

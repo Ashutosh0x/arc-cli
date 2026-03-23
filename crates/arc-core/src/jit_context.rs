@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! JIT (Just-In-Time) Context Loading
 //!
 //! Dynamically discovers and loads ARC.md context files when the agent

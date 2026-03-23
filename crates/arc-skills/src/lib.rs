@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod execution;
 pub mod registry;
 pub mod skill;

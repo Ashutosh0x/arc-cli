@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Session forking: create divergent conversation branches.
 //!
 //! This is the conversational equivalent of a git branch.

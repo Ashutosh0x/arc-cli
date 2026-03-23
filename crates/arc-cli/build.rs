@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use clap::CommandFactory;
 use std::env;
 use std::fs;

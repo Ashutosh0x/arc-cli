@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-plan — Read-Only Planning Mode
 //!
 //! Provides a safe, read-only research subagent that analyzes codebases,

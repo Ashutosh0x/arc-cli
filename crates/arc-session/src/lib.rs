@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-session — Session Checkpointing & Resume
 //!
 //! Persists full session state to disk using redb, enabling instant

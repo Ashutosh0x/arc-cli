@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Checkpoint I/O benchmark — redb write/read speed.
 //! Target: <50ms for 200k token session checkpoint.
 

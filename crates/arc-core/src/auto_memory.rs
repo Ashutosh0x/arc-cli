@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Auto-Memory — /memory Command with Auto-Save + Timestamps
 //!
 //! Persists useful context across sessions. Auto-detects important facts.

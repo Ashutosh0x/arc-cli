@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use regex::Regex;
 use std::sync::OnceLock;
 

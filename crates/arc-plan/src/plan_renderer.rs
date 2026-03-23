@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::plan_model::*;
 
 /// Renders a Plan as a beautiful terminal-friendly string.

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::registry::AgentRegistry;
 use anyhow::Result;
 use serde_json::Value;

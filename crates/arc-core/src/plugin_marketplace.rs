@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Plugin Marketplace — Git/Local Install, Manifests, Trust
 //!
 //! Install from git URLs, local dirs. `plugin.json` manifests.

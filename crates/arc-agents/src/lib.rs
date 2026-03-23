@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-agents — Multi-Agent Orchestration Subsystem
 //!
 //! Provides the Coordinator-Worker model where a main orchestration agent

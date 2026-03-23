@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use criterion::{Criterion, black_box, criterion_group, criterion_main};
 
 fn bench_config_load(c: &mut Criterion) {

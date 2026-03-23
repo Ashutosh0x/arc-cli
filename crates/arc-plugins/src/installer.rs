@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Plugin installer: handles installation from marketplace, git, and local sources.
 
 use std::path::{Path, PathBuf};

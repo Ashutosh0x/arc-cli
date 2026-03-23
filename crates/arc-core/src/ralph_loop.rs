@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # Ralph Loop — Autonomous Iteration with Stop-Hook
 //!
 //! `/ralph-loop` with `--max-iterations` and `--completion-promise`.

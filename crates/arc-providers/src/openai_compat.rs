@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Unified OpenAI-compatible streaming provider.
 //!
 //! Works with any API that follows the OpenAI chat completions format:

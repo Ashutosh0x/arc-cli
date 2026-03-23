@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! SSE Parser Benchmark — the single most latency-critical path.
 //!
 //! Target: 0 heap allocations per event line.

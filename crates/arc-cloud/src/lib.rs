@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod delegation;
 pub mod result_poll;
 

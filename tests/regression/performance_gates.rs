@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Performance gate tests — these FAIL CI if performance regresses.
 //! Run with: cargo test --test regression -- --ignored
 

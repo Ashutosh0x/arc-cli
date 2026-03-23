@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Environment variable overrides for API keys.
 //! Checks env vars first, falls back to keyring.
 //! Redacts secrets in all log output.

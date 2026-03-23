@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crossterm::tty::IsTty;
 use std::io::{self, Write};
 use std::thread;

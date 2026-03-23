@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Plugin manifest format.
 //!
 //! A plugin is a directory with this structure:

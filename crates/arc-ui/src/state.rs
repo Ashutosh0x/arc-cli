@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use std::time::Instant;
 
 /// Top-level phase of the CLI session

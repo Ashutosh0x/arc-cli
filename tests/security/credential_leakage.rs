@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Tests to ensure credentials never appear in logs, errors, or serialized state.
 
 #[test]

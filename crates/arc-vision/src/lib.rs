@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 pub mod analyzer;
 pub mod decoder;
 

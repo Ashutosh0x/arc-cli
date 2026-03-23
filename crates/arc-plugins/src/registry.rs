@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Local plugin registry: tracks installed plugins, their state, and configuration.
 
 use chrono::{DateTime, Utc};

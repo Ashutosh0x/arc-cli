@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::session_model::{SessionMetadata, SessionState};
 use anyhow::Result;
 use redb::{Database, ReadableTable, TableDefinition};

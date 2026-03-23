@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use futures::future::select_ok;
 use futures::stream::BoxStream;
 use std::collections::HashMap;

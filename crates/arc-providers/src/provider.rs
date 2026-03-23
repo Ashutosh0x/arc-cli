@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Provider trait and shared types.
 
 use arc_core::error::ArcResult;

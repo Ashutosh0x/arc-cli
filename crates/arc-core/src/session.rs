@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};

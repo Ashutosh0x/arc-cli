@@ -1,5 +1,6 @@
+// SPDX-License-Identifier: MIT
 use crate::rules::{PolicyRule, RuleSeverity};
-use std::path::PathBuf;
+use std::path::Path;
 
 pub struct PolicyViolation {
     pub rule_name: String,
@@ -16,6 +17,12 @@ pub struct PolicyResult {
 /// or user-defined constraints.
 pub struct PolicyEngine {
     rules: Vec<PolicyRule>,
+}
+
+impl Default for PolicyEngine {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl PolicyEngine {
@@ -53,7 +60,7 @@ impl PolicyEngine {
     }
 
     /// Evaluate a file path the LLM wants to read or modify.
-    pub fn evaluate_file_access(&self, file_path: &PathBuf, is_write: bool) -> PolicyResult {
+    pub fn evaluate_file_access(&self, file_path: &Path, is_write: bool) -> PolicyResult {
         let mut violations = Vec::new();
 
         for rule in &self.rules {

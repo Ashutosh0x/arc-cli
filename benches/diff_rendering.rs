@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Diff rendering benchmark using syntect.
 
 use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};

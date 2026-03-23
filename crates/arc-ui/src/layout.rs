@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use std::io::{self, Stdout, Write};
 
 use crate::header;

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Remote control WebSocket server integration tests.
 
 use std::time::Duration;

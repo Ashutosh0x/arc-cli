@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! Git worktree operation benchmarks.
 //! Measures the overhead ARC adds on top of raw git operations.
 

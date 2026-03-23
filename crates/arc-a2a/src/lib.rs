@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! # arc-a2a — Agent-to-Agent Protocol for ARC CLI
 //!
 //! Production-grade implementation of the A2A protocol enabling ARC agents

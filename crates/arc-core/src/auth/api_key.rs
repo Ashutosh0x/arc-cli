@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 //! API Key authentication — prompts user and stores in keyring.
 
 use crate::credentials::{self, CredentialKind, Provider};

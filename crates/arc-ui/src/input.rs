@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MIT
 use crate::state::UiState;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyModifiers};
 
