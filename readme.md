@@ -19,6 +19,8 @@
 [![Google Gemini](https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=googlegemini&logoColor=white)](https://ai.google.dev/)
 [![Ollama](https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=ollama&logoColor=white)](https://ollama.com/)
 
+<img width="100%" alt="arc cli terminal" src="arc%20cli%20terminal.png" />
+
 A native agentic CLI that reasons over codebases. One binary. No runtime. Works offline.
 
 ---
