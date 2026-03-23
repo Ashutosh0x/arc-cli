@@ -138,3 +138,25 @@ jobs:
       - name: Check MSRV
         run: cargo check --workspace
 
+  coverage:
+    name: Code Coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libasound2-dev
+
+      - name: Install tarpaulin
+        run: cargo install cargo-tarpaulin
+        
+      - name: Run code coverage
+        run: cargo tarpaulin --workspace --timeout 120 --out xml
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
