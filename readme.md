@@ -2,8 +2,8 @@
 
 ## Demo
 
-[![asciicast](https://asciinema.org/a/8332.svg)](https://asciinema.org/a/8332)
-*(Note: Replace `8332` with your actual ARC CLI asciinema cast ID)*
+<img width="1444" height="1127" alt="arc cli terminal" src="https://github.com/user-attachments/assets/985a3fe5-ef89-4149-8de3-d8a2e437e906" />
+
 
 [![Release](https://img.shields.io/github/v/release/Ashutosh0x/arc-cli?style=for-the-badge&logo=github)](https://github.com/Ashutosh0x/arc-cli/releases/latest)
 [![Downloads](https://img.shields.io/github/downloads/Ashutosh0x/arc-cli/total?style=for-the-badge&logo=github)](https://github.com/Ashutosh0x/arc-cli/releases)
