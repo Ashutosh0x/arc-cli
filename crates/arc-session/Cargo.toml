@@ -1,4 +1,5 @@
 [package]
+rust-version.workspace = true
 name = "arc-session"
 version.workspace = true
 edition.workspace = true

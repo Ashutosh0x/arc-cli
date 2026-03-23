@@ -1,4 +1,5 @@
 [package]
+rust-version.workspace = true
 name = "arc-compact"
 version.workspace = true
 edition.workspace = true
