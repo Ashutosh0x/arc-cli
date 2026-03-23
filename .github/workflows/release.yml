@@ -88,6 +88,10 @@ jobs:
           mkdir -p "$STAGING"
           cp "target/${{ matrix.target }}/release/arc${{ matrix.ext }}" "$STAGING/"
           cp README.md LICENSE CHANGELOG.md "$STAGING/" 2>/dev/null || true
+          COMPLETIONS_DIR=$(find target/${{ matrix.target }}/release/build -type d -name "completions" | head -n 1)
+          MAN_DIR=$(find target/${{ matrix.target }}/release/build -type d -name "man" | head -n 1)
+          if [ -n "$COMPLETIONS_DIR" ] && [ -d "$COMPLETIONS_DIR" ]; then cp -r "$COMPLETIONS_DIR" "$STAGING/"; fi
+          if [ -n "$MAN_DIR" ] && [ -d "$MAN_DIR" ]; then cp -r "$MAN_DIR" "$STAGING/"; fi
           tar czf "$STAGING.tar.gz" "$STAGING"
           echo "ASSET=$STAGING.tar.gz" >> $GITHUB_ENV
 
@@ -99,6 +103,10 @@ jobs:
           New-Item -ItemType Directory -Path $staging
           Copy-Item "target/${{ matrix.target }}/release/arc${{ matrix.ext }}" $staging/
           Copy-Item README.md, LICENSE, CHANGELOG.md $staging/ -ErrorAction SilentlyContinue
+          $comps = Get-ChildItem -Path "target/${{ matrix.target }}/release/build" -Filter "completions" -Directory -Recurse | Select-Object -First 1
+          $man = Get-ChildItem -Path "target/${{ matrix.target }}/release/build" -Filter "man" -Directory -Recurse | Select-Object -First 1
+          if ($comps) { Copy-Item $comps.FullName -Destination $staging/completions -Recurse -Force }
+          if ($man) { Copy-Item $man.FullName -Destination $staging/man -Recurse -Force }
           Compress-Archive -Path "$staging/*" -DestinationPath "$staging.zip"
           echo "ASSET=$staging.zip" >> $env:GITHUB_ENV
 

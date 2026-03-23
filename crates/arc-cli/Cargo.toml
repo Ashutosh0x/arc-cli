@@ -58,3 +58,8 @@ self_update = { version = "0.43.1", features = ["archive-tar", "archive-zip", "c
 
 [lints]
 workspace = true
+
+[build-dependencies]
+clap = { workspace = true, features = ["derive"] }
+clap_complete = "4.6.0"
+clap_mangen = "0.2.2"
