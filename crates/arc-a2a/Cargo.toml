@@ -18,7 +18,7 @@ tokio-stream = { workspace = true, features = ["sync"] }
 futures = { workspace = true }
 
 # HTTP client + server
-reqwest = { workspace = true, features = ["json", "stream"] }
+reqwest = { default-features = false, workspace = true, features = ["json", "stream"] }
 axum = { workspace = true }
 tower = { workspace = true }
 tower-http = { workspace = true, features = ["cors", "trace", "compression-gzip", "auth"] }

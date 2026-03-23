@@ -23,7 +23,7 @@ arc-mcp = { path = "../arc-mcp" }
 arc-plugins = { path = "../arc-plugins" }
 arc-sandbox = { path = "../arc-sandbox" }
 
-reqwest = { workspace = true, features = ["rustls-tls"] }
+reqwest = { default-features = false, workspace = true, features = ["rustls-tls"] }
 keyring.workspace = true
 
 clap.workspace = true

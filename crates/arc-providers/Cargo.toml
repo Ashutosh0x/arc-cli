@@ -11,7 +11,7 @@ workspace = true
 [dependencies]
 arc-core = { workspace = true }
 tokio.workspace = true
-reqwest = { workspace = true, features = ["rustls-tls", "stream"] }
+reqwest = { default-features = false, workspace = true, features = ["rustls-tls", "stream"] }
 serde.workspace = true
 serde_json.workspace = true
 futures.workspace = true

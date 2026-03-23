@@ -96,7 +96,6 @@ opentelemetry_sdk = "0.22"
 opentelemetry-otlp = "0.15"
 tracing-appender = "0.2"
 base64 = "0.22"
-openssl = { version = "0.10", features = ["vendored"] }
 
 
 oauth2 = "*"
