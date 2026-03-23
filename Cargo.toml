@@ -108,7 +108,7 @@ criterion = { version = "0.8", features = ["async_tokio"] }
 
 # NEW PHASE 7 WORKSPACE DEPS
 image = "0.25"
-flume = "0.11"
+flume = "0.12"
 
 arc-core = { path = "crates/arc-core" }
 
