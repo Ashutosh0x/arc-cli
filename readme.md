@@ -23,6 +23,12 @@
 
 A native agentic CLI that reasons over codebases. One binary. No runtime. Works offline.
 
+
+https://github.com/user-attachments/assets/cd052349-ad50-4d4d-b607-ecc324121477
+
+
+
+
 ---
 
 ## Install
